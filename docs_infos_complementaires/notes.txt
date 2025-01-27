@@ -1,4 +1,0 @@
-Séparation logique applicative/interface (archi MVC)
-Concevoir, implémenter des tests automatisés
-
-Décrire les étapes de l'apprentissage de pygame, par exemple..
