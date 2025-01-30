@@ -1,0 +1,81 @@
+@startuml
+class Personnage {
+  - nom : String
+  - or : int
+  - vie : int [0..100]
+}
+
+class Combattant {
+  - inventairePotions : int [0..5]
+  + equiperArme(arme : Arme) : void
+  + desequiperArme() : void
+  + changerArme(arme : Arme) : void
+  + choisirQuete(quete : Quete) : void
+  + abandonnerQuete(quete : Quete) : void
+  + entrerDonjon(donjon : Donjon) : void
+  + entrerBoutique() : void
+  + attaquer(monstre : Monstre) : void
+  + recevoirDommage(nbDegat : double) : void
+  + utiliserPotion() : bool
+  + gagnerOr(montant : int) : void
+}
+
+class Medecin {
+  - stockPotions : int
+}
+
+class Forgeron {
+  + creerArme(type : String, valeur : int) : Arme
+}
+
+class Monstre {
+  - difficulte : int
+  + attaquer(combattant : Combattant) : void
+  + recevoirDommage(nbDegat : double) : void
+}
+
+class Arme {
+  - nom : String
+  - type : String
+  - valeurOr : int
+  - degat : double ]0..100]
+}
+
+class Quete {
+  - description : String
+  - recompenseOr : int
+  - monstreCible : Monstre
+  + terminerQuete() : bool
+}
+
+class Donjon {
+  - nom : String
+  - difficulte : int
+  + genererMonstres(nbMonstre : int) : bool
+}
+
+class GestionnaireDeQuetes {
+  + creerQuetes(nbQuetes : int) : void
+  + creerDonjonPourQuete(quete : Quete) : Donjon
+  + creerMonstresPourDonjon(donjon : Donjon, nbMonstres : int) : List<Monstre>
+}
+
+
+' Héritage
+Personnage <|-- Combattant
+Personnage <|-- Monstre
+Personnage <|-- Forgeron
+Personnage <|-- Medecin
+
+' Associations
+Combattant "1" --> "0..1" Arme : armeEquipee
+Combattant "1" --> "0..*" Arme : inventaireArmes
+Combattant "1" --> "0..1" Quete : queteActuelle
+Combattant "1" --> "0..*" Donjon : donjonExploré
+Forgeron "1" --> "0..*" Arme : inventaireArmes
+
+Monstre "1" --> "0..1" Arme : armePossédée
+Quete "1" --> "1" Monstre : monstreCible
+Quete "1" --> "1" Donjon : donjonAssocié
+Donjon "1" --> "0..*" Monstre : monstres
+@enduml

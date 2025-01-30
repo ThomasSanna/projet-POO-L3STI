@@ -5,3 +5,6 @@ class Donjon:
         self.nom = nom
         self.difficulte = difficulte
         self.monstres = []
+        
+    def __str__(self):
+        return (f"Donjon(nom={self.nom}, difficulte={self.difficulte}, monstres={self.monstres})")

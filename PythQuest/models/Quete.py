@@ -13,3 +13,8 @@ class Quete:
         self.monstreCible = monstreCible
         self.donjonAssocie = donjonAssocie
         self.statut = Quete.STATUT_CREEE
+        
+    def __str__(self):
+        return (f"Quete(description={self.description}, recompenseOr={self.recompenseOr}, "
+                f"monstreCible={self.monstreCible}, donjonAssocie={self.donjonAssocie}, "
+                f"statut={self.statut})")

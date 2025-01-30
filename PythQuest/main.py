@@ -1,3 +1,5 @@
-from models.Combattant import Combattant
+from models.Forgeron import Forgeron
 
-comb = Combattant("Joueur", 100, 100, 0)
+forg = Forgeron("George")
+
+print(forg) # Forgeron(nom=George, or_=100, vie=100, armePossedee=None)

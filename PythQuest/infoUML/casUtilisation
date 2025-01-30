@@ -1,0 +1,20 @@
+@startuml
+left to right direction
+actor Combattant
+actor Administrateur
+actor "Tâches automatiques" as Taches
+
+rectangle "Système du jeu" {
+    Combattant --> (Changer d'arme)
+    Combattant --> (Utiliser une potion)
+    Combattant --> (Explorer Donjon)
+    Combattant --> (Faire des achats)
+    Combattant --> (Gagner/Dépenser de l'or)
+    Administrateur --> (Gérer utilisateur)
+    Taches --> (Créer une/des quêtes)
+
+    (Faire des achats) <|-- (Acheter des potions) : <<extend>>
+    (Faire des achats) <|-- (Acheter des armes) : <<extend>>
+    (Explorer Donjon) --> (Combattre un monstre) : <<include>>
+}
+@enduml
