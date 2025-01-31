@@ -87,7 +87,7 @@ class Combattant(Personnage):
         self.queteActuelle = None
         return True
     
-    def accepterQuete(self, quete: Quete) -> bool: # changer le statut de la quête
+    def accepterQuete(self, quete: Quete) -> bool: # changer le statut de la quête + vérifier si le combattant a déjà une quête en cours
         self.queteActuelle = quete
         return True
     
