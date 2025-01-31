@@ -2,8 +2,11 @@ from models.Personnage import Personnage
 from models.Quete import Quete
 from models.Arme import Arme
 from models.Donjon import Donjon
-from models.Medecin import Medecin
 from typing import List, Optional
+
+""" 
+Vente d'arme au forgeron
+"""
 
 class Combattant(Personnage):
     
@@ -16,14 +19,6 @@ class Combattant(Personnage):
         self.inventaireArmes: List[Arme] = []
         self.queteActuelle: Optional[Quete] = None
         self.donjonsExplores: List[Donjon] = []
-        
-    def perdreVie(self, degats: int) -> bool:
-        self.vie -= degats
-        if self.vie <= 0: # Si le combattant n'a plus de vie, il perd la moitié de son or et sa vie est remise à 100
-            self.vie = 100
-            self.or_ = self.or_ // 2
-            return False
-        return True
     
     def gagnerOr(self, or_: int) -> bool:
         self.or_ += or_
@@ -40,6 +35,14 @@ class Combattant(Personnage):
         self.vie += vie
         if self.vie > 100:
             self.vie = 100
+            return False
+        return True
+
+    def perdreVie(self, degats: int) -> bool:
+        self.vie -= degats
+        if self.vie <= 0: # Si le combattant n'a plus de vie, il perd la moitié de son or et sa vie est remise à 100
+            self.vie = 100
+            self.or_ = self.or_ // 2
             return False
         return True
             
@@ -83,12 +86,16 @@ class Combattant(Personnage):
             return True
         return False
     
-    def abandonnerQuete(self) -> bool: # changer le statut de la quête
+    def abandonnerQuete(self) -> bool: 
+        self.queteActuelle.queteAbandonnee()
         self.queteActuelle = None
         return True
     
-    def accepterQuete(self, quete: Quete) -> bool: # changer le statut de la quête + vérifier si le combattant a déjà une quête en cours
+    def accepterQuete(self, quete: Quete) -> bool:
+        if self.queteActuelle is not None:
+            return False
         self.queteActuelle = quete
+        self.queteActuelle.queteEnCours()
         return True
     
     def explorerDonjon(self, donjon: Donjon) -> bool: # à revoir
@@ -100,12 +107,11 @@ class Combattant(Personnage):
     def entrerBoutique(self) -> bool: # à faire
         return True
     
-    def acheterPotion(self, medecin: Medecin) -> bool:
-        prixPotion = medecin.prixPotion
-        if self.perdreOr(prixPotion):
-            self.gagnerPotion()
-            medecin.perdrePotion()
-            return True
+    def acheterPotion(self, medecin: "Medecin") -> bool:
+        prixPotion = medecin.getPrixPotion()
+        if self.perdreOr(prixPotion) and self.gagnerPotion():
+            if medecin.perdrePotion() :
+                return True
         return False
 
     def acheterArme(self, forgeron: 'Forgeron', arme: Arme) -> bool:
@@ -113,6 +119,21 @@ class Combattant(Personnage):
             self.ajouterArmeInventaire(arme)
             return True
         return False
+    
+    def getInventairePotions(self) -> int:
+        return self.inventairePotions
+    
+    def getArmeEquipee(self) -> Optional[Arme]:
+        return self.armeEquipee
+    
+    def getInventaireArmes(self) -> List[Arme]:
+        return self.inventaireArmes
+    
+    def getQueteActuelle(self) -> Optional[Quete]:
+        return self.queteActuelle
+    
+    def getDonjonsExplores(self) -> List[Donjon]:
+        return self.donjonsExplores
     
     def __repr__(self) -> str: # sert à afficher le combattant dans une liste
         return self.nom

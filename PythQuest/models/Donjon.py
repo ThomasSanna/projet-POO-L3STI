@@ -24,9 +24,11 @@ class Donjon:
     )
     
     tousLesDonjons = []
-
+    nbDonjons = 1
     
     def __init__(self, nom, difficulte, monstre=None):
+        self.id = Donjon.nbDonjons
+        Donjon.nbDonjons += 1
         self.nom = nom
         self.difficulte = difficulte
         if monstre is None:
@@ -36,17 +38,41 @@ class Donjon:
         Donjon.tousLesDonjons.append(self)
         
     @staticmethod
-    def creerDonjonAleatoire(difficulte):
+    def creerDonjonAleatoire(difficulte, monstre: Monstre):
         prefixe = Donjon.PREFIXES
         suffixe = Donjon.SUFFIXES[random.randint(0, len(Donjon.SUFFIXES) - 1)]
         nom = prefixe + suffixe
-        donjon = Donjon(nom, difficulte)
+        donjon = Donjon(nom, difficulte, monstre)
         return donjon
         
     def ajouterNbMonstre(self, nb: int):
         for i in range(nb):
             monstre = Monstre.creerMonstreAleatoire(self.difficulte)
             self.listeMonstres.append(monstre)
-        
+            
+    def supprimerMonstre(self, monstre: Monstre):
+        if monstre in self.listeMonstres:
+            self.listeMonstres.remove(monstre)
+            return True
+        return False
+    
+    def estVide(self):
+        return len(self.listeMonstres) == 0
+    
+    def getListeMonstres(self):
+        return self.listeMonstres
+    
+    def getNom(self):
+        return self.nom
+    
+    def getDifficulte(self):
+        return self.difficulte
+    
+    def getId(self):
+        return self.id
+    
+    def getNbMonstres(self):
+        return len(self.listeMonstres)
+
     def __str__(self):
-        return (f"Donjon(nom={self.nom}, difficulte={self.difficulte}, monstres={self.monstres})")
+        return (f"Donjon(id={self.id}, nom={self.nom}, difficulte={self.difficulte}, monstres={self.listeMonstres})")

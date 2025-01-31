@@ -8,4 +8,7 @@ class GestionnaireDeQuetes:
         pass
 
 
+    @staticmethod
+    def creerQueteDonjonMonstres():
+        return Quete.creerQueteAleatoire()
         

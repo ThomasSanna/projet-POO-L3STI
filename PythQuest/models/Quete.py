@@ -44,11 +44,11 @@ class Quete:
         Quete.toutesLesQuetes.append(self)
         
     @staticmethod
-    def creerQueteAleatoire(self):
+    def creerQueteAleatoire():
         nom = Quete.PREFIXES + Quete.SUFFIXES[random.randint(0, len(Quete.SUFFIXES) - 1)]
         difficulte = random.randint(1, 5)
         recompenseOr = random.randint(difficulte * 15, difficulte * 35)
-        return Quete(nom, recompenseOr)
+        return Quete(nom, recompenseOr, difficulte)
         
     def queteFinie(self):
         self.statut = Quete.STATUT_TERMINEE
@@ -71,11 +71,17 @@ class Quete:
     def getStatut(self):
         return self.statut
     
+    def getRecompenseOr(self):
+        return self.recompenseOr
+
+    def getDifficulte(self):
+        return self.difficulte
+    
         
     def __repr__(self):
         return f"{self.description}, {self.recompenseOr} or, {self.monstreCible}, {self.donjonAssocie}, {self.statut}"
         
     def __str__(self):
-        return (f"Quete(description={self.description}, recompenseOr={self.recompenseOr}, "
+        return (f"Quete(nom={self.nom}, recompenseOr={self.recompenseOr}, "
                 f"monstreCible={self.monstreCible}, donjonAssocie={self.donjonAssocie}, "
                 f"statut={self.statut})")

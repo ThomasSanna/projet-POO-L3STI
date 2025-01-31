@@ -1,5 +1,4 @@
 from models.Personnage import Personnage
-from models.Combattant import Combattant
 from models.Arme import Arme
 import random
 
@@ -21,6 +20,9 @@ class Forgeron(Personnage):
         
     def forgerArme(self) -> None:
         self.ajouterArme(Arme.genererArmeAleatoire())
+        
+    def getInventaireArmes(self):
+        return self.inventaireArmes
         
     def __str__(self):
         return (f"Forgeron(nom={self.nom}, or_={self.or_}, vie={self.vie}, inventaireArmes={self.inventaireArmes})")

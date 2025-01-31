@@ -1,35 +1,68 @@
 from models.Combattant import Combattant
 from models.Forgeron import Forgeron
-from models.Donjon import Donjon
-from models.GestionnaireDeQuetes import GestionnaireDeQuetes
-from models.Monstre import Monstre
+from models.Medecin import Medecin
 
-while True:
-    print("1. Créer un personnage")
-    print("2. Créer un forgeron")
-    print("3. Créer un donjon")
-    print("4. Créer un gestionnaire de quêtes")
-    print("5. Quitter")
-    choix = input("Choix: ")
+def choixConsole(message):
+    return input(message)
+
+def creerPersonnage():
+    nomPersonnage = choixConsole("Entrez le nom de votre personnage : ")
+    return Combattant(nomPersonnage)
+
+def afficherMenuPrincipal():
+    print("\nQue voulez-vous faire ?")
+    print("1. Faire des achats")
+    print("2. Voir les quêtes")
+    print("3. Voir les donjons")
+    print("4. Quitter")
+
+def afficherMenuAchats():
+    print("\nOù voulez-vous aller ?")
+    print("1. Visiter le Forgeron")
+    print("2. Visiter le Médecin")
+    print("3. Retour")
+
+def gererAchats(player):
+    while True:
+        afficherMenuAchats()
+        choixAchat = input("Entrez votre choix (1-3) : ")
+        
+        if choixAchat == '1':
+            forgeron = Forgeron("Forgeron")
+            print(f"\nBienvenue chez le {forgeron.nom}. Voici vos armes :")
+            for arme in forgeron.getInventaireArmes():
+                print(arme)
+        elif choixAchat == '2':
+            medecin = Medecin("Médecin")
+            print(f"\nBienvenue chez le {medecin.nom}. Vous pouvez acheter des potions pour {medecin.getPrixPotion()} pièces d'or.")
+        elif choixAchat == '3':
+            break
+        else:
+            print("Choix invalide. Veuillez réessayer.")
+
+def main():
+    print("Bienvenue dans le jeu !")
     
-    if choix == "1":
-        nom = input("Nom du personnage: ")
-        personnage = Combattant(nom)
-        print(personnage)
-    elif choix == "2":
-        nom = input("Nom du forgeron: ")
-        forgeron = Forgeron(nom)
-        print(forgeron)
-    elif choix == "3":
-        nom = input("Nom du donjon: ")
-        difficulte = input("Difficulté du donjon: ")
-        monstre = Monstre("Monstre", 100, 10)
-        donjon = Donjon(nom, difficulte, monstre)
-        print(donjon)
-    elif choix == "4":
-        gestionnaire = GestionnaireDeQuetes()
-        print(gestionnaire)
-    elif choix == "5":
-        break
-    else:
-        print("Choix invalide")
+    # Création du personnage
+    player = creerPersonnage()
+    
+    while True:
+        afficherMenuPrincipal()
+        choix = input("Entrez votre choix (1-4) : ")
+        
+        if choix == '1':
+            gererAchats(player)
+        elif choix == '2':
+            print("\nVoici vos quêtes :")
+            # Logique pour afficher les quêtes peut être ajoutée ici
+        elif choix == '3':
+            print("\nVoici les donjons :")
+            # Logique pour afficher les donjons peut être ajoutée ici
+        elif choix == '4':
+            print("Merci d'avoir joué !")
+            break
+        else:
+            print("Choix invalide. Veuillez réessayer.")
+
+if __name__ == "__main__":
+    main()
