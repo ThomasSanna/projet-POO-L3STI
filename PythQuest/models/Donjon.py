@@ -23,6 +23,9 @@ class Donjon:
         "de l'antarctique", "de l'espace", "de la galaxie", "de l'univers", "du multivers"
     )
     
+    ACTIF = "Actif"
+    INACTIF = "Inactif"
+    
     tousLesDonjons = []
     nbDonjons = 1
     
@@ -35,6 +38,7 @@ class Donjon:
             monstre = Monstre.creerMonstreAleatoire(difficulte)
         self.listeMonstres = [monstre]
         self.ajouterNbMonstre(random.randint(3, 10))
+        self.statut = Donjon.ACTIF
         Donjon.tousLesDonjons.append(self)
         
     @staticmethod
@@ -56,6 +60,9 @@ class Donjon:
             return True
         return False
     
+    def putInactif(self):
+        self.statut = Donjon.INACTIF
+    
     def estVide(self):
         return len(self.listeMonstres) == 0
     
@@ -73,6 +80,9 @@ class Donjon:
     
     def getNbMonstres(self):
         return len(self.listeMonstres)
+    
+    def getTousLesDonjons():
+        return Donjon.tousLesDonjons
 
     def __str__(self):
         return (f"Donjon(id={self.id}, nom={self.nom}, difficulte={self.difficulte}, monstres={self.listeMonstres})")

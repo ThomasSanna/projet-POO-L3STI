@@ -77,6 +77,9 @@ class Quete:
     def getDifficulte(self):
         return self.difficulte
     
+    def getToutesLesQuetes():
+        return Quete.toutesLesQuetes
+    
         
     def __repr__(self):
         return f"{self.description}, {self.recompenseOr} or, {self.monstreCible}, {self.donjonAssocie}, {self.statut}"
