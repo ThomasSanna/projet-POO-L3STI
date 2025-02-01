@@ -12,8 +12,8 @@ class Combattant(Personnage):
     
     GAIN_POTION = 15
     
-    def __init__(self, nom: str):
-        super().__init__(nom, 0, 100)
+    def __init__(self, nom: str, or_: int = 0, vie: int = 100):
+        super().__init__(nom, or_, vie)
         self.inventairePotions: int = 0
         self.armeEquipee: Optional[Arme] = None
         self.inventaireArmes: List[Arme] = []
@@ -25,10 +25,9 @@ class Combattant(Personnage):
         return True
     
     def perdreOr(self, or_: int) -> bool:
-        self.or_ -= or_
-        if self.or_ < 0:
-            self.or_ = 0
+        if self.or_ - or_ < 0:
             return False
+        self.or_ -= or_
         return True
         
     def gagnerVie(self, vie: int) -> bool:
@@ -87,6 +86,8 @@ class Combattant(Personnage):
         return False
     
     def abandonnerQuete(self) -> bool: 
+        if(self.queteActuelle is None):
+            return False
         self.queteActuelle.queteAbandonnee()
         self.queteActuelle = None
         return True
@@ -117,6 +118,7 @@ class Combattant(Personnage):
     def acheterArme(self, forgeron: 'Forgeron', arme: Arme) -> bool:
         if self.perdreOr(arme.getValeurOr()):
             self.ajouterArmeInventaire(arme)
+            forgeron.enleverArme(arme)
             return True
         return False
     
@@ -134,6 +136,19 @@ class Combattant(Personnage):
     
     def getDonjonsExplores(self) -> List[Donjon]:
         return self.donjonsExplores
+    
+    def getNbArmesInventaire(self) -> int:
+        return len(self.inventaireArmes)
+    
+    def getArmeIndexInventaire(self, index: int) -> Arme: # systeme d'erreur à revoir
+        return self.inventaireArmes[index]
+    
+    def afficherArmes(self) -> None:
+        print("Arme portée :", self.armeEquipee)
+        print("Armes dans l'inventaire :")
+        for i, arme in enumerate(self.inventaireArmes):
+            print(f"{i + 1}. {arme}")
+        print(f"{self.getNbArmesInventaire() + 1}. Retour")
     
     def __repr__(self) -> str: # sert à afficher le combattant dans une liste
         return self.nom

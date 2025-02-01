@@ -20,4 +20,4 @@ class Medecin(Personnage):
         return self.stockPotions
         
     def __str__(self) -> str:
-        return (f"Medecin(nom={self.nom}, or_={self.or_}, vie={self.vie}, stockPotions={self.stockPotions})")
+        return (f"Medecin {self.nom}, {self.stockPotions} potions en stock")

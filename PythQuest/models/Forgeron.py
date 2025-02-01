@@ -19,10 +19,21 @@ class Forgeron(Personnage):
         return False
         
     def forgerArme(self) -> None:
-        self.ajouterArme(Arme.genererArmeAleatoire())
+        self.ajouterArme(Arme.creerArmeAleatoire())
         
     def getInventaireArmes(self):
         return self.inventaireArmes
+    
+    def getNbArmes(self):
+        return len(self.inventaireArmes)
+    
+    def afficherInventaire(self):
+        for i, arme in enumerate(self.inventaireArmes):
+            print(f"{i + 1}. {arme}")
+        print(f"{self.getNbArmes() + 1}. Retour")
+        
+    def getArmeIndex(self, index: int) -> Arme: # systeme d'erreur à revoir
+        return self.inventaireArmes[index]
         
     def __str__(self):
-        return (f"Forgeron(nom={self.nom}, or_={self.or_}, vie={self.vie}, inventaireArmes={self.inventaireArmes})")
+        return (f"Forgeron {self.nom}, {self.getNbArmes()} armes en stock")

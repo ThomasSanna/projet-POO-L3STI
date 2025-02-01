@@ -101,7 +101,7 @@ class Arme:
         
         :return: Une chaîne de caractères représentant l'objet.
         """
-        return f"{self.__nom}, {self.__degat} dgts, {self.__valeurOr} or"
+        return self.__str__()
         
     def __str__(self) -> str:
         """
@@ -109,4 +109,4 @@ class Arme:
         
         :return: Une chaîne de caractères lisible représentant l'objet.
         """
-        return f"Arme(nom={self.__nom}, valeurOr={self.__valeurOr}, degat={self.__degat})"
+        return f"{self.__nom} : {self.__degat} dgts, {self.__valeurOr} or"
