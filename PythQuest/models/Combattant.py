@@ -3,14 +3,11 @@ from models.Quete import Quete
 from models.Arme import Arme
 from models.Donjon import Donjon
 from typing import List, Optional
-
-""" 
-Vente d'arme au forgeron
-"""
-
+from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
 class Combattant(Personnage):
     
     GAIN_POTION = 15
+    NB_POTION_MAX = 10
     
     def __init__(self, nom: str, or_: int = 0, vie: int = 100):
         super().__init__(nom, or_, vie)
@@ -20,107 +17,95 @@ class Combattant(Personnage):
         self.queteActuelle: Optional[Quete] = None
         self.donjonsExplores: List[Donjon] = []
     
-    def gagnerOr(self, or_: int) -> bool:
+    def gagnerOr(self, or_: int) -> None:
         self.or_ += or_
-        return True
     
-    def perdreOr(self, or_: int) -> bool:
+    def perdreOr(self, or_: int) -> None:
         if self.or_ - or_ < 0:
-            return False
+            raise InsufficientFundsError("Vous n'avez pas assez d'or.")
         self.or_ -= or_
-        return True
         
-    def gagnerVie(self, vie: int) -> bool:
+    def gagnerVie(self, vie: int) -> None:
         self.vie += vie
         if self.vie > 100:
             self.vie = 100
-            return False
-        return True
 
-    def perdreVie(self, degats: int) -> bool:
+    def perdreVie(self, degats: int) -> None:
         self.vie -= degats
-        if self.vie <= 0: # Si le combattant n'a plus de vie, il perd la moitié de son or et sa vie est remise à 100
+        if self.vie <= 0:
             self.vie = 100
             self.or_ = self.or_ // 2
-            return False
-        return True
             
-    def gagnerPotion(self) -> bool:
+    def gagnerPotion(self) -> None:
         self.inventairePotions += 1
-        if self.inventairePotions > 5:
-            self.inventairePotions = 5
-            return False
-        return True
+        if self.inventairePotions > Combattant.NB_POTION_MAX:
+            self.inventairePotions = Combattant.NB_POTION_MAX
+            raise InventoryFullError("L'inventaire de potion est au maximum (5).")
     
-    def perdrePotion(self) -> bool:
+    def perdrePotion(self) -> None:
+        if self.inventairePotions <= 0:
+            raise NoSuchItemError("Vous n'avez plus de potion.")
         self.inventairePotions -= 1
-        if self.inventairePotions < 0:
-            self.inventairePotions = 0
-            return False
-        return True
     
-    def boirePotion(self) -> bool:
+    def boirePotion(self) -> None:
         if self.inventairePotions > 0:
             self.gagnerVie(Combattant.GAIN_POTION)
             self.perdrePotion()
-            return True
-        return False
+        else:
+            raise NoSuchItemError("Vous n'avez plus de potion.")
     
-    def ajouterArmeInventaire(self, arme: Arme) -> bool:
+    def ajouterArmeInventaire(self, arme: Arme) -> None:
         self.inventaireArmes.append(arme)
-        return True
         
-    def retirerArmeInventaire(self, arme: Arme) -> bool:
-        if arme in self.inventaireArmes:
-            self.inventaireArmes.remove(arme)
-            return True
-        return False
+    def retirerArmeInventaire(self, arme: Arme) -> None:
+        if arme not in self.inventaireArmes:
+            raise NoSuchItemError("L'arme n'est pas dans l'inventaire.")
+        self.inventaireArmes.remove(arme)
     
-    def equiperArme(self, arme: Arme) -> bool:
-        if arme in self.inventaireArmes:
-            if self.armeEquipee is not None: # Remettre l'arme équipée dans l'inventaire si le combattant en a déjà une
-                self.ajouterArmeInventaire(self.armeEquipee)
-            self.armeEquipee = arme
-            self.retirerArmeInventaire(arme)
-            return True
-        return False
+    def equiperArme(self, arme: Arme) -> None:
+        if arme not in self.inventaireArmes:
+            raise NoSuchItemError("L'arme n'est pas dans l'inventaire.")
+        if self.armeEquipee is not None:
+            self.ajouterArmeInventaire(self.armeEquipee)
+        self.armeEquipee = arme
+        self.retirerArmeInventaire(arme)
     
-    def abandonnerQuete(self) -> bool: 
-        if(self.queteActuelle is None):
-            return False
+    def abandonnerQuete(self) -> None:
+        if self.queteActuelle is None:
+            raise NoActiveQuestError("Vous n'avez pas de quête active.")
         self.queteActuelle.queteAbandonnee()
         self.queteActuelle = None
-        return True
     
-    def accepterQuete(self, quete: Quete) -> bool:
+    def accepterQuete(self, quete: Quete) -> None:
         if self.queteActuelle is not None:
-            return False
+            raise QuestAlreadyAcceptedError("Une quête est déjà en cours.")
         self.queteActuelle = quete
         self.queteActuelle.queteEnCours()
-        return True
     
-    def explorerDonjon(self, donjon: Donjon) -> bool: # à revoir
+    def explorerDonjon(self, donjon: Donjon) -> None:
         if donjon not in self.donjonsExplores:
             self.donjonsExplores.append(donjon)
-            return True
-        return False
     
-    def entrerBoutique(self) -> bool: # à faire
-        return True
+    def entrerBoutique(self) -> None:
+        pass
     
-    def acheterPotion(self, medecin: "Medecin") -> bool:
+    def acheterPotion(self, medecin: "Medecin") -> None:
         prixPotion = medecin.getPrixPotion()
-        if self.perdreOr(prixPotion) and self.gagnerPotion():
-            if medecin.perdrePotion() :
-                return True
-        return False
+        if self.or_ < prixPotion:
+            raise InsufficientFundsError("Vous n'avez pas assez d'or pour acheter une potion.")
+        if medecin.getStockPotions() <= 0:
+            raise NoSuchItemError("Le médecin n'a plus de potions en stock.")
+        if self.inventairePotions > Combattant.NB_POTION_MAX:
+            raise InventoryFullError("Votre inventaire de potions est plein.")
+        
+        self.perdreOr(prixPotion)
+        self.gagnerPotion()
+        medecin.perdrePotion()
 
-    def acheterArme(self, forgeron: 'Forgeron', arme: Arme) -> bool:
-        if self.perdreOr(arme.getValeurOr()):
-            self.ajouterArmeInventaire(arme)
-            forgeron.enleverArme(arme)
-            return True
-        return False
+    def acheterArme(self, forgeron: 'Forgeron', arme: Arme) -> None:
+        self.perdreOr(arme.getValeurOr())
+        self.ajouterArmeInventaire(arme)
+        forgeron.enleverArme(arme)
     
     def getInventairePotions(self) -> int:
         return self.inventairePotions
@@ -140,7 +125,9 @@ class Combattant(Personnage):
     def getNbArmesInventaire(self) -> int:
         return len(self.inventaireArmes)
     
-    def getArmeIndexInventaire(self, index: int) -> Arme: # systeme d'erreur à revoir
+    def getArmeIndexInventaire(self, index: int) -> Arme:
+        if index < 0 or index >= len(self.inventaireArmes):
+            raise IndexError("Weapon index out of range.")
         return self.inventaireArmes[index]
     
     def afficherArmes(self) -> None:
@@ -150,7 +137,7 @@ class Combattant(Personnage):
             print(f"{i + 1}. {arme}")
         print(f"{self.getNbArmesInventaire() + 1}. Retour")
     
-    def __repr__(self) -> str: # sert à afficher le combattant dans une liste
+    def __repr__(self) -> str:
         return self.nom
     
     def __str__(self) -> str:

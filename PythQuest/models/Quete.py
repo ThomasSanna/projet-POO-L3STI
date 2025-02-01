@@ -49,6 +49,11 @@ class Quete:
         difficulte = random.randint(1, 5)
         recompenseOr = random.randint(difficulte * 15, difficulte * 35)
         return Quete(nom, recompenseOr, difficulte)
+    
+    def afficherToutesLesQuetes(self):
+        for i, quete in enumerate(Quete.toutesLesQuetes):
+            print(f"{i + 1}. {quete}")
+        print(f"{len(Quete.toutesLesQuetes) + 1}. Retour")
         
     def queteFinie(self):
         self.statut = Quete.STATUT_TERMINEE
@@ -80,11 +85,8 @@ class Quete:
     def getToutesLesQuetes():
         return Quete.toutesLesQuetes
     
-        
     def __repr__(self):
-        return f"{self.description}, {self.recompenseOr} or, {self.monstreCible}, {self.donjonAssocie}, {self.statut}"
+        return self.__str__()
         
     def __str__(self):
-        return (f"Quete(nom={self.nom}, recompenseOr={self.recompenseOr}, "
-                f"monstreCible={self.monstreCible}, donjonAssocie={self.donjonAssocie}, "
-                f"statut={self.statut})")
+        return f"{self.nom} : Monstre à tuer : {self.monstreCible} dans le {self.donjonAssocie}, (récompense : {self.recompenseOr} or) ((statut : {self.statut}))"

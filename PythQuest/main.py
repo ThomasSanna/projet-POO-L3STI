@@ -3,6 +3,9 @@ from models.Forgeron import Forgeron
 from models.Medecin import Medecin
 from models.Quete import Quete
 from models.Donjon import Donjon
+from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
+from models.GestionnaireDeQuetes import GestionnaireDeQuetes
+import random
 
 """ 
 
@@ -69,22 +72,23 @@ Etapes :
 
 """
 
-
 def initialiserInstances():
     # Création des instances des différents personnages
     forgeron = Forgeron("Robert")
     medecin = Medecin("Jean")
     return forgeron, medecin
 
+def creerQuete():
+    for i in range(random.randint(3, 5)):
+        GestionnaireDeQuetes.creerQueteDonjonMonstres()
+    
 
 def choixConsole(message):
     return input(message)
 
-
 def creerPersonnage():
     nomPersonnage = choixConsole("Entrez le nom de votre personnage : ")
     return Combattant(nomPersonnage, 100)
-
 
 def afficherMenuPrincipal():
     print("Que voulez-vous faire ?")
@@ -93,7 +97,6 @@ def afficherMenuPrincipal():
     print("3. Voir les donjons")
     print("4. Informations sur le personnage")
     print("5. Quitter le jeu")
-
 
 def afficherMenuAchats():
     print("Où voulez-vous aller ?")
@@ -107,7 +110,6 @@ def afficherMenuPersonnage():
     print("2. Abandonner la quête")
     print("3. Retour")
 
-
 def main():
     print("Bienvenue dans le jeu !")
 
@@ -120,25 +122,52 @@ def main():
         choix = choixConsole("Choix : ")
 
         if choix == "1":
+            print("Vous arrivez dans la boutique.")
             while True:
                 afficherMenuAchats()
                 choixAchats = choixConsole("Choix : ")
 
                 if choixAchats == "1":
+                    print("Vous arrivez chez le forgeron.")
                     forgeron.afficherInventaire()
                     choix = choixConsole("Choix : ")
-                    if(choix == str(forgeron.getNbArmes() + 1)):
+                    if choix == str(forgeron.getNbArmes() + 1):
                         break
-                    else:
-                        arme = forgeron.getArmeIndex(int(choix) - 1)
-                        if joueur.acheterArme(forgeron, arme):
+                    elif choix.isdigit() and (int(choix) > 0 and int(choix) <= forgeron.getNbArmes()):
+                        try:
+                            arme = forgeron.getArmeIndex(int(choix) - 1)
+                            joueur.acheterArme(forgeron, arme)
                             print(f"Vous avez acheté l'arme {arme.getNom()} pour {arme.getValeurOr()} or.")
-                        else:
-                            print("Vous n'avez pas assez d'or pour acheter cette arme.")
+                        except (InsufficientFundsError, NoSuchItemError) as e:
+                            print(e)
+                        except ValueError:
+                            print("Choix invalide. Veuillez entrer un nombre.")
+                    else:
+                        print("Choix invalide.")
+                            
                 elif choixAchats == "2":
-                    print(medecin)
+                    print("Vous arrivez chez", medecin)
+                    medecin.afficherStockPotions()
+                    choix = choixConsole("Choix : ")
+                    if choix == 0:
+                        break
+                    elif choix.isdigit() and (int(choix) > 0 and int(choix) <= medecin.getStockPotions()):
+                        for i in range(int(choix)):
+                            nbAchetes = int(choix)
+                            try:
+                                joueur.acheterPotion(medecin)
+                            except (InsufficientFundsError, NoSuchItemError, InventoryFullError) as e:
+                                nbAchetes -= 1
+                        print(f"Vous avez acheté {nbAchetes} potions.")
+                        if nbAchetes != int(choix):
+                            print(f"Vous n'avez pas pu acheter {int(choix)-nbAchetes} potion(s).")
+                    else:
+                        print("Choix invalide.")
+                    
                 elif choixAchats == "3":
+                    print("Vous quittez la boutique.")
                     break
+                
                 else:
                     print("Choix invalide. Veuillez réessayer.")
 
@@ -158,17 +187,23 @@ def main():
                 if choix == "1":
                     joueur.afficherArmes()
                     choix = choixConsole("Choix d'arme à porter : ")
-                    if(choix == str(joueur.getNbArmesInventaire() + 1)):
+                    if choix == str(joueur.getNbArmesInventaire() + 1):
                         break
                     else:
-                        arme = joueur.getArmeIndexInventaire(int(choix) - 1)
-                        joueur.equiperArme(arme)
-                        print(f"Vous avez équipé l'arme {arme.getNom()}.")
+                        try:
+                            arme = joueur.getArmeIndexInventaire(int(choix) - 1)
+                            joueur.equiperArme(arme)
+                            print(f"Vous avez équipé l'arme {arme.getNom()}.")
+                        except (NoSuchItemError, IndexError) as e:
+                            print(e)
+                        except ValueError:
+                            print("Choix invalide. Veuillez entrer un nombre.")
                 elif choix == "2":
-                    if joueur.abandonnerQuete():
+                    try:
+                        joueur.abandonnerQuete()
                         print("Vous avez abandonné la quête.")
-                    else:
-                        print("Vous n'avez pas de quête à abandonner.")
+                    except NoActiveQuestError as e:
+                        print(e)
                 elif choix == "3":
                     break
                 else:
@@ -179,7 +214,6 @@ def main():
             break
         else:
             print("Choix invalide. Veuillez réessayer.")
-
 
 if __name__ == "__main__":
     main()
