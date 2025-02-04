@@ -7,6 +7,6 @@ class GestionnaireDeQuetes:
 
 
     @staticmethod
-    def creerQueteDonjonMonstres():
-        return Quete.creerQueteAleatoire()
+    def creerQueteDonjonMonstres(niveauJoueur):
+        return Quete.creerQueteAleatoire(niveauJoueur)
         

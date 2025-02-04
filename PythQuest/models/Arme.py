@@ -48,7 +48,7 @@ class Arme:
         suffixe, degatsSuffixe = random.choice(Arme.SUFFIXES)
         etat, pourcentageDegats = random.choice(Arme.ETAT_ARME)
         degats = int((degatsPrefixe + degatsSuffixe) * (pourcentageDegats / 100))
-        plageValeurOr = [degats*3 - 10, degats*3 + 10] # Valeur de l'arme entre degats*2 - 50 et degats*2 + 100
+        plageValeurOr = [degats*5 - 10, degats*5 + 30] # Valeur de l'arme entre degats*2 - 50 et degats*2 + 100
         valeurOr = random.randint(plageValeurOr[0], plageValeurOr[1])
         
         return Arme(f"{prefixe} {suffixe} ({etat})", valeurOr, degats)
@@ -60,7 +60,7 @@ class Arme:
         plageValeurOr = [degats*3 - 10, degats*3 + 10] # Valeur de l'arme entre degats*2 - 50 et degats*2 + 100
         valeurOr = random.randint(plageValeurOr[0], plageValeurOr[1])
         
-        return Arme(f"{prefixe} {suffixe} (Rouillé)", valeurOr, degats)
+        return Arme(f"{prefixe} {suffixe} (Rouillé)", valeurOr, degats//1.5)
     
     
     def getNom(self) -> str:

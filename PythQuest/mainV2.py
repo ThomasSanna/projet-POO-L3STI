@@ -72,21 +72,21 @@ Etapes :
 
 """
 
-def initialiserInstances():
+def initialiserInstances() -> tuple[Forgeron, Medecin]:
     # Création des instances des différents personnages
     forgeron = Forgeron("Robert")
     medecin = Medecin("Jean")
     return forgeron, medecin
 
-def creerQuete():
+def creerQuete(joueur : Combattant):
     for i in range(random.randint(3, 5)):
-        GestionnaireDeQuetes.creerQueteDonjonMonstres()
+        GestionnaireDeQuetes.creerQueteDonjonMonstres(joueur.getNiveau())
     
 
 def choixConsole(message):
     return input(message)
 
-def creerPersonnage():
+def creerPersonnage() -> "Combattant":
     nomPersonnage = choixConsole("Entrez le nom de votre personnage : ")
     return Combattant(nomPersonnage, 100)
 
@@ -116,6 +116,7 @@ def main():
     # Création du personnage
     joueur = creerPersonnage()
     forgeron, medecin = initialiserInstances()
+    creerQuete(joueur)
 
     while True:
         afficherMenuPrincipal()
@@ -172,13 +173,78 @@ def main():
                     print("Choix invalide. Veuillez réessayer.")
 
         elif choix == "2":
-            toutesLesQuetes = Quete.getToutesLesQuetes()
-            print(toutesLesQuetes)
+            Quete.afficherToutesLesQuetesEnCours()
+            choix = choixConsole("Choix d'une quête à accepter : ")
+            if choix == str(Quete.getNbQuetesEnCours() + 1):
+                continue
+            elif choix.isdigit() and (int(choix) > 0 and int(choix) <= Quete.getNbQuetesEnCours()):
+                try:
+                    quete = Quete.getQueteIndexEnCours(int(choix) - 1)
+                    joueur.accepterQuete(quete)
+                    print(f"Vous avez accepté la quête {quete.getNom()}.")
+                except (QuestAlreadyAcceptedError, IndexError) as e:
+                    print(e)
+                except ValueError:
+                    print("Choix invalide. Veuillez entrer un nombre.")
+            else:
+                print("Choix invalide. Veuillez réessayer.")
+            
 
         elif choix == "3":
-            tousLesDonjons = Donjon.getTousLesDonjons()
-            print(tousLesDonjons)
+            Donjon.afficherTousLesDonjonsActifs()
+            choix = choixConsole("Choix d'un donjon à explorer : ")
+            if choix == str(Donjon.nbDonjons + 1):  # Retour
+                continue
+            elif choix.isdigit() and (  # Vérifie si le choix est un nombre et s'il est dans la plage des donjons
+                int(choix) > 0 and int(choix) <= Donjon.nbDonjons
+            ):
+                donjon = Donjon.getDonjonIndexActif(int(choix) - 1)
+                print(f"Vous entrez dans le {donjon.getNom()}.")
+                while not donjon.estVide(): # Boucle d'apparition des monstres
+                    monstre = donjon.getMonstreAleatoire()
+                    print(f"Vous rencontrez un {monstre.getNom()} !")
+                    while not joueur.estMort() and not monstre.estMort(): # Boucle de combat
+                        print(f"Vous avez {joueur.getVie()} points de vie.")
+                        print(
+                            f"Le {monstre.getNom()} a {monstre.getVie()} points de vie."
+                        )
+                        choix = choixConsole(
+                            "1. Attaquer\n2. Boire une potion\n3. Fuir\nChoix : "
+                        )
+                        if choix == "1":  # Attaquer
+                            print(f"Vous attaquez {monstre.getNom()} !")
+                            joueur.attaquer(monstre)
+                            if not monstre.estMort():
+                                print(f"{monstre.getNom()} vous attaque !")
+                                monstre.attaquer(joueur)
+                        elif choix == "2":  # Boire une potion
+                            try:
+                                joueur.boirePotion()
+                                print("Vous avez bu une potion.")
+                            except NoSuchItemError as e:
+                                print(e)
+                        elif choix == "3":  # Fuir
+                            print("Vous avez fui.")
+                            break
+                        else:  # Choix invalide
+                            print("Choix invalide. Veuillez réessayer.")
+                            continue
+                    if joueur.estMort():
+                        joueur.resetApresMort()
+                        break
+                    elif monstre.estMort():
+                        try:
+                            joueur.battreMonstre(monstre, donjon)
+                        except NoActiveQuestError:
+                            pass
+                    else :
+                        break
+                if donjon.estVide():
+                    donjon.setInactif()
 
+            else:  # Choix invalide
+                print("Choix invalide. Veuillez réessayer.")
+                
         elif choix == "4":
             while True:
                 print(joueur)

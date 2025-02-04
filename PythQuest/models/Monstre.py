@@ -25,26 +25,20 @@ class Monstre(Personnage):
     )
 
     
-    def __init__(self, nom, or_, vie, armePossedee:Arme):
+    def __init__(self, nom, or_, vie, armePossedee:Arme, niveau):
         super().__init__(nom, or_, vie)
         self.armePossedee = armePossedee
+        self.niveau = niveau
         
     @staticmethod
-    def creerMonstreAleatoire(difficulte):
+    def creerMonstreAleatoire(difficulte, niveauJoueur):
         nom = random.choice(Monstre.PREFIXES) + " " + random.choice(Monstre.SUFFIXES)
-        or_ = random.randint(10, 20) * difficulte
-        vie = random.randint(50, 100) * difficulte
-        armeMonstre = Arme.creerArme(random.randint(5, 10) * difficulte)
-        monstre = Monstre(nom, or_, vie, armeMonstre)
+        or_ = random.randint(10, 20) * difficulte * niveauJoueur
+        vie = random.randint(8, 18) * difficulte//2 * niveauJoueur
+        armeMonstre = Arme.creerArme(int(random.randint(2, 5) * difficulte * niveauJoueur))
+        monstre = Monstre(nom, or_, vie, armeMonstre, niveauJoueur)
         return monstre
     
-    
-    def perdreVie(self, degats: int) -> bool:
-        if(self.vie - degats <= 0):
-            self.vie = 0
-            return False
-        self.vie -= degats
-        return True
     
     def attaquer(self, combattant:"Combattant") -> bool:
         degats = self.armePossedee.getDegats()
@@ -60,7 +54,7 @@ class Monstre(Personnage):
         return self.armePossedee
     
     def __repr__(self):
-        return self.__str__()
-    
+        return f"{self.nom} (lvl {self.niveau}), {self.vie} vie, possédant {self.armePossedee} et {self.or_} or"
+
     def __str__(self):
-        return (f"Monstre(nom={self.nom}, or_={self.or_}, vie={self.vie}, armePossedee={self.armePossedee})")
+        return f"Monstre(nom={self.nom}, vie={self.vie}, or={self.or_}, arme={self.armePossedee}, niveau={self.niveau})"

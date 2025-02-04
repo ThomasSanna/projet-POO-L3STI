@@ -23,7 +23,7 @@ class Quete:
     STATUT_EN_COURS = "En cours"
     STATUT_TERMINEE = "Terminée"
     
-    toutesLesQuetes = []
+    toutesLesQuetes = [] 
   
     def __init__(self, nom, recompenseOr, difficulte, monstreCible, donjonAssocie):
         self.nom = nom
@@ -34,26 +34,32 @@ class Quete:
         self.statut = Quete.STATUT_EN_COURS
         Quete.toutesLesQuetes.append(self)
         
-    def __init__(self, nom, recompenseOr, difficulte):
+    def __init__(self, nom, recompenseOr, difficulte, niveauJoueur):
         self.nom = nom
         self.recompenseOr = recompenseOr
         self.difficulte = difficulte
-        self.monstreCible =  Monstre.creerMonstreAleatoire(difficulte)
-        self.donjonAssocie = Donjon.creerDonjonAleatoire(difficulte, self.monstreCible)
+        self.monstreCible =  Monstre.creerMonstreAleatoire(difficulte, niveauJoueur)
+        self.donjonAssocie = Donjon.creerDonjonAleatoire(difficulte, self.monstreCible, niveauJoueur)
         self.statut = Quete.STATUT_EN_COURS
+        self.niveau = niveauJoueur
         Quete.toutesLesQuetes.append(self)
         
     @staticmethod
-    def creerQueteAleatoire():
+    def creerQueteAleatoire(niveauJoueur):
         nom = Quete.PREFIXES + Quete.SUFFIXES[random.randint(0, len(Quete.SUFFIXES) - 1)]
         difficulte = random.randint(1, 5)
         recompenseOr = random.randint(difficulte * 15, difficulte * 35)
-        return Quete(nom, recompenseOr, difficulte)
+        return Quete(nom, recompenseOr, difficulte, niveauJoueur)
     
-    def afficherToutesLesQuetes(self):
-        for i, quete in enumerate(Quete.toutesLesQuetes):
-            print(f"{i + 1}. {quete}")
-        print(f"{len(Quete.toutesLesQuetes) + 1}. Retour")
+    @staticmethod
+    def afficherToutesLesQuetesEnCours():
+        for i, quete in enumerate(Quete.getToutesLesQuetesEnCours()):
+            if(quete.getStatut() == Quete.STATUT_EN_COURS):
+                print(f"{i + 1}. {quete}")
+        print(f"{len(Quete.getToutesLesQuetesEnCours()) + 1}. Retour")
+        
+    def getQueteIndexEnCours(id) -> 'Quete':
+        return Quete.getToutesLesQuetesEnCours()[id]
         
     def queteFinie(self):
         self.statut = Quete.STATUT_TERMINEE
@@ -82,11 +88,24 @@ class Quete:
     def getDifficulte(self):
         return self.difficulte
     
+    @staticmethod
     def getToutesLesQuetes():
         return Quete.toutesLesQuetes
+    
+    @staticmethod
+    def getToutesLesQuetesEnCours() -> list['Quete']:
+        quetes = []
+        for quete in Quete.toutesLesQuetes:
+            if quete.getStatut() == Quete.STATUT_EN_COURS:
+                quetes.append(quete)
+        return quetes
+    
+    @staticmethod
+    def getNbQuetesEnCours():
+        return len(Quete.getToutesLesQuetesEnCours())
     
     def __repr__(self):
         return self.__str__()
         
     def __str__(self):
-        return f"{self.nom} : Monstre à tuer : {self.monstreCible} dans le {self.donjonAssocie}, (récompense : {self.recompenseOr} or) ((statut : {self.statut}))"
+        return f"{self.nom} (lvl {self.niveau}, difficulté {self.difficulte}) : Monstre à tuer : {self.monstreCible.getNom()} dans le {self.donjonAssocie.getNom()}, (récompense : {self.recompenseOr} or) ((statut : {self.statut}))"

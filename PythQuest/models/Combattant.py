@@ -11,31 +11,39 @@ class Combattant(Personnage):
     
     def __init__(self, nom: str, or_: int = 0, vie: int = 100):
         super().__init__(nom, or_, vie)
+        self.maxVie = vie
         self.inventairePotions: int = 0
-        self.armeEquipee: Optional[Arme] = None
+        self.armeEquipee: Arme = Arme("Poings", 0, 5)
         self.inventaireArmes: List[Arme] = []
         self.queteActuelle: Optional[Quete] = None
         self.donjonsExplores: List[Donjon] = []
+        self.niveau: int = 1
+        self.experience: int = 0
     
-    def gagnerOr(self, or_: int) -> None:
-        self.or_ += or_
-    
-    def perdreOr(self, or_: int) -> None:
-        if self.or_ - or_ < 0:
-            raise InsufficientFundsError("Vous n'avez pas assez d'or.")
-        self.or_ -= or_
+    def gagnerExperience(self, exp: int) -> None:
+        if exp <= 0:
+            raise ValueError("L'expérience gagnée doit être positive.")
+        self.experience += exp
+        expNiveauSuivant = self.niveau * 100
+        print(f"Vous avez gagné {exp} points d'expérience.")
+        print(f"Vous avez maintenant {self.experience}/{expNiveauSuivant} points d'expérience.")
+        while self.experience >= self.niveau * 100:  # Par exemple, 100 XP par niveau
+            self.niveau += 1
+            self.experience = self.experience - self.niveau * 100
+            self.maxVie = int(self.maxVie * 1.5)
+            print(f"Félicitations ! Vous avez atteint le niveau {self.niveau}. Votre vie maximale est maintenant de {self.maxVie}.")
         
-    def gagnerVie(self, vie: int) -> None:
-        self.vie += vie
-        if self.vie > 100:
-            self.vie = 100
-
-    def perdreVie(self, degats: int) -> None:
-        self.vie -= degats
-        if self.vie <= 0:
-            self.vie = 100
-            self.or_ = self.or_ // 2
-            
+    def estMort(self):
+        if(self.vie <= 0):
+            return True
+        return False
+    
+    def resetApresMort(self):
+        print("Vous êtes mort.")
+        print(f"Vous perdez {self.or_//2} pièces d'or.")
+        self.vie = self.maxVie//1.5
+        self.perdreOr(self.or_//1.5)
+        
     def gagnerPotion(self) -> None:
         self.inventairePotions += 1
         if self.inventairePotions > Combattant.NB_POTION_MAX:
@@ -53,6 +61,11 @@ class Combattant(Personnage):
             self.perdrePotion()
         else:
             raise NoSuchItemError("Vous n'avez plus de potion.")
+        
+    def gagnerVie(self, vie: int) -> None:
+        self.vie += vie
+        if self.vie > self.maxVie:
+            self.vie = self.maxVie
     
     def ajouterArmeInventaire(self, arme: Arme) -> None:
         self.inventaireArmes.append(arme)
@@ -106,18 +119,55 @@ class Combattant(Personnage):
         self.perdreOr(arme.getValeurOr())
         self.ajouterArmeInventaire(arme)
         forgeron.enleverArme(arme)
+        
+    def reussiteQuete(self) -> None:
+        if self.queteActuelle is None:
+            raise NoActiveQuestError("Vous n'avez pas de quête active.")
+        self.queteActuelle.queteFinie()
+        self.gagnerOr(self.queteActuelle.getRecompenseOr())
+        self.gagnerExperience(int((self.queteActuelle.getDifficulte()/1.3) * 30 * self.niveau/1.3))
+        self.queteActuelle = None
+        
+    def battreMonstre(self, monstre: "Monstre", donjon: "Donjon") -> None:
+        print(f"Vous avez vaincu {monstre.getNom()} !")
+        self.gagnerOr(monstre.getOr())
+        self.gagnerExperience(10 * self.niveau*1.3)
+        self.ajouterArmeInventaire(monstre.getArmePossedee())
+        donjon.supprimerMonstre(monstre)
+        try:
+            monstreQuete = self.getMonstreQueteActuelle()
+            if monstreQuete == monstre:
+                self.reussiteQuete()
+                print("Vous avez réussi la quête !")
+        except NoActiveQuestError:
+            raise NoActiveQuestError("Vous n'avez pas de quête active.")
+        
+    def attaquer(self, monstre: "Monstre") -> None:
+        degats = self.armeEquipee.getDegats()
+        monstre.perdreVie(degats)
     
     def getInventairePotions(self) -> int:
         return self.inventairePotions
     
-    def getArmeEquipee(self) -> Optional[Arme]:
+    def getArmeEquipee(self) -> Arme:
         return self.armeEquipee
+    
+    def getNiveau(self) -> int:
+        return self.niveau
+    
+    def getExperience(self) -> int:
+        return self.experience
     
     def getInventaireArmes(self) -> List[Arme]:
         return self.inventaireArmes
     
     def getQueteActuelle(self) -> Optional[Quete]:
         return self.queteActuelle
+    
+    def getMonstreQueteActuelle(self) -> "Monstre":
+        if self.queteActuelle is None:
+            raise NoActiveQuestError("Vous n'avez pas de quête active.")
+        return self.queteActuelle.getMonstreCible()
     
     def getDonjonsExplores(self) -> List[Donjon]:
         return self.donjonsExplores
@@ -141,7 +191,9 @@ class Combattant(Personnage):
         return self.nom
     
     def __str__(self) -> str:
-        return (f"Combattant(nom={self.nom}, or_={self.or_}, vie={self.vie}, "
+        return (f"Combattant(nom={self.nom}, or_={self.or_}, vie={self.vie}/{self.maxVie}, "
+                f"niveau={self.niveau}, experience={self.experience}, "
                 f"inventairePotions={self.inventairePotions}, armeEquipee={self.armeEquipee}, "
                 f"inventaireArmes={self.inventaireArmes}, queteActuelle={self.queteActuelle}, "
                 f"donjonExplore={self.donjonsExplores})")
+        

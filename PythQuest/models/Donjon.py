@@ -29,38 +29,49 @@ class Donjon:
     tousLesDonjons = []
     nbDonjons = 1
     
-    def __init__(self, nom, difficulte, monstre=None):
+    def __init__(self, nom, difficulte, niveauJoueur, monstre=None):
         self.id = Donjon.nbDonjons
         Donjon.nbDonjons += 1
         self.nom = nom
         self.difficulte = difficulte
-        if monstre is None:
-            monstre = Monstre.creerMonstreAleatoire(difficulte)
-        self.listeMonstres = [monstre]
-        self.ajouterNbMonstre(random.randint(3, 10))
+        self.listeMonstres = []
+        if monstre is not None:
+            self.listeMonstres = [monstre]
+        self.ajouterNbMonstre(random.randint(3, 10), niveauJoueur)
         self.statut = Donjon.ACTIF
+        self.niveau = niveauJoueur
         Donjon.tousLesDonjons.append(self)
         
     @staticmethod
-    def creerDonjonAleatoire(difficulte, monstre: Monstre):
+    def creerDonjonAleatoire(difficulte, monstre: Monstre, niveauJoueur):
         prefixe = Donjon.PREFIXES
         suffixe = Donjon.SUFFIXES[random.randint(0, len(Donjon.SUFFIXES) - 1)]
         nom = prefixe + suffixe
-        donjon = Donjon(nom, difficulte, monstre)
+        donjon = Donjon(nom, difficulte, niveauJoueur, monstre)
         return donjon
-        
-    def ajouterNbMonstre(self, nb: int):
+    
+    @staticmethod
+    def afficherTousLesDonjonsActifs():
+        for i, donjon in enumerate(Donjon.getTousLesDonjonsActifs()):
+            if donjon.statut == Donjon.ACTIF:
+                print(f"{i + 1}. {donjon.nom} (lvl {donjon.niveau}, difficulté {donjon.difficulte}). Nombre de monstres: {len(donjon.listeMonstres)})")
+        print(f"{len(Donjon.getTousLesDonjonsActifs()) + 1}. Retour")
+    
+    def ajouterNbMonstre(self, nb: int, niveauJoueur):
         for i in range(nb):
-            monstre = Monstre.creerMonstreAleatoire(self.difficulte)
+            monstre = Monstre.creerMonstreAleatoire(self.difficulte, niveauJoueur)
             self.listeMonstres.append(monstre)
-            
+      
     def supprimerMonstre(self, monstre: Monstre):
         if monstre in self.listeMonstres:
             self.listeMonstres.remove(monstre)
-            return True
-        return False
+        else:
+            raise ValueError("Le monstre n'est pas dans la liste des monstres du donjon.")
     
-    def putInactif(self):
+    def getMonstreAleatoire(self) -> "Monstre":
+        return random.choice(self.listeMonstres)
+    
+    def setInactif(self):
         self.statut = Donjon.INACTIF
     
     def estVide(self):
@@ -81,8 +92,30 @@ class Donjon:
     def getNbMonstres(self):
         return len(self.listeMonstres)
     
+    @staticmethod
     def getTousLesDonjons():
         return Donjon.tousLesDonjons
-
+    
+    @staticmethod
+    def getTousLesDonjonsActifs() -> list['Donjon']:
+        donjonsActifs = []
+        for donjon in Donjon.tousLesDonjons:
+            if donjon.statut == Donjon.ACTIF:
+                donjonsActifs.append(donjon)
+        return donjonsActifs
+    
+    @staticmethod
+    def getDonjonIndexActif(index: int) -> 'Donjon':
+        donjonsActifs = Donjon.getTousLesDonjonsActifs()
+        if index < 0 or index >= len(donjonsActifs):
+            raise IndexError("Donjon index out of range.")
+        return donjonsActifs[index]
+    
+    @staticmethod
+    def getNbDonjonsActifs():
+        len(Donjon.getTousLesDonjonsActifs())
+    
+    def __repr__(self):
+        return self.__str__()
     def __str__(self):
-        return (f"Donjon(id={self.id}, nom={self.nom}, difficulte={self.difficulte}, monstres={self.listeMonstres})")
+        return f"{self.nom} (id: {self.id}, niveau: {self.niveau}, difficulté: {self.difficulte}, monstres: {self.listeMonstres}, statut: {self.statut})"
