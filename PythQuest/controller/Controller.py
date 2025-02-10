@@ -13,15 +13,15 @@ class Controller:
         self.view = View()
         self.joueur = self.creerPersonnage()
         self.forgeron, self.medecin = self.initialiserInstances()
-        self.creerQuete(self.joueur)
+        self.creerQuete(self.joueur, 2, 4)
 
     def initialiserInstances(self):
         forgeron = Forgeron("Robert")
         medecin = Medecin("Jean")
         return forgeron, medecin
 
-    def creerQuete(self, joueur: Combattant):
-        for i in range(random.randint(3, 5)):
+    def creerQuete(self, joueur: Combattant, minQuete, maxQuete):
+        for i in range(random.randint(minQuete, maxQuete)):
             GestionnaireDeQuetes.creerQueteDonjonMonstres(joueur.getNiveau())
 
     def creerPersonnage(self) -> Combattant:
