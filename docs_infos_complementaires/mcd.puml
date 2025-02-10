@@ -1,0 +1,70 @@
+@startuml
+
+entity Combattant {
+  * id : int
+  * nom : string
+  * or_ : int
+  * vie : int
+  * maxVie : int
+  * inventairePotions : int
+  * armeEquipee : Arme
+  * niveau : int
+  * experience : int
+}
+
+entity Forgeron {
+  * id : int
+  * nom : string
+  * or_ : int
+  * vie : int
+}
+
+entity Medecin {
+  * id : int
+  * nom : string
+  * or_ : int
+  * vie : int
+}
+
+entity Quete {
+  * id : int
+  * nom : string
+  * recompenseOr : int
+  * difficulte : int
+  * statut : string
+  * monstreCibleId : int
+  * donjonAssocieId : int
+}
+
+entity Donjon {
+  * id : int
+  * nom : string
+  * difficulte : int
+  * statut : string
+  * niveau : int
+}
+
+entity Monstre {
+  * id : int
+  * nom : string
+  * or_ : int
+  * vie : int
+  * armePossedeeId : int
+  * niveau : int
+}
+
+entity Arme {
+  * id : int
+  * nom : string
+  * valeurOr : int
+  * degat : int
+}
+
+Combattant -- Arme : "1..1"
+Combattant -- Quete : "0..N"
+Quete -- Donjon : "0..1"
+Quete -- Monstre : "1..1"
+Donjon -- Monstre : "1..N"
+Forgeron -- Arme : "0..N"
+
+@enduml

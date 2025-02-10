@@ -1,0 +1,8 @@
+Séparation logique applicative/interface (archi MVC)
+Concevoir, implémenter des tests automatisés
+
+Décrire les étapes de l'apprentissage de pygame, par exemple..
+
+MCD Base de donnée
+
+Connexion de l'utilisateur : l'utilisateur peut posséder plusieurs combattants sur son compte.

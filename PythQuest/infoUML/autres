@@ -1,0 +1,37 @@
+@startuml
+left to right direction
+actor Combattant
+actor Administrateur
+actor "Tâches automatiques" as Taches
+actor Forgeron
+actor Medecin
+actor Monstre
+
+rectangle "Système du jeu" {
+    Combattant --> (Changer d'arme)
+    Combattant --> (Utiliser une potion)
+    Combattant --> (Explorer Donjon)
+    Combattant --> (Faire des achats)
+    Combattant --> (Gagner/Dépenser de l'or)
+    Combattant --> (Equiper une arme)
+    Combattant --> (Déséquiper une arme)
+    Combattant --> (Choisir une quête)
+    Combattant --> (Abandonner une quête)
+    Combattant --> (Entrer dans une boutique)
+    Combattant --> (Recevoir des dommages)
+    Combattant --> (Attaquer un monstre)
+    
+    Forgeron --> (Créer une arme)
+    Medecin --> (Fournir des potions)
+    
+    Monstre --> (Attaquer un combattant)
+    Monstre --> (Recevoir des dommages)
+    
+    Administrateur --> (Gérer utilisateur)
+    Taches --> (Créer une/des quêtes)
+
+    (Faire des achats) <|-- (Acheter des potions) : <<extend>>
+    (Faire des achats) <|-- (Acheter des armes) : <<extend>>
+    (Explorer Donjon) --> (Combattre un monstre) : <<include>>
+}
+@enduml
