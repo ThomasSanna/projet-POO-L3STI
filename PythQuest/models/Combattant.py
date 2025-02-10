@@ -40,7 +40,7 @@ class Combattant(Personnage):
     
     def resetApresMort(self):
         print("Vous êtes mort.")
-        print(f"Vous perdez {self.or_//2} pièces d'or.")
+        print(f"Vous perdez {self.or_//1.5} pièces d'or.")
         self.vie = self.maxVie//1.5
         self.perdreOr(self.or_//1.5)
         
