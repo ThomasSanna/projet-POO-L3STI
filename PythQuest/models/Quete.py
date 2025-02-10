@@ -52,11 +52,13 @@ class Quete:
         return Quete(nom, recompenseOr, difficulte, niveauJoueur)
     
     @staticmethod
-    def afficherToutesLesQuetesEnCours():
+    def afficherToutesLesQuetesEnCours() -> str:
+        result = []
         for i, quete in enumerate(Quete.getToutesLesQuetesEnCours()):
-            if(quete.getStatut() == Quete.STATUT_EN_COURS):
-                print(f"{i + 1}. {quete}")
-        print(f"{len(Quete.getToutesLesQuetesEnCours()) + 1}. Retour")
+            if quete.getStatut() == Quete.STATUT_EN_COURS:
+                result.append(f"{i + 1}. {quete}")
+        result.append(f"{len(Quete.getToutesLesQuetesEnCours()) + 1}. Retour")
+        return "\n".join(result)
         
     def getQueteIndexEnCours(id) -> 'Quete':
         return Quete.getToutesLesQuetesEnCours()[id]

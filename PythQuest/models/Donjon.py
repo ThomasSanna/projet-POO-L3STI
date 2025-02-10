@@ -52,10 +52,12 @@ class Donjon:
     
     @staticmethod
     def afficherTousLesDonjonsActifs():
+        result = []
         for i, donjon in enumerate(Donjon.getTousLesDonjonsActifs()):
             if donjon.statut == Donjon.ACTIF:
-                print(f"{i + 1}. {donjon.nom} (lvl {donjon.niveau}, difficulté {donjon.difficulte}). Nombre de monstres: {len(donjon.listeMonstres)})")
-        print(f"{len(Donjon.getTousLesDonjonsActifs()) + 1}. Retour")
+                result.append(f"{i + 1}. {donjon.nom} (lvl {donjon.niveau}, difficulté {donjon.difficulte}). Nombre de monstres: {len(donjon.listeMonstres)})")
+        result.append(f"{len(Donjon.getTousLesDonjonsActifs()) + 1}. Retour")
+        return "\n".join(result)
     
     def ajouterNbMonstre(self, nb: int, niveauJoueur):
         for i in range(nb):

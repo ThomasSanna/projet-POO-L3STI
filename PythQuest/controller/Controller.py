@@ -83,7 +83,7 @@ class Controller:
 
     def gestionMedecin(self):
         self.view.afficherMessage("Vous arrivez chez le médecin.")
-        self.medecin.afficherStockPotions()
+        self.view.afficherMessage(self.medecin.afficherStockPotions())
         choix = self.view.choixConsole("Choix : ")
         if choix.isdigit() and int(choix) == 0:
             return
@@ -101,7 +101,7 @@ class Controller:
             self.view.afficherMessage("Choix invalide.")
 
     def gestionQuetes(self):
-        Quete.afficherToutesLesQuetesEnCours()
+        self.view.afficherMessage(Quete.afficherToutesLesQuetesEnCours())
         choix = self.view.choixConsole("Choix d'une quête à accepter : ")
         if choix.isdigit() and int(choix) == Quete.getNbQuetesEnCours() + 1:
             return
@@ -118,7 +118,7 @@ class Controller:
             self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
 
     def gestionDonjons(self):
-        Donjon.afficherTousLesDonjonsActifs()
+        self.view.afficherMessage(Donjon.afficherTousLesDonjonsActifs())
         choix = self.view.choixConsole("Choix d'un donjon à explorer : ")
         if choix.isdigit() and int(choix) == Donjon.nbDonjons + 1:
             return
@@ -169,7 +169,7 @@ class Controller:
             self.view.afficherMenuPersonnage()
             choix = self.view.choixConsole("Choix : ")
             if choix == "1":
-                self.joueur.afficherArmes()
+                self.view.afficherMessage(self.joueur.afficherArmes())
                 choix = self.view.choixConsole("Choix d'arme à porter : ")
                 if choix.isdigit() and int(choix) == self.joueur.getNbArmesInventaire() + 1:
                     break

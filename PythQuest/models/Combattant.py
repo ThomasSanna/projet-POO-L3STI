@@ -180,12 +180,13 @@ class Combattant(Personnage):
             raise IndexError("Weapon index out of range.")
         return self.inventaireArmes[index]
     
-    def afficherArmes(self) -> None:
-        print("Arme portée :", self.armeEquipee)
-        print("Armes dans l'inventaire :")
+    def afficherArmes(self) -> str:
+        result = f"Arme portée : {self.armeEquipee}\n"
+        result += "Armes dans l'inventaire :\n"
         for i, arme in enumerate(self.inventaireArmes):
-            print(f"{i + 1}. {arme}")
-        print(f"{self.getNbArmesInventaire() + 1}. Retour")
+            result += f"{i + 1}. {arme}\n"
+        result += f"{self.getNbArmesInventaire() + 1}. Retour\n"
+        return result
     
     def __repr__(self) -> str:
         return self.nom

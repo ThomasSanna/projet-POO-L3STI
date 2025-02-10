@@ -18,13 +18,14 @@ class Medecin(Personnage):
         if self.stockPotions > Medecin.NB_POTION_MAX:
             self.stockPotions = Medecin.NB_POTION_MAX
             
-    def afficherStockPotions(self) -> None:
-        print(f"{self.stockPotions} potions en stock")
-        print(f"Prix d'une potion: {self.prixPotion} pièces d'or")
+    def afficherStockPotions(self) -> str:
+        result = f"{self.stockPotions} potions en stock\n"
+        result += f"Prix d'une potion: {self.prixPotion} pièces d'or\n"
         if self.stockPotions == 0:
-            print("Le stock est vide. 0 pour retourner au menu.")
+            result += "Le stock est vide. 0 pour retourner au menu."
         else:
-            print(f"Combien de potions voulez-vous acheter? (1-{self.stockPotions}). 0 pour retourner au menu.")
+            result += f"Combien de potions voulez-vous acheter? (1-{self.stockPotions}). 0 pour retourner au menu."
+        return result
         
     def getPrixPotion(self) -> int:
         return self.prixPotion
