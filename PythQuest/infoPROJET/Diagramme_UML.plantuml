@@ -1,0 +1,94 @@
+@startuml name
+
+package models {
+    class Combattant {
+        - nom: str
+        - or_: int
+        - vie: int
+        - maxVie: int
+        - inventairePotions: int
+        - niveau: int
+        - experience: int
+    }
+
+    class Personnage {
+        - nom: str
+        - or_: int
+        - vie: int
+    }
+
+    class Arme {
+        - nom: str
+        - valeurOr: int
+        - degat: int
+    }
+
+    class Quete {
+        - nom: str
+        - recompenseOr: int
+        - difficulte: int
+        - statut: str
+        - niveau: int
+    }
+
+    class Donjon {
+        - nom: str
+        - difficulte: int
+        - statut: str
+        - niveau: int
+    }
+
+    class Monstre {
+        - nom: str
+        - or_: int
+        - vie: int
+        - niveau: int
+    }
+
+    class Forgeron {
+    }
+
+    class Medecin {
+        - prixPotion: int
+        - stockPotions: int
+    }
+
+    class GestionnaireDeQuetes {
+    }
+}
+
+package view {
+    class View {
+    }
+}
+
+package controller {
+    class Controller {
+    }
+}
+
+models.Personnage <|-- models.Combattant
+models.Personnage <|-- models.Forgeron
+models.Personnage <|-- models.Medecin
+models.Personnage <|-- models.Monstre
+
+models.Forgeron "1" --> "0..*" models.Arme : inventaireArmes
+
+models.Combattant "1" --> "1" models.Arme : armeEquipee
+models.Combattant "1" --> "0..1" models.Quete : queteActuelle
+models.Combattant "1" --> "0..*" models.Donjon : donjonsExplores
+models.Combattant "1" --> "0..*" models.Arme : inventaireArmes
+
+models.Quete "1" --> "1" models.Monstre : monstreCible
+models.Quete "0..*" --> "1" models.Donjon : donjonAssocie
+
+models.Donjon "1" --> "1..*" models.Monstre : listeMonstres
+
+models.Monstre "1" --> "1" models.Arme : armePossedee
+
+controller.Controller "1" --> "1" view.View : view
+controller.Controller "1" --> "1" models.Combattant : joueur
+controller.Controller "1" --> "1" models.Forgeron : forgeron
+controller.Controller "1" --> "1" models.Medecin : medecin
+
+@enduml

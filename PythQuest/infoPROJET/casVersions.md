@@ -1,7 +1,7 @@
 V1 :
 
 - Création du combattant (Avec arme et quantité d'or/potion définie en dur.)
-- Inventaire Combattant (déjà fait)
+- Inventaire Combattant
   - Voir nom/niveau/arme/or
   - Voir les potions de vie
   - Voir Inventaire d'arme
@@ -9,8 +9,8 @@ V1 :
     - Changer d'arme avec une arme de l'inventaire
   - Voir Quête assignée
     - Abandonner la quête
-- Choix de Quête (déjà fait)
-- Choix Visite Donjon (déjà fait)
+- Choix de Quête
+- Choix Visite Donjon
   - Système de combat de Monstre aléatoires dans le donjon
     - Attaquer le Monstre
     - Recevoir dégats du Monstre
@@ -26,7 +26,7 @@ V1 :
     - Réussite de la quête
       - Gain d'expérience
       - Gain d'or de la quête
-- Création de Quête, Donjon, Monstres automatisés au début du jeu et à la fin d'une quête, difficulté selon le niveau du joueur (déjà fait)
+- Création de Quête, Donjon, Monstres automatisés au début du jeu et à la fin d'une quête, difficulté selon le niveau du joueur
 
 V2 :
 
@@ -38,8 +38,13 @@ V2 :
   - Restock les potions de vie à l'initialisation et à la fin d'une quête (limite de 10 potions)
 - Voir le nombre de potions de vie disponibles chez le médecin
   - Achat de potion de vie
+- Ajout d'une interface graphique avec Tkinter
+- Equilibrage du jeu
+  - Ajustement des récompenses et de la difficulté
 
 V3 :
 
 - Vente d'arme
 - Sauvegarde de la partie
+- Equilibrage du jeu
+  - Ajustement des dégats d'arme et autres statistiques

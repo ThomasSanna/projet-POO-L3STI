@@ -5,13 +5,13 @@ from models.Quete import Quete
 from models.Donjon import Donjon
 from models.GestionnaireDeQuetes import GestionnaireDeQuetes
 from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
-from view.View import View
+from view.ViewV1 import ViewV1
 import random
 import time
 
-class Controller:
+class ControllerV1:
     def __init__(self):
-        self.view = View()
+        self.view = ViewV1()
         self.joueur = self.creerPersonnage()
         self.forgeron, self.medecin = self.initialiserInstances()
         self.creerQuete(self.joueur, 2, 4)
@@ -35,7 +35,7 @@ class Controller:
             choix = self.view.choixConsole("Choix : ")
 
             if choix == "1":
-                self.gestionAchats()
+                print("Pas encore implémenté.")
             elif choix == "2":
                 self.gestionQuetes()
             elif choix == "3":
@@ -44,28 +44,15 @@ class Controller:
                 self.gestionPersonnage()
             elif choix == "5":
                 self.view.afficherMessage("Merci d'avoir joué !")
+                time.sleep(2)
                 break
             else:
                 self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
-
-    def gestionAchats(self):
-        self.view.afficherMessage("Vous arrivez dans la boutique.")
-        while True:
-            self.view.afficherMenuAchats()
-            choixAchats = self.view.choixConsole("Choix : ")
-
-            if choixAchats == "1":
-                self.gestionForgeron()
-            elif choixAchats == "2":
-                self.gestionMedecin()
-            elif choixAchats == "3":
-                self.view.afficherMessage("Vous quittez la boutique.")
-                break
-            else:
-                self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
+                time.sleep(1)
 
     def gestionForgeron(self):
         self.view.afficherMessage("Vous arrivez chez le forgeron.")
+        time.sleep(1)
         self.forgeron.afficherInventaire()
         choix = self.view.choixConsole("Choix : ")
         if choix.isdigit() and int(choix) == self.forgeron.getNbArmes() + 1:
@@ -75,15 +62,20 @@ class Controller:
                 arme = self.forgeron.getArmeIndex(int(choix) - 1)
                 self.joueur.acheterArme(self.forgeron, arme)
                 self.view.afficherMessage(f"Vous avez acheté l'arme {arme.getNom()} pour {arme.getValeurOr()} or.")
+                time.sleep(1)
             except (InsufficientFundsError, NoSuchItemError) as e:
                 self.view.afficherMessage(str(e))
+                time.sleep(1)
             except ValueError:
                 self.view.afficherMessage("Choix invalide. Veuillez entrer un nombre.")
+                time.sleep(1)
         else:
             self.view.afficherMessage("Choix invalide.")
+            time.sleep(1)
 
     def gestionMedecin(self):
         self.view.afficherMessage("Vous arrivez chez le médecin.")
+        time.sleep(1)
         self.view.afficherMessage(self.medecin.afficherStockPotions())
         choix = self.view.choixConsole("Choix : ")
         if choix.isdigit() and int(choix) == 0:
@@ -96,10 +88,13 @@ class Controller:
                     nbAchetes += 1
                 except (InsufficientFundsError, NoSuchItemError, InventoryFullError) as e:
                     self.view.afficherMessage(str(e))
+                    time.sleep(1)
                     break
             self.view.afficherMessage(f"Vous avez acheté {nbAchetes} potions.")
+            time.sleep(1)
         else:
             self.view.afficherMessage("Choix invalide.")
+            time.sleep(1)
 
     def gestionQuetes(self):
         self.view.afficherMessage(Quete.afficherToutesLesQuetesEnCours())
@@ -111,12 +106,16 @@ class Controller:
                 quete = Quete.getQueteIndexEnCours(int(choix) - 1)
                 self.joueur.accepterQuete(quete)
                 self.view.afficherMessage(f"Vous avez accepté la quête {quete.getNom()}.")
+                time.sleep(1)
             except (QuestAlreadyAcceptedError, IndexError) as e:
                 self.view.afficherMessage(str(e))
+                time.sleep(1)
             except ValueError:
                 self.view.afficherMessage("Choix invalide. Veuillez entrer un nombre.")
+                time.sleep(1)
         else:
             self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
+            time.sleep(1)
 
     def gestionDonjons(self):
         self.view.afficherMessage(Donjon.afficherTousLesDonjonsActifs())
@@ -195,17 +194,23 @@ class Controller:
                         arme = self.joueur.getArmeIndexInventaire(int(choix) - 1)
                         self.joueur.equiperArme(arme)
                         self.view.afficherMessage(f"Vous avez équipé l'arme {arme.getNom()}.")
+                        time.sleep(1)
                     except (NoSuchItemError, IndexError) as e:
                         self.view.afficherMessage(str(e))
+                        time.sleep(1)
                     except ValueError:
                         self.view.afficherMessage("Choix invalide. Veuillez entrer un nombre.")
+                        time.sleep(1)
             elif choix == "2":
                 try:
                     self.joueur.abandonnerQuete()
                     self.view.afficherMessage("Vous avez abandonné la quête.")
+                    time.sleep(1)
                 except NoActiveQuestError as e:
                     self.view.afficherMessage(str(e))
+                    time.sleep(1)
             elif choix == "3":
                 break
             else:
                 self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
+                time.sleep(1)
