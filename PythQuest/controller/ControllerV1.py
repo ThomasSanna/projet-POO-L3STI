@@ -35,7 +35,7 @@ class ControllerV1:
             choix = self.view.choixConsole("Choix : ")
 
             if choix == "1":
-                print("Pas encore implémenté.")
+                self.view.afficherMessage("Pas encore implémenté.")
             elif choix == "2":
                 self.gestionQuetes()
             elif choix == "3":

@@ -48,7 +48,7 @@ class Quete:
     def creerQueteAleatoire(niveauJoueur):
         nom = Quete.PREFIXES + Quete.SUFFIXES[random.randint(0, len(Quete.SUFFIXES) - 1)]
         difficulte = random.randint(1, 5)
-        recompenseOr = random.randint(difficulte * 15, difficulte * 35)
+        recompenseOr = random.randint(difficulte * 15, difficulte * 35) + niveauJoueur * 10
         return Quete(nom, recompenseOr, difficulte, niveauJoueur)
     
     @staticmethod
