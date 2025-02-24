@@ -1,4 +1,4 @@
-Faire un README
+Faire un README (mettre les bonnes pratiques de nommages de variables, etc...)
 Savoir quoi expliquer dans la demo client
 Savoir quoi expliquer dans la demo developpeur : Comment expliquer à un développeur qui veut s'y mettre
 Faire un plan détaillé/planning sur qui fait quoi PUIS expliquer qui a vraiment fait quoi 
@@ -9,5 +9,6 @@ Rajouter des tests automatiques
 Connaître tout ce qu'on a fait avec l'IA
 Faire des branches (V1, V2,...). Le main doit être une version qui MARCHE
 Des "logs" à dire de ce qu'on a changé sur les anciennes versions (autocritiques)
-$$ faire des diapos avec les points compliqués à comprendre (comment marche une quete)
+$$ faire des diapos/illustrations avec les points compliqués à comprendre (comment marche une quete)
+$$ faire des schema pour savoir à quoi ressemblera l'interface graphique Tkinter
 Faire un fichier requirements.txt
