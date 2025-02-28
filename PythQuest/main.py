@@ -1,7 +1,7 @@
-from controller.ControllerV1 import ControllerV1
+from controller.Controller import Controller
 
 def main():
-    game_controller = ControllerV1()
+    game_controller = Controller()
     game_controller.afficherMenuPrincipal()
 
 if __name__ == "__main__":
