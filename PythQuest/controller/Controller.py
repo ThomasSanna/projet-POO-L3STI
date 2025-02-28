@@ -62,10 +62,10 @@ class Controller:
         """
         while True:
             self.view.afficherMenuPrincipal()
-            choix = self.view.choixConsole("Choix : ")
+            choix = self.view.choixConsole("Choix : ") # 1. Achats, 2. Quêtes, 3. Donjons, 4. Personnage, 5. Quitter
 
             if choix == "1":
-                self.view.afficherMessage("Pas encore implémenté.")
+                self.gestionAchats()
             elif choix == "2":
                 self.gestionQuetes()
             elif choix == "3":
@@ -79,6 +79,25 @@ class Controller:
             else:
                 self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
                 time.sleep(1)
+                
+    def gestionAchats(self):
+        """
+        Gère l'interaction avec la boutique et les achats d'armes et potions.
+        """
+        self.view.afficherMessage("Vous arrivez dans la boutique.")
+        while True:
+            self.view.afficherMenuAchats()
+            choixAchats = self.view.choixConsole("Choix : ") # 1. Forgeron, 2. Medecin, 3. Quitter
+
+            if choixAchats == "1":
+                self.gestionForgeron()
+            elif choixAchats == "2":
+                self.gestionMedecin()
+            elif choixAchats == "3":
+                self.view.afficherMessage("Vous quittez la boutique.")
+                break
+            else:
+                self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
 
     def gestionForgeron(self) -> None:
         """
