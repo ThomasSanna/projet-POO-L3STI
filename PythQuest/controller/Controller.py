@@ -8,28 +8,58 @@ from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuch
 from view.View import View
 import random
 import time
+from typing import Tuple
 
 class Controller:
-    def __init__(self):
-        self.view = View()
-        self.joueur = self.creerPersonnage()
+    """Classe principale contrôlant la logique du jeu et les interactions entre le modèle et la vue."""
+
+    def __init__(self) -> None:
+        """
+        Initialise le contrôleur avec une vue, un joueur et des instances de forgeron et médecin.
+
+        Crée également des quêtes initiales pour le joueur.
+        """
+        self.view: View = View()
+        self.joueur: Combattant = self.creerPersonnage()
+        self.forgeron: Forgeron
+        self.medecin: Medecin
         self.forgeron, self.medecin = self.initialiserInstances()
         self.creerQuete(self.joueur, 2, 4)
 
-    def initialiserInstances(self):
+    def initialiserInstances(self) -> Tuple[Forgeron, Medecin]:
+        """
+        Initialise les instances de forgeron et médecin.
+
+        :return: Un tuple contenant le forgeron et le médecin créés.
+        """
         forgeron = Forgeron("Robert")
         medecin = Medecin("Jean")
         return forgeron, medecin
 
-    def creerQuete(self, joueur: Combattant, minQuete, maxQuete):
-        for i in range(random.randint(minQuete, maxQuete)):
+    def creerQuete(self, joueur: Combattant, minQuete: int, maxQuete: int) -> None:
+        """
+        Crée un nombre aléatoire de quêtes pour le joueur.
+
+        :param joueur: Le combattant pour lequel créer les quêtes.
+        :param minQuete: Le nombre minimum de quêtes à créer.
+        :param maxQuete: Le nombre maximum de quêtes à créer.
+        """
+        for _ in range(random.randint(minQuete, maxQuete)):
             GestionnaireDeQuetes.creerQueteDonjonMonstres(joueur.getNiveau())
 
     def creerPersonnage(self) -> Combattant:
+        """
+        Crée un personnage en demandant son nom via la vue.
+
+        :return: Le combattant créé avec 100 pièces d'or initiales.
+        """
         nomPersonnage = self.view.choixConsole("Entrez le nom de votre personnage : ")
         return Combattant(nomPersonnage, 100)
 
-    def afficherMenuPrincipal(self):
+    def afficherMenuPrincipal(self) -> None:
+        """
+        Affiche le menu principal et gère les choix de l'utilisateur.
+        """
         while True:
             self.view.afficherMenuPrincipal()
             choix = self.view.choixConsole("Choix : ")
@@ -50,7 +80,10 @@ class Controller:
                 self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
                 time.sleep(1)
 
-    def gestionForgeron(self):
+    def gestionForgeron(self) -> None:
+        """
+        Gère l'interaction avec le forgeron et l'achat d'armes.
+        """
         self.view.afficherMessage("Vous arrivez chez le forgeron.")
         time.sleep(1)
         self.forgeron.afficherInventaire()
@@ -73,7 +106,10 @@ class Controller:
             self.view.afficherMessage("Choix invalide.")
             time.sleep(1)
 
-    def gestionMedecin(self):
+    def gestionMedecin(self) -> None:
+        """
+        Gère l'interaction avec le médecin et l'achat de potions.
+        """
         self.view.afficherMessage("Vous arrivez chez le médecin.")
         time.sleep(1)
         self.view.afficherMessage(self.medecin.afficherStockPotions())
@@ -82,7 +118,7 @@ class Controller:
             return
         elif choix.isdigit() and (int(choix) > 0 and int(choix) <= self.medecin.getStockPotions()):
             nbAchetes = 0
-            for i in range(int(choix)):
+            for _ in range(int(choix)):
                 try:
                     self.joueur.acheterPotion(self.medecin)
                     nbAchetes += 1
@@ -96,7 +132,10 @@ class Controller:
             self.view.afficherMessage("Choix invalide.")
             time.sleep(1)
 
-    def gestionQuetes(self):
+    def gestionQuetes(self) -> None:
+        """
+        Gère l'affichage et l'acceptation des quêtes par le joueur.
+        """
         self.view.afficherMessage(Quete.afficherToutesLesQuetesEnCours())
         choix = self.view.choixConsole("Choix d'une quête à accepter : ")
         if choix.isdigit() and int(choix) == Quete.getNbQuetesEnCours() + 1:
@@ -117,7 +156,12 @@ class Controller:
             self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
             time.sleep(1)
 
-    def gestionDonjons(self):
+    def gestionDonjons(self) -> None:
+        """
+        Gère l'exploration des donjons et les combats avec les monstres.
+
+        Sort du donjon immédiatement si le joueur choisit de fuir un combat.
+        """
         self.view.afficherMessage(Donjon.afficherTousLesDonjonsActifs())
         choix = self.view.choixConsole("Choix d'un donjon à explorer : ")
         if choix.isdigit() and int(choix) == Donjon.nbDonjons + 1:
@@ -131,11 +175,11 @@ class Controller:
                 self.view.afficherMessage(f"Vous rencontrez un {monstre.getNom()} !")
                 time.sleep(1)
                 self.view.afficherMessage(f"Vous avez {self.joueur.getVie()} points de vie.")
-                time.sleep(.5)
+                time.sleep(0.5)
                 self.view.afficherMessage(f"Le {monstre.getNom()} a {monstre.getVie()} points de vie.")
                 time.sleep(1)
-                while not self.joueur.estMort() and not monstre.estMort():
-
+                fuite = False  # Indicateur pour savoir si le joueur a fui
+                while not self.joueur.estMort() and not monstre.estMort() and not fuite:
                     choix = self.view.choixConsole("1. Attaquer\n2. Boire une potion\n3. Fuir\nChoix : ")
                     if choix == "1":
                         self.view.afficherMessage(f"Vous attaquez {monstre.getNom()} !")
@@ -160,11 +204,14 @@ class Controller:
                     elif choix == "3":
                         self.view.afficherMessage("Vous avez fui.")
                         time.sleep(1)
+                        fuite = True  # Marque que le joueur a fui
                         break
                     else:
                         self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
                         time.sleep(1)
                         continue
+                if fuite:  # Si le joueur a fui, on sort complètement du donjon
+                    break
                 if self.joueur.estMort():
                     self.joueur.resetApresMort()
                     break
@@ -179,7 +226,10 @@ class Controller:
             self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
             time.sleep(1)
 
-    def gestionPersonnage(self):
+    def gestionPersonnage(self) -> None:
+        """
+        Gère les actions liées au personnage, comme équiper une arme ou abandonner une quête.
+        """
         while True:
             self.view.afficherMessage(str(self.joueur))
             self.view.afficherMenuPersonnage()

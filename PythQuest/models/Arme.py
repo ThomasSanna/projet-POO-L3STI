@@ -33,7 +33,7 @@ class Arme:
     def __init__(self, nom: str, valeurOr: int, degat: int):
         """
         Initialise une nouvelle arme.
-        
+
         :param nom: Le nom de l'arme.
         :param valeurOr: La valeur en or de l'arme.
         :param degat: Les dégâts de l'arme.
@@ -43,7 +43,12 @@ class Arme:
         self.__degat = degat
         
     @staticmethod
-    def creerArmeAleatoire():
+    def creerArmeAleatoire() -> "Arme":
+        """
+        Crée une arme aléatoire avec un nom, une valeur en or et des dégâts.
+
+        :return: Une instance de la classe Arme.
+        """
         prefixe, degatsPrefixe = random.choice(Arme.PREFIXES)
         suffixe, degatsSuffixe = random.choice(Arme.SUFFIXES)
         etat, pourcentageDegats = random.choice(Arme.ETAT_ARME)
@@ -54,7 +59,13 @@ class Arme:
         return Arme(f"{prefixe} {suffixe} ({etat})", valeurOr, degats)
     
     @staticmethod
-    def creerArme(degats):
+    def creerArme(degats: int) -> "Arme":
+        """
+        Crée une arme avec des dégâts spécifiés.
+
+        :param degats: Les dégâts de l'arme.
+        :return: Une instance de la classe Arme.
+        """
         prefixe = random.choice(Arme.PREFIXES)[0]
         suffixe = random.choice(Arme.SUFFIXES)[0]
         plageValeurOr = [degats*3 - 10, degats*3 + 10] # Valeur de l'arme entre degats*2 - 50 et degats*2 + 100
@@ -62,11 +73,10 @@ class Arme:
         
         return Arme(f"{prefixe} {suffixe} (Rouillé)", valeurOr, degats//1.5)
     
-    
     def getNom(self) -> str:
         """
         Retourne le nom de l'arme.
-        
+
         :return: Le nom de l'arme.
         """
         return self.__nom
@@ -74,7 +84,7 @@ class Arme:
     def getValeurOr(self) -> int:
         """
         Retourne la valeur en or de l'arme.
-        
+
         :return: La valeur en or de l'arme.
         """
         return self.__valeurOr
@@ -82,7 +92,7 @@ class Arme:
     def getDegats(self) -> int:
         """
         Retourne les dégâts de l'arme.
-        
+
         :return: Les dégâts de l'arme.
         """
         return self.__degat
@@ -90,7 +100,7 @@ class Arme:
     def setDegats(self, degat: int) -> None:
         """
         Modifie les dégâts de l'arme.
-        
+
         :param degat: Les nouveaux dégâts de l'arme.
         """
         self.__degat = degat
@@ -98,7 +108,7 @@ class Arme:
     def __repr__(self) -> str:
         """
         Retourne une représentation non ambiguë de l'objet.
-        
+
         :return: Une chaîne de caractères représentant l'objet.
         """
         return self.__str__()
@@ -106,7 +116,7 @@ class Arme:
     def __str__(self) -> str:
         """
         Retourne une représentation lisible de l'objet.
-        
+
         :return: Une chaîne de caractères lisible représentant l'objet.
         """
         return f"{self.__nom} : {self.__degat} dgts, {self.__valeurOr} or"

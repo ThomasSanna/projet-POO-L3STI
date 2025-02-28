@@ -25,36 +25,67 @@ class Monstre(Personnage):
     )
 
     
-    def __init__(self, nom, or_, vie, armePossedee:Arme, niveau):
+    def __init__(self, nom: str, or_: int, vie: int, armePossedee: Arme, niveau: int) -> None:
+        """
+        Initialise un monstre avec un nom, une quantité d'or, des points de vie, une arme possédée et un niveau.
+
+        :param nom: Le nom du monstre.
+        :param or_: La quantité d'or possédée par le monstre.
+        :param vie: Les points de vie du monstre.
+        :param armePossedee: L'arme possédée par le monstre.
+        :param niveau: Le niveau du monstre.
+        """
         super().__init__(nom, or_, vie)
         self.armePossedee = armePossedee
         self.niveau = niveau
         
     @staticmethod
-    def creerMonstreAleatoire(difficulte, niveauJoueur):
+    def creerMonstreAleatoire(difficulte: int, niveauJoueur: int) -> "Monstre":
+        """
+        Crée un monstre aléatoire basé sur la difficulté et le niveau du joueur.
+
+        :param difficulte: La difficulté du jeu.
+        :param niveauJoueur: Le niveau du joueur.
+        :return: Un monstre généré aléatoirement.
+        """
         nom = random.choice(Monstre.PREFIXES) + " " + random.choice(Monstre.SUFFIXES)
-        or_ = random.randint(10, 20) * difficulte * niveauJoueur
-        vie = random.randint(8, 18) * difficulte//2 * niveauJoueur
+        or_ = random.randint(10, 20) * difficulte * niveauJoueur # Calcule une quantité d'or aléatoire basée sur la difficulté et le niveau du joueur
+        vie = random.randint(8, 18) * difficulte // 2 * niveauJoueur # Calcule des points de vie aléatoires basés sur la difficulté et le niveau du joueur
         armeMonstre = Arme.creerArme(int(random.randint(2, 5) * difficulte * niveauJoueur))
         monstre = Monstre(nom, or_, vie, armeMonstre, niveauJoueur)
         return monstre
     
     
-    def attaquer(self, combattant:"Combattant") -> bool:
+    def attaquer(self, combattant: "Combattant") -> bool:
+        """
+        Attaque un combattant et lui inflige des dégâts.
+
+        :param combattant: Le combattant à attaquer.
+        :return: True si le combattant a perdu de la vie, False sinon.
+        """
         degats = self.armePossedee.getDegats()
         return combattant.perdreVie(degats)
         
-    
     def getArmePossedee(self) -> Arme:
         """
         Retourne l'arme possédée par le monstre.
-        
+
         :return: L'arme possédée par le monstre.
         """
         return self.armePossedee
     
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """
+        Retourne une représentation non ambiguë du monstre.
+
+        :return: Une chaîne de caractères représentant le monstre.
+        """
         return f"{self.nom} (lvl {self.niveau}), {self.vie} vie, possédant {self.armePossedee} et {self.or_} or"
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Retourne une représentation lisible du monstre.
+
+        :return: Une chaîne de caractères représentant le monstre.
+        """
         return f"Monstre(nom={self.nom}, vie={self.vie}, or={self.or_}, arme={self.armePossedee}, niveau={self.niveau})"
