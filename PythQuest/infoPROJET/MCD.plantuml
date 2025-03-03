@@ -1,0 +1,81 @@
+@startuml
+entity Combattant {
+    id: int <<PK>>
+    email: str
+    motDePasse: str
+    nom: str
+    piece: int
+    vie: int
+    maxVie: int
+    niveau: int
+    experience: int
+    inventairePotions: int
+    armeEquipee_id: int <<FK>>
+    queteActuelle_id: int <<FK>>
+}
+
+entity Arme {
+    id: int <<PK>>
+    combattant_id: int <<PK>>
+    nom: str
+    valeurOr: int
+    degat: int
+    combattant_id: int <<FK>>
+}
+
+entity Quete {
+    id: int <<PK>>
+    combattant_id: int <<PK>>
+    nom: str
+    recompenseOr: int
+    difficulte: int
+    statut: str
+    niveau: int
+    combattant_id: int <<FK>>
+    monstreCible_id: int <<FK>>
+    donjonAssocie_id: int <<FK>>
+}
+
+entity Donjon {
+    id: int <<PK>>
+    combattant_id: int <<PK>>
+    nom: str
+    difficulte: int
+    statut: str
+    niveau: int
+}
+
+entity Monstre {
+    id: int <<PK>>
+    combattant_id: int <<PK>>
+    nom: str
+    piece: int
+    vie: int
+    niveau: int
+    armePossedee_id: int <<FK>>
+    donjon_id: int <<FK>>
+    combattant_id: int <<FK>>
+}
+
+entity Forgeron {
+    id: int <<PK>>
+    combattant_id: int <<PK>>
+    nom: str
+}
+
+entity Medecin {
+    id: int <<PK>>
+    combattant_id: int <<PK>>
+    nom: str
+    prixPotion: int
+    stockPotions: int
+}
+
+Combattant "1" -- "0..*" Arme : possède
+Combattant "1" -- "0..*" Quete : accepte
+Combattant "1" -- "0..*" Donjon : explore
+Donjon "1" -- "0..*" Monstre : contient
+Monstre "1" -- "1" Arme : possède
+Combattant "1" -- "1" Forgeron : a
+Combattant "1" -- "1" Medecin : a
+@enduml
