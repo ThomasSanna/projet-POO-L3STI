@@ -4,36 +4,36 @@ from typing import Optional
 class Personnage:
     """Classe de base représentant un personnage dans le jeu avec un nom, de l'or et de la vie."""
 
-    def __init__(self, nom: str, or_: int, vie: int) -> None:
+    def __init__(self, nom: str, piece: int, vie: int) -> None:
         """
         Initialise un nouveau personnage.
 
         :param nom: Le nom du personnage.
-        :param or_: La quantité d'or initiale du personnage.
+        :param piece: La quantité d'or initiale du personnage.
         :param vie: La quantité de vie initiale du personnage.
         """
         self.nom: str = nom
-        self.or_: int = or_
+        self.piece: int = piece
         self.vie: int = vie
 
-    def gagnerOr(self, or_: int) -> None:
+    def gagnerOr(self, piece: int) -> None:
         """
         Ajoute une quantité d'or au personnage.
 
-        :param or_: La quantité d'or à ajouter.
+        :param piece: La quantité d'or à ajouter.
         """
-        self.or_ += or_
+        self.piece += piece
 
-    def perdreOr(self, or_: int) -> None:
+    def perdreOr(self, piece: int) -> None:
         """
         Retire une quantité d'or au personnage.
 
-        :param or_: La quantité d'or à retirer.
+        :param piece: La quantité d'or à retirer.
         :raises InsufficientFundsError: Si le personnage n'a pas assez d'or pour effectuer la perte.
         """
-        if self.or_ - or_ < 0:
+        if self.piece - piece < 0:
             raise InsufficientFundsError("Vous n'avez pas assez d'or.")
-        self.or_ -= or_
+        self.piece -= piece
 
     def perdreVie(self, degats: int) -> None:  # Correction du typage de retour
         """
@@ -69,7 +69,7 @@ class Personnage:
 
         :return: La quantité d'or.
         """
-        return self.or_
+        return self.piece
 
     def getVie(self) -> int:
         """
@@ -85,4 +85,4 @@ class Personnage:
 
         :return: Une chaîne de caractères décrivant le personnage.
         """
-        return f"Personnage(nom={self.nom}, or_={self.or_}, vie={self.vie})"
+        return f"Personnage(nom={self.nom}, piece={self.piece}, vie={self.vie})"

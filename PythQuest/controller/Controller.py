@@ -245,6 +245,7 @@ class Controller:
                         self.view.afficherMessage(message)
                         time.sleep(0.5)
             if donjon.estVide():
+                self.creerQuete(self.joueur, 1, 2) # Création de nouvelles quêtes (entre 1 et 2) après avoir vidé un donjon
                 self.view.afficherMessage(f"Vous avez vidé le {donjon.getNom()} ! Retour au village.")
                 time.sleep(1)
         else:

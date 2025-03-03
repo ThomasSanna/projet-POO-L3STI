@@ -44,7 +44,7 @@ class TestCombattant(unittest.TestCase):
         self.combattant.perdreVie(100)
         self.combattant.resetApresMort()
         self.assertEqual(self.combattant.vie, self.combattant.maxVie // 1.5)
-        self.assertEqual(self.combattant.or_, 100 - (100 // 1.5))
+        self.assertEqual(self.combattant.piece, 100 - (100 // 1.5))
 
     def testGagnerPotion(self):
         """
@@ -85,7 +85,7 @@ class TestCombattant(unittest.TestCase):
         medecin = Medecin("Test Medecin")
         self.combattant.acheterPotion(medecin)
         self.assertEqual(self.combattant.inventairePotions, 1)
-        self.assertEqual(self.combattant.or_, 90)
+        self.assertEqual(self.combattant.piece, 90)
 
     def testAcheterArme(self):
         """
@@ -95,7 +95,7 @@ class TestCombattant(unittest.TestCase):
         forgeron.ajouterArme(self.arme)
         self.combattant.acheterArme(forgeron, self.arme)
         self.assertIn(self.arme, self.combattant.inventaireArmes)
-        self.assertEqual(self.combattant.or_, 50)
+        self.assertEqual(self.combattant.piece, 50)
 
     def testAccepterQuete(self):
         """

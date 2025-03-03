@@ -27,19 +27,19 @@ class Monstre(Personnage):
     nbMonstres = 1
 
     
-    def __init__(self, nom: str, or_: int, vie: int, armePossedee: Arme, niveau: int) -> None:
+    def __init__(self, nom: str, piece: int, vie: int, armePossedee: Arme, niveau: int) -> None:
         """
         Initialise un monstre avec un nom, une quantité d'or, des points de vie, une arme possédée et un niveau.
 
         :param nom: Le nom du monstre.
-        :param or_: La quantité d'or possédée par le monstre.
+        :param piece: La quantité d'or possédée par le monstre.
         :param vie: Les points de vie du monstre.
         :param armePossedee: L'arme possédée par le monstre.
         :param niveau: Le niveau du monstre.
         """
         self.id = Monstre.nbMonstres
         Monstre.nbMonstres += 1
-        super().__init__(nom, or_, vie)
+        super().__init__(nom, piece, vie)
         self.armePossedee = armePossedee
         self.niveau = niveau
         
@@ -53,10 +53,10 @@ class Monstre(Personnage):
         :return: Un monstre généré aléatoirement.
         """
         nom = random.choice(Monstre.PREFIXES) + " " + random.choice(Monstre.SUFFIXES)
-        or_ = random.randint(10, 20) * difficulte * niveauJoueur # Calcule une quantité d'or aléatoire basée sur la difficulté et le niveau du joueur
+        piece = random.randint(10, 20) * difficulte * niveauJoueur # Calcule une quantité d'or aléatoire basée sur la difficulté et le niveau du joueur
         vie = random.randint(8, 18) * difficulte // 2 * niveauJoueur # Calcule des points de vie aléatoires basés sur la difficulté et le niveau du joueur
         armeMonstre = Arme.creerArme(int(random.randint(2, 5) * difficulte * niveauJoueur))
-        monstre = Monstre(nom, or_, vie, armeMonstre, niveauJoueur)
+        monstre = Monstre(nom, piece, vie, armeMonstre, niveauJoueur)
         return monstre
     
     
@@ -84,7 +84,7 @@ class Monstre(Personnage):
 
         :return: Une chaîne de caractères représentant le monstre.
         """
-        return f"{self.nom} (lvl {self.niveau}), {self.vie} vie, possédant {self.armePossedee} et {self.or_} or"
+        return f"{self.nom} (lvl {self.niveau}), {self.vie} vie, possédant {self.armePossedee} et {self.piece} or"
 
     def __str__(self) -> str:
         """
@@ -92,4 +92,4 @@ class Monstre(Personnage):
 
         :return: Une chaîne de caractères représentant le monstre.
         """
-        return f"Monstre(nom={self.nom}, vie={self.vie}, or={self.or_}, arme={self.armePossedee}, niveau={self.niveau})"
+        return f"Monstre(nom={self.nom}, vie={self.vie}, or={self.piece}, arme={self.armePossedee}, niveau={self.niveau})"

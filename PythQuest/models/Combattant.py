@@ -11,15 +11,15 @@ class Combattant(Personnage):
     GAIN_POTION: int = 15  # Quantité de vie gagnée par potion
     NB_POTION_MAX: int = 10  # Nombre maximum de potions dans l'inventaire
 
-    def __init__(self, nom: str, or_: int = 0, vie: int = 100) -> None:
+    def __init__(self, nom: str, piece: int = 0, vie: int = 100) -> None:
         """
         Initialise un nouveau Combattant avec le nom, l'or et la vie spécifiés.
 
         :param nom: Le nom du combattant.
-        :param or_: La quantité d'or initiale du combattant. Par défaut 0.
+        :param piece: La quantité d'or initiale du combattant. Par défaut 0.
         :param vie: La vie initiale du combattant. Par défaut 100.
         """
-        super().__init__(nom, or_, vie)
+        super().__init__(nom, piece, vie)
         self.maxVie: int = vie
         self.inventairePotions: int = 0
         self.armeEquipee: Arme = Arme("Poings", 0, 5)
@@ -68,9 +68,9 @@ class Combattant(Personnage):
         """
         messages = []
         messages.append("Vous êtes mort.")
-        messages.append(f"Vous perdez {self.or_ // 1.5} pièces d'or.")
+        messages.append(f"Vous perdez {self.piece // 1.5} pièces d'or.")
         self.vie = self.maxVie // 1.5
-        self.perdreOr(self.or_ // 1.5)
+        self.perdreOr(self.piece // 1.5)
         return messages
 
     def gagnerPotion(self) -> None:
@@ -199,7 +199,7 @@ class Combattant(Personnage):
         :raises InventoryFullError: Si l'inventaire de potions du combattant est plein.
         """
         prixPotion = medecin.getPrixPotion()
-        if self.or_ < prixPotion:
+        if self.piece < prixPotion:
             raise InsufficientFundsError("Vous n'avez pas assez d'or pour acheter une potion.")
         if medecin.getStockPotions() <= 0:
             raise NoSuchItemError("Le médecin n'a plus de potions en stock.")
@@ -385,7 +385,7 @@ class Combattant(Personnage):
 
         :return: Une chaîne de caractères représentant le combattant.
         """
-        return (f"Combattant(nom={self.nom}, or_={self.or_}, vie={self.vie}/{self.maxVie}, "
+        return (f"Combattant(nom={self.nom}, piece={self.piece}, vie={self.vie}/{self.maxVie}, "
                 f"niveau={self.niveau}, experience={self.experience}, "
                 f"inventairePotions={self.inventairePotions}, armeEquipee={self.armeEquipee}, "
                 f"inventaireArmes={self.inventaireArmes}, queteActuelle={self.queteActuelle}, "

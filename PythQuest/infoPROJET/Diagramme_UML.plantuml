@@ -3,7 +3,7 @@
 package models {
     class Combattant {
         - nom: str
-        - or_: int
+        - piece: int
         - vie: int
         - maxVie: int
         - inventairePotions: int
@@ -13,7 +13,7 @@ package models {
 
     class Personnage {
         - nom: str
-        - or_: int
+        - piece: int
         - vie: int
     }
 
@@ -40,7 +40,7 @@ package models {
 
     class Monstre {
         - nom: str
-        - or_: int
+        - piece: int
         - vie: int
         - niveau: int
     }
