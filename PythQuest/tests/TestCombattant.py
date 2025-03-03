@@ -29,7 +29,7 @@ class TestCombattant(unittest.TestCase):
         self.monstre = Monstre("Test Monstre", 10, 10, self.arme, 1)
         self.donjon = Donjon("Donjon de Test", 1, 1, self.monstre)
 
-    def test_gagner_experience(self):
+    def testGagnerExperience(self):
         """
         Teste la méthode gagnerExperience.
         """
@@ -37,7 +37,7 @@ class TestCombattant(unittest.TestCase):
         self.assertEqual(self.combattant.niveau, 2)
         self.assertEqual(self.combattant.experience, 50)
 
-    def test_reset_apres_mort(self):
+    def testResetApresMort(self):
         """
         Teste la méthode resetApresMort.
         """
@@ -46,7 +46,7 @@ class TestCombattant(unittest.TestCase):
         self.assertEqual(self.combattant.vie, self.combattant.maxVie // 1.5)
         self.assertEqual(self.combattant.or_, 100 - (100 // 1.5))
 
-    def test_gagner_potion(self):
+    def testGagnerPotion(self):
         """
         Teste la méthode gagnerPotion.
         """
@@ -56,7 +56,7 @@ class TestCombattant(unittest.TestCase):
             for _ in range(Combattant.NB_POTION_MAX + 1):
                 self.combattant.gagnerPotion()
 
-    def test_perdre_potion(self):
+    def testPerdrePotion(self):
         """
         Teste la méthode perdrePotion.
         """
@@ -66,7 +66,7 @@ class TestCombattant(unittest.TestCase):
         with self.assertRaises(NoSuchItemError):
             self.combattant.perdrePotion()
 
-    def test_boire_potion(self):
+    def testBoirePotion(self):
         """
         Teste la méthode boirePotion.
         """
@@ -78,7 +78,7 @@ class TestCombattant(unittest.TestCase):
         with self.assertRaises(NoSuchItemError):
             self.combattant.boirePotion()
 
-    def test_acheter_potion(self):
+    def testAcheterPotion(self):
         """
         Teste la méthode acheterPotion.
         """
@@ -87,7 +87,7 @@ class TestCombattant(unittest.TestCase):
         self.assertEqual(self.combattant.inventairePotions, 1)
         self.assertEqual(self.combattant.or_, 90)
 
-    def test_acheter_arme(self):
+    def testAcheterArme(self):
         """
         Teste la méthode acheterArme.
         """
@@ -97,7 +97,7 @@ class TestCombattant(unittest.TestCase):
         self.assertIn(self.arme, self.combattant.inventaireArmes)
         self.assertEqual(self.combattant.or_, 50)
 
-    def test_accepter_quete(self):
+    def testAccepterQuete(self):
         """
         Teste la méthode accepterQuete.
         """
@@ -106,7 +106,7 @@ class TestCombattant(unittest.TestCase):
         with self.assertRaises(QuestAlreadyAcceptedError):
             self.combattant.accepterQuete(self.quete)
 
-    def test_abandonner_quete(self):
+    def testAbandonnerQuete(self):
         """
         Teste la méthode abandonnerQuete.
         """
@@ -116,14 +116,14 @@ class TestCombattant(unittest.TestCase):
         with self.assertRaises(NoActiveQuestError):
             self.combattant.abandonnerQuete()
 
-    def test_battre_monstre(self):
+    def testBattreMonstre(self):
         """
         Teste la méthode battreMonstre.
         """
         self.combattant.battreMonstre(self.monstre, self.donjon)
         self.assertIn(self.monstre.getArmePossedee(), self.combattant.inventaireArmes)
 
-    def test_attaquer(self):
+    def testAttaquer(self):
         """
         Teste la méthode attaquer.
         """
