@@ -13,7 +13,16 @@ class Quete:
         "de l'ombre", "de la lumière", "du guerrier",
         "de la sorcière", "du magicien", "du voleur",
         "du roi", "de la reine", "du prince",
-        "de la princesse",
+        "de la princesse", "du chevalier", "de la fée",
+        "du nain", "de l'elfe", "du géant",
+        "du loup", "du serpent", "de l'araignée",
+        "du scorpion", "du zombie", "du squelette",
+        "du fantôme", "du vampire", "du loup-garou",
+        "du démon", "de l'ange", "du dieu",
+        "de la déesse", "du titan", "de la chimère",
+        "du sphinx", "du minotaure", "du cyclope",
+        "du centaure", "du dragonnier", "du chasseur",
+        "du pêcheur", "du bûcheron", "du mineur"
     )  # Suffixes pour générer les noms de quêtes
 
     STATUT_EN_COURS: str = "En cours"  # Statut d'une quête en cours
@@ -30,6 +39,7 @@ class Quete:
         :param difficulte: La difficulté de la quête.
         :param niveauJoueur: Le niveau du joueur pour adapter la quête.
         """
+        self.id = len(Quete.toutesLesQuetes) + 1
         self.nom: str = nom
         self.recompenseOr: int = recompenseOr
         self.difficulte: int = difficulte

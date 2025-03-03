@@ -240,6 +240,8 @@ class Controller:
                 elif monstre.estMort():
                     messages = self.joueur.battreMonstre(monstre, donjon)
                     for message in messages:
+                        if message.startswith("Félicitations ! Vous avez terminé la") or message.startswith("Félicitations ! Vous avez atteint le niveau"):
+                            self.creerQuete(self.joueur, 1, 2) # Création de nouvelles quêtes (entre 1 et 2) après avoir fini une quête ou monté de niveau
                         self.view.afficherMessage(message)
                         time.sleep(0.5)
             if donjon.estVide():

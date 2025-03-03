@@ -23,6 +23,8 @@ class Monstre(Personnage):
         "sournois", "rusé", "fourbe", "cruel", "sadique", "impitoyable", "inflexible", "implacable",
         "carnivore", "cannibale"
     )
+    
+    nbMonstres = 1
 
     
     def __init__(self, nom: str, or_: int, vie: int, armePossedee: Arme, niveau: int) -> None:
@@ -35,6 +37,8 @@ class Monstre(Personnage):
         :param armePossedee: L'arme possédée par le monstre.
         :param niveau: Le niveau du monstre.
         """
+        self.id = Monstre.nbMonstres
+        Monstre.nbMonstres += 1
         super().__init__(nom, or_, vie)
         self.armePossedee = armePossedee
         self.niveau = niveau
