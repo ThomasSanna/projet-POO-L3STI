@@ -29,24 +29,27 @@ class Combattant(Personnage):
         self.niveau: int = 1
         self.experience: int = 0
 
-    def gagnerExperience(self, exp: int) -> None:
+    def gagnerExperience(self, exp: int) -> List[str]:
         """
         Permet au combattant de gagner de l'expérience.
 
         :param exp: La quantité d'expérience à gagner. Doit être positive.
         :raises ValueError: Si exp est négatif ou nul.
+        :return: Liste des messages à afficher.
         """
+        messages = []
         if exp <= 0:
             raise ValueError("L'expérience gagnée doit être positive.")
         self.experience += exp
         expNiveauSuivant = self.niveau * 100
-        print(f"Vous avez gagné {exp} points d'expérience.")
-        print(f"Vous avez maintenant {self.experience}/{expNiveauSuivant} points d'expérience.")
+        messages.append(f"Vous avez gagné {exp} points d'expérience.")
+        messages.append(f"Vous avez maintenant {self.experience}/{expNiveauSuivant} points d'expérience.")
         while self.experience >= self.niveau * 100:
+            self.experience -= self.niveau * 100
             self.niveau += 1
-            self.experience = self.experience - self.niveau * 100
             self.maxVie = int(self.maxVie * 1.5)
-            print(f"Félicitations ! Vous avez atteint le niveau {self.niveau}. Votre vie maximale est maintenant de {self.maxVie}.")
+            messages.append(f"Félicitations ! Vous avez atteint le niveau {self.niveau}. Votre vie maximale est maintenant de {self.maxVie}.")
+        return messages
 
     def estMort(self) -> bool:
         """
@@ -56,16 +59,19 @@ class Combattant(Personnage):
         """
         return self.vie <= 0
 
-    def resetApresMort(self) -> None:
+    def resetApresMort(self) -> List[str]:
         """
         Réinitialise le combattant après sa mort.
 
         Le combattant perd la moitié de son or et sa vie est réinitialisée à la moitié de sa vie maximale.
+        :return: Liste des messages à afficher.
         """
-        print("Vous êtes mort.")
-        print(f"Vous perdez {self.or_//1.5} pièces d'or.")
+        messages = []
+        messages.append("Vous êtes mort.")
+        messages.append(f"Vous perdez {self.or_ // 1.5} pièces d'or.")
         self.vie = self.maxVie // 1.5
         self.perdreOr(self.or_ // 1.5)
+        return messages
 
     def gagnerPotion(self) -> None:
         """
@@ -223,30 +229,38 @@ class Combattant(Personnage):
         if self.queteActuelle is None:
             raise NoActiveQuestError("Vous n'avez pas de quête active.")
         self.queteActuelle.queteFinie()
+        messages = []
+        messages.append("Félicitations ! Vous avez terminé la ", self.queteActuelle.getNom())
+        messages.append(f"Vous avez gagné {self.queteActuelle.getRecompenseOr()} pièces d'or.")
         self.gagnerOr(self.queteActuelle.getRecompenseOr())
         self.gagnerExperience(int((self.queteActuelle.getDifficulte() / 1.3) * 30 * self.niveau / 1.3))
         self.queteActuelle = None
+        return messages
 
-    def battreMonstre(self, monstre: "Monstre", donjon: "Donjon") -> None:
+    def battreMonstre(self, monstre: "Monstre", donjon: "Donjon") -> List[str]:
         """
         Gère les actions après avoir battu un monstre.
 
         :param monstre: Le monstre vaincu.
         :param donjon: Le donjon dans lequel le monstre a été vaincu.
         :raises NoActiveQuestError: Si aucune quête n'est active et que le monstre est lié à une quête.
+        :return: Liste des messages à afficher.
         """
-        print(f"Vous avez vaincu {monstre.getNom()} !")
+        messages = []
+        messages.append(f"Vous avez vaincu {monstre.getNom()} !")
+        messages.append(f"Vous avez gagné {monstre.getOr()} pièces d'or.")
         self.gagnerOr(monstre.getOr())
-        self.gagnerExperience(int(10 * self.niveau * 1.3))  # Typage explicite pour int
+        messages.extend(self.gagnerExperience(int(10 * self.niveau * 1.3)))  # Typage explicite pour int
         self.ajouterArmeInventaire(monstre.getArmePossedee())
+        messages.append(f"Vous avez obtenu {monstre.getArmePossedee()}.")
         donjon.supprimerMonstre(monstre)
         try:
             monstreQuete = self.getMonstreQueteActuelle()
             if monstreQuete == monstre:
-                self.reussiteQuete()
-                print("Vous avez réussi la quête !")
+                messages.extend(self.reussiteQuete())
         except NoActiveQuestError:
-            raise NoActiveQuestError("Vous n'avez pas de quête active.")
+            pass
+        return messages
 
     def attaquer(self, monstre: "Monstre") -> None:
         """

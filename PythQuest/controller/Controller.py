@@ -51,10 +51,10 @@ class Controller:
         """
         Crée un personnage en demandant son nom via la vue.
 
-        :return: Le combattant créé avec 100 pièces d'or initiales.
+        :return: Le combattant créé.
         """
         nomPersonnage = self.view.choixConsole("Entrez le nom de votre personnage : ")
-        return Combattant(nomPersonnage, 100)
+        return Combattant(nomPersonnage)
 
     def afficherMenuPrincipal(self) -> None:
         """
@@ -178,18 +178,18 @@ class Controller:
     def gestionDonjons(self) -> None:
         """
         Gère l'exploration des donjons et les combats avec les monstres.
-
+    
         Sort du donjon immédiatement si le joueur choisit de fuir un combat.
         """
         self.view.afficherMessage(Donjon.afficherTousLesDonjonsActifs())
         choix = self.view.choixConsole("Choix d'un donjon à explorer : ")
-        if choix.isdigit() and int(choix) == Donjon.nbDonjons + 1:
+        if choix.isdigit() and int(choix) >= Donjon.nbDonjons: # Sortie du donjon #0 : Quitter
             return
-        elif choix.isdigit() and (int(choix) > 0 and int(choix) <= Donjon.nbDonjons):
+        elif choix.isdigit() and (int(choix) > 0 and int(choix) <= Donjon.nbDonjons): 
             donjon = Donjon.getDonjonIndexActif(int(choix) - 1)
             self.view.afficherMessage(f"Vous entrez dans le {donjon.getNom()}.")
             time.sleep(1)
-            while not donjon.estVide():
+            while not donjon.estVide(): # Sortie du donjon #1 : Donjon vidé
                 monstre = donjon.getMonstreAleatoire()
                 self.view.afficherMessage(f"Vous rencontrez un {monstre.getNom()} !")
                 time.sleep(1)
@@ -198,7 +198,7 @@ class Controller:
                 self.view.afficherMessage(f"Le {monstre.getNom()} a {monstre.getVie()} points de vie.")
                 time.sleep(1)
                 fuite = False  # Indicateur pour savoir si le joueur a fui
-                while not self.joueur.estMort() and not monstre.estMort() and not fuite:
+                while not self.joueur.estMort() and not monstre.estMort() and not fuite: # Boucle de combat
                     choix = self.view.choixConsole("1. Attaquer\n2. Boire une potion\n3. Fuir\nChoix : ")
                     if choix == "1":
                         self.view.afficherMessage(f"Vous attaquez {monstre.getNom()} !")
@@ -223,28 +223,31 @@ class Controller:
                     elif choix == "3":
                         self.view.afficherMessage("Vous avez fui.")
                         time.sleep(1)
-                        fuite = True  # Marque que le joueur a fui
-                        break
+                        fuite = True
+                        break # Sortie du donjon #2 : Fuite du combat et donjon
                     else:
                         self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
                         time.sleep(1)
                         continue
-                if fuite:  # Si le joueur a fui, on sort complètement du donjon
-                    break
+                if fuite: 
+                    break # Sortie du donjon #3 : Fuite du combat et donjon
                 if self.joueur.estMort():
-                    self.joueur.resetApresMort()
-                    break
+                    messages = self.joueur.resetApresMort()
+                    for message in messages:
+                        self.view.afficherMessage(message)
+                        time.sleep(0.5)
+                    break # Sortie du donjon #4 : Mort du joueur
                 elif monstre.estMort():
-                    try:
-                        self.joueur.battreMonstre(monstre, donjon)
-                    except NoActiveQuestError:
-                        pass
+                    messages = self.joueur.battreMonstre(monstre, donjon)
+                    for message in messages:
+                        self.view.afficherMessage(message)
+                        time.sleep(0.5)
             if donjon.estVide():
-                donjon.setInactif()
+                self.view.afficherMessage(f"Vous avez vidé le {donjon.getNom()} ! Retour au village.")
+                time.sleep(1)
         else:
             self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
             time.sleep(1)
-
     def gestionPersonnage(self) -> None:
         """
         Gère les actions liées au personnage, comme équiper une arme ou abandonner une quête.
