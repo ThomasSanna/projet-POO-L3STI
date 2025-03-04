@@ -105,7 +105,7 @@ class Controller:
         """
         self.view.afficherMessage("Vous arrivez chez le forgeron.")
         time.sleep(1)
-        self.forgeron.afficherInventaire()
+        self.view.afficherMessage(self.forgeron.afficherInventaire())
         choix = self.view.choixConsole("Choix : ")
         if choix.isdigit() and int(choix) == self.forgeron.getNbArmes() + 1:
             return

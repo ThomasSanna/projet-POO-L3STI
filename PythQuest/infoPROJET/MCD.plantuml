@@ -16,15 +16,17 @@ entity Combattant {
 
 entity Arme {
     id: int <<PK>>
-    combattant_id: int <<PK>>
+    combattant_id: int <<PK>> <<FK>>
     nom: str
     valeurOr: int
     degat: int
+    inventaire_combattant_id: int <<FK>>
+    inventaire_forgeron_id: int <<FK>>
 }
 
 entity Quete {
     id: int <<PK>>
-    combattant_id: int <<PK>>
+    combattant_id: int <<PK>> <<FK>>
     nom: str
     recompenseOr: int
     difficulte: int
@@ -36,7 +38,7 @@ entity Quete {
 
 entity Donjon {
     id: int <<PK>>
-    combattant_id: int <<PK>>
+    combattant_id: int <<PK>> <<FK>>
     nom: str
     difficulte: int
     statut: str
@@ -45,7 +47,7 @@ entity Donjon {
 
 entity Monstre {
     id: int <<PK>>
-    combattant_id: int <<PK>>
+    combattant_id: int <<PK>> <<FK>>
     nom: str
     piece: int
     vie: int
@@ -56,13 +58,13 @@ entity Monstre {
 
 entity Forgeron {
     id: int <<PK>>
-    combattant_id: int <<PK>>
+    combattant_id: int <<PK>> <<FK>>
     nom: str
 }
 
 entity Medecin {
     id: int <<PK>>
-    combattant_id: int <<PK>>
+    combattant_id: int <<PK>> <<FK>>
     nom: str
     prixPotion: int
     stockPotions: int

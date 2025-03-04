@@ -60,13 +60,15 @@ class Forgeron(Personnage):
         """
         return len(self.inventaireArmes)
     
-    def afficherInventaire(self) -> None:
+    def afficherInventaire(self) -> str:
         """
-        Affiche l'inventaire des armes du forgeron.
+        Renvoie une chaîne de caractères représentant l'inventaire des armes du forgeron.
         """
+        inventaireStr = ""
         for i, arme in enumerate(self.inventaireArmes):
-            print(f"{i + 1}. {arme}")
-        print(f"{self.getNbArmes() + 1}. Retour")
+            inventaireStr += f"{i + 1}. {arme}\n"
+        inventaireStr += f"{self.getNbArmes() + 1}. Retour"
+        return inventaireStr
         
     def getArmeIndex(self, index: int) -> Arme:
         """
