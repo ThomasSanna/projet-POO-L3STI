@@ -20,7 +20,6 @@ entity Arme {
     nom: str
     valeurOr: int
     degat: int
-    combattant_id: int <<FK>>
 }
 
 entity Quete {
@@ -31,7 +30,6 @@ entity Quete {
     difficulte: int
     statut: str
     niveau: int
-    combattant_id: int <<FK>>
     monstreCible_id: int <<FK>>
     donjonAssocie_id: int <<FK>>
 }
@@ -54,7 +52,6 @@ entity Monstre {
     niveau: int
     armePossedee_id: int <<FK>>
     donjon_id: int <<FK>>
-    combattant_id: int <<FK>>
 }
 
 entity Forgeron {
