@@ -47,7 +47,7 @@ class Combattant(Personnage):
         while self.experience >= self.niveau * 100:
             self.experience -= self.niveau * 100
             self.niveau += 1
-            self.maxVie = int(self.maxVie * 1.5)
+            self.maxVie = int(self.maxVie + 100)
             messages.append(f"Félicitations ! Vous avez atteint le niveau {self.niveau}. Votre vie maximale est maintenant de {self.maxVie}.")
         return messages
 

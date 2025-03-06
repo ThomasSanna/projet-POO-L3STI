@@ -12,6 +12,7 @@ class ViewUI:
         self.piece = tk.IntVar(value=0)
         self.vie = tk.IntVar(value=100)
         self.niveau = tk.IntVar(value=1)
+        self.experience = tk.IntVar(value=0)
 
         # Frame du haut pour les stats
         self.statsFrame = ttk.Frame(root)
@@ -27,7 +28,7 @@ class ViewUI:
         self.vieLabel.grid(row=0, column=1, padx=5)
         
         self.niveauLabel = ttk.Label(self.statsFrame, 
-                                   text=f"Niveau: {self.niveau.get()}")
+                                   text=f"Niveau: {self.niveau.get()} ({self.experience.get()}/{self.niveau.get() * 100})")
         self.niveauLabel.grid(row=0, column=2, padx=5)
 
         # Frame central pour les images (vide pour l'instant)
@@ -35,7 +36,8 @@ class ViewUI:
         self.imageFrame.pack(expand=True, fill=tk.BOTH)
 
         # Frame pour les messages
-        self.messageFrame = ttk.Frame(root)
+        self.messageFrame = ttk.Frame(root, height=100)
+        self.messageFrame.pack_propagate(False)  # Empêche la frame de s'ajuster à la taille de son contenu
         self.messageFrame.pack(side=tk.BOTTOM, fill=tk.X, pady=(0, 10))
         
         # Liste pour stocker les messages actifs
@@ -46,17 +48,18 @@ class ViewUI:
         self.choicesFrame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
 
     # Méthodes de mise à jour des stats
-    def updatepiece(self, amount):
+    def updatePiece(self, amount):
         self.piece.set(amount)
         self.pieceLabel.config(text=f"Pièces: {self.piece.get()}")
 
-    def updatevie(self, amount):
+    def updateVie(self, amount):
         self.vie.set(amount)
         self.vieLabel.config(text=f"Vie: {self.vie.get()}")
 
-    def updateniveau(self, niveau):
+    def updateNiveau(self, niveau, experience):
         self.niveau.set(niveau)
-        self.niveauLabel.config(text=f"Niveau: {self.niveau.get()}")
+        self.experience.set(experience)
+        self.niveauLabel.config(text=f"Niveau: {self.niveau.get()} ({self.experience.get()}/{self.niveau.get() * 100})")
 
     # Méthode pour afficher un message temporaire
     def showMessage(self, message):
@@ -88,30 +91,3 @@ class ViewUI:
                            text=choice["text"],
                            command=choice["command"])
             btn.pack(pady=2)
-
-# Exemple d'utilisation
-def main():
-    root = tk.Tk()
-    view = ViewUI(root)
-
-    # Exemple de mise à jour des stats
-    view.updatepiece(50)
-    view.updatevie(-20)
-    view.updateniveau(2)
-
-    # Exemple de messages
-    view.showMessage("Vous avez gagné 99 or!")
-    root.after(1000, lambda: view.showMessage("Attention, ennemi proche!"))
-
-    # Exemple de choix
-    choices = [
-        {"text": "Attaquer", "command": lambda: print("Attaque!")},
-        {"text": "Fuir", "command": lambda: print("Fuite!")},
-        {"text": "Se cacher", "command": lambda: print("Cachette!")}
-    ]
-    view.showChoices(choices)
-
-    root.mainloop()
-
-if __name__ == "__main__":
-    main()

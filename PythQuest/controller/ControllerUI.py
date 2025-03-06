@@ -32,9 +32,9 @@ class ControllerUI:
             GestionnaireDeQuetes.creerQueteDonjonMonstres(joueur.getNiveau())
 
     def updateStats(self) -> None:
-        self.view.updateHealth(self.joueur.getVie())
-        self.view.updateCoins(self.joueur.getOr())
-        self.view.updateLevel(self.joueur.getNiveau())
+        self.view.updateVie(self.joueur.getVie())
+        self.view.updatePiece(self.joueur.getOr())
+        self.view.updateNiveau(self.joueur.getNiveau(), self.joueur.getExperience())
 
     def afficherMenuPrincipal(self) -> None:
         self.view.showChoices([
@@ -109,19 +109,19 @@ class ControllerUI:
 
     def explorerDonjon(self, donjon: Donjon) -> None:
         self.view.showMessage(f"Vous entrez dans le {donjon.getNom()}.")
-        self.view.root.after(500, lambda: self.combatDonjon(donjon))
+        self.combatDonjon(donjon)
 
     def combatDonjon(self, donjon: Donjon) -> None:
         if donjon.estVide():
             donjon.setInactif()
             self.creerQuete(self.joueur, 1, 2)
             self.view.showMessage(f"Vous avez vidé le {donjon.getNom()} ! Retour au village.")
-            self.view.root.after(500, self.afficherMenuPrincipal)
+            self.afficherMenuPrincipal()
             return
 
         monstre = donjon.getMonstreAleatoire()
         self.view.showMessage(f"Vous rencontrez un {monstre.getNom()} !")
-        self.view.root.after(500, lambda: self.combatMonstre(monstre, donjon))
+        self.combatMonstre(monstre, donjon)
 
     def combatMonstre(self, monstre: Monstre, donjon: Donjon) -> None:
         if self.joueur.estMort():
@@ -129,7 +129,7 @@ class ControllerUI:
             for message in messages:
                 self.view.showMessage(message)
             self.updateStats()
-            self.view.root.after(500, self.afficherMenuPrincipal)
+            self.afficherMenuPrincipal()
             return
 
         if monstre.estMort():
@@ -139,7 +139,7 @@ class ControllerUI:
                     self.creerQuete(self.joueur, 1, 2)
                 self.view.showMessage(message)
             self.updateStats()
-            self.view.root.after(500, lambda: self.combatDonjon(donjon))
+            self.combatDonjon(donjon)
             return
 
         self.view.showChoices([
@@ -166,7 +166,7 @@ class ControllerUI:
             self.updateStats()
         except NoSuchItemError as e:
             self.view.showMessage(str(e))
-        self.view.root.after(500, lambda: self.combatMonstre(monstre, donjon))
+        self.combatMonstre(monstre, donjon)
 
     def gestionPersonnage(self) -> None:
         self.view.showChoices([
