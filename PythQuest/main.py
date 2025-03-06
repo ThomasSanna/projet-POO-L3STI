@@ -1,8 +1,8 @@
 from controller.Controller import Controller
 
 def main():
-    game_controller = Controller()
-    game_controller.afficherMenuPrincipal()
+    gameController = Controller()
+    gameController.afficherMenuPrincipal()
 
 if __name__ == "__main__":
     main()

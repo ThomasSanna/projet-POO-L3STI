@@ -105,7 +105,7 @@ class Controller:
         """
         self.view.afficherMessage("Vous arrivez chez le forgeron.")
         time.sleep(1)
-        self.view.afficherMessage(self.forgeron.afficherInventaire())
+        self.view.afficherMessage(self.forgeron.afficherInventaire()) # self.forgeron.getInventaireArmes()
         choix = self.view.choixConsole("Choix : ")
         if choix.isdigit() and int(choix) == self.forgeron.getNbArmes() + 1:
             return
@@ -155,7 +155,7 @@ class Controller:
         """
         Gère l'affichage et l'acceptation des quêtes par le joueur.
         """
-        self.view.afficherMessage(Quete.afficherToutesLesQuetesEnCours())
+        self.view.afficherMessage(Quete.afficherToutesLesQuetesEnCours()) # Quete.getToutesLesQuetesEnCours()
         choix = self.view.choixConsole("Choix d'une quête à accepter : ")
         if choix.isdigit() and int(choix) == Quete.getNbQuetesEnCours() + 1:
             return

@@ -78,6 +78,14 @@ class Forgeron(Personnage):
         :return: L'arme à l'index spécifié.
         """
         return self.inventaireArmes[index]
+    
+    def getInventaireArmes(self) -> list[Arme]:
+        """
+        Retourne l'inventaire des armes du forgeron.
+
+        :return: Une liste d'armes.
+        """
+        return self.inventaireArmes
         
     def __str__(self) -> str:
         """
