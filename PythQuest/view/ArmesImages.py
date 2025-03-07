@@ -3,14 +3,14 @@ from PIL import Image
 import os
 
 # Tuples de préfixes, suffixes et états d'arme
-PREFIXES = (
+prefixes = (
     ("Épée", 40), ("Hache", 50), ("Dague", 30), ("Lance", 45),
     ("Marteau", 55), ("Bâton", 25), ("Glaive", 60), ("Faux", 65), ("Fleuret", 30),
     ("Katana", 45), ("Gourdin", 20), ("Fouet", 25), ("Hallebarde", 55),
     ("Masse", 50), ("Poignard", 35), ("Trident", 50)
 )
 
-SUFFIXES = (
+suffixes = (
     ("de Feu", 20),  
     ("du Dragon", 30),  
     ("de Glace", 20),  
@@ -66,11 +66,11 @@ SUFFIXES = (
     ("en Bronze", 10)
 )
 
-ETAT_ARME = (
+etatArme = (
     ("Cassé", 20), ("Endommagé", 40), ("Usé", 60), ("Solide", 80), ("Neuf", 90)
 )
 
-RARETES = {
+raretes = {
     (0, 20): "normal",
     (20, 40): "moyenne",
     (40, 60): "rare",
@@ -79,7 +79,7 @@ RARETES = {
 }
 
 # Dictionnaire des catégories de suffixes
-CATEGORIES_SUFFIXES = {
+categoriesSuffixes = {
     "feu": ["de Feu", "du Dragon"],
     "glace": ["de Glace"],
     "ombre": ["des Ombres", "de la Nuit", "du Chaos", "de la Mort"],
@@ -104,21 +104,21 @@ CATEGORIES_SUFFIXES = {
 }
 
 # Fonction de génération d'arme
-def get_categorie(suffixe):
+def getCategorie(suffixe):
     """Retourne la catégorie associée à un suffixe."""
-    for categorie, suffixes in CATEGORIES_SUFFIXES.items():
+    for categorie, suffixes in categoriesSuffixes.items():
         if suffixe in suffixes:
             return categorie
     return "inconnu"
 
-def get_rarete(degats):
+def getRarete(degats):
     """Retourne la rareté en fonction des dégâts."""
-    for (min_degats, max_degats), rarete in RARETES.items():
-        if min_degats <= degats < max_degats:
+    for (minDegats, maxDegats), rarete in raretes.items():
+        if minDegats <= degats < maxDegats:
             return rarete
     return "inconnu"  
 
-def ajuster_opacite(image, alpha):
+def ajusterOpacite(image, alpha):
     """Ajuste l'opacité d'une image en modifiant son canal alpha."""
     image = image.convert("RGBA")
     pixels = image.load()  # Accéder aux pixels
@@ -128,53 +128,64 @@ def ajuster_opacite(image, alpha):
             pixels[i, j] = (r, g, b, int(a * alpha))  # Modifier l'opacité
     return image
 
-def generer_arme(type_arme, suffixe, etat, degats, dossier="assets"):
+def genererArme(typeArme, suffixe, etat, degats, dossier="assets"):
+    """
+    Génère une image d'arme avec des effets, un état et une rareté spécifiques.
+    Args:
+        typeArme (str): Le type de l'arme (nom du fichier sans extension).
+        suffixe (str): Le suffixe de l'arme, utilisé pour déterminer l'effet.
+        etat (str): L'état de l'arme, utilisé pour superposer une image d'état.
+        degats (int): Les dégâts de l'arme, utilisés pour déterminer la rareté.
+        dossier (str, optional): Le dossier contenant les images des armes, effets, états et raretés. Par défaut "assets".
+    Returns:
+        None: La fonction sauvegarde l'image générée dans le dossier "assets/armes_crees" et affiche un message de confirmation.
+    """
+    
     # Déterminer la rareté via le dictionnaire
-    rarete = get_rarete(degats)
-    effet = get_categorie(suffixe)
+    rarete = getRarete(degats)
+    effet = getCategorie(suffixe)
     
     # Charger l'image de l'arme
-    arme = Image.open(f"{dossier}/armes/{type_arme}.png").convert("RGBA")
+    arme = Image.open(f"{dossier}/armes/{typeArme}.png").convert("RGBA")
     
     # Si l'effet est "transparent", on ajuste l'opacité de l'arme
     if effet == "transparent":
-        arme = ajuster_opacite(arme, 0.5)  # Baisse l'opacité de l'arme à 50%
+        arme = ajusterOpacite(arme, 0.5)  # Baisse l'opacité de l'arme à 50%
     
     # Pour la catégorie "rien", on ne superpose rien
     if effet != "rien":
         # Charger les images d'effet
-        effet_img = Image.open(f"{dossier}/effets/{effet}.png").convert("RGBA")
+        effetImg = Image.open(f"{dossier}/effets/{effet}.png").convert("RGBA")
         # Appliquer la transparence de 50% sur l'effet (alpha 0.5)
-        effet_img = ajuster_opacite(effet_img, 0.7)
+        effetImg = ajusterOpacite(effetImg, 0.7)
         # Superposer l'effet sur l'arme
-        arme.paste(effet_img, (0, 0), effet_img)
+        arme.paste(effetImg, (0, 0), effetImg)
     
     # Charger l'image de l'état si elle existe, sinon ne pas l'ajouter
     try:
-        etat_img = Image.open(f"{dossier}/etats/{etat}.png").convert("RGBA")
+        etatImg = Image.open(f"{dossier}/etats/{etat}.png").convert("RGBA")
         # Appliquer la transparence de 50% sur l'état (alpha 0.5)
-        etat_img = ajuster_opacite(etat_img, 0.5)
+        etatImg = ajusterOpacite(etatImg, 0.5)
         # Superposer l'état sur l'arme
-        arme.paste(etat_img, (0, 0), etat_img)
+        arme.paste(etatImg, (0, 0), etatImg)
     except FileNotFoundError:
         pass
 
     # Charger l'image de la rareté
-    rarete_img = Image.open(f"{dossier}/raretes/{type_arme}_{rarete}.png").convert("RGBA")
+    rareteImg = Image.open(f"{dossier}/raretes/{typeArme}_{rarete}.png").convert("RGBA")
     
     # Superposer l'image de rareté
-    arme.paste(rarete_img, (0, 0), rarete_img)
+    arme.paste(rareteImg, (0, 0), rareteImg)
 
     # Nom du fichier de sortie
-    output = f"{type_arme} {suffixe} {etat} {rarete}.png"
-    output_path = os.path.join("assets/armes_crees", output)
-    arme.save(output_path)
+    output = f"{typeArme} {suffixe} {etat} {rarete}.png"
+    outputPath = os.path.join("assets/armes_crees", output)
+    arme.save(outputPath)
     print(f"Arme générée : {output} (Rareté : {rarete})")
 
 # Exemple d'utilisation avec des paramètres aléatoires
-prefixe, degats = random.choice(PREFIXES)
-suffixe, _ = random.choice(SUFFIXES)
-etat, _ = random.choice(ETAT_ARME)
+prefixe, degats = random.choice(prefixes)
+suffixe, _ = random.choice(suffixes)
+etat, _ = random.choice(etatArme)
 
-
-generer_arme(prefixe, suffixe, etat, degats)
+genererArme(prefixe, suffixe, etat, degats)
