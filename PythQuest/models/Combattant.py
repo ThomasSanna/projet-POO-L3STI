@@ -264,11 +264,9 @@ class Combattant(Personnage):
         except NoActiveQuestError:
             pass
         finally:
-            print("On entre la")
             quetesEnCours = Quete.getQuetesEnCoursUsingDifficulte(donjon.getDifficulte())
             for quete in quetesEnCours:
                 if quete.getMonstreCible() == monstre:
-                    print("LALALALALA")
                     quete.queteFinie()
         return messages
 
