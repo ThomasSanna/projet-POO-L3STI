@@ -18,7 +18,7 @@ class ControllerUI:
         self.view = ViewUI(root)
         self.joueur = Combattant("Joueur") # a faire : demander le nom du joueur
         self.forgeron, self.medecin = self.initialiserInstances()
-        self.creerQuete(self.joueur, 2, 4)
+        self.creerQueteArme(self.joueur, 4, 6)
         self.updateStats()
         self.afficherMenuPrincipal()
 
@@ -27,9 +27,11 @@ class ControllerUI:
         medecin = Medecin("Jean")
         return forgeron, medecin
 
-    def creerQuete(self, joueur: Combattant, minQuete: int, maxQuete: int) -> None:
+    def creerQueteArme(self, joueur: Combattant, minQuete: int, maxQuete: int) -> None:
         for _ in range(random.randint(minQuete, maxQuete)):
             GestionnaireDeQuetes.creerQueteDonjonMonstres(joueur.getNiveau())
+        for _ in range(random.randint(1, 2)):
+            self.forgeron.forgerArme()
 
     def updateStats(self) -> None:
         self.view.updateVie(self.joueur.getVie())
@@ -37,6 +39,7 @@ class ControllerUI:
         self.view.updateNiveau(self.joueur.getNiveau(), self.joueur.getExperience())
 
     def afficherMenuPrincipal(self) -> None:
+        self.view.supprimerMonstre()
         self.view.showChoices([
             {"text": "Faire des achats", "command": self.gestionAchats},
             {"text": "Voir les quêtes", "command": self.gestionQuetes},
@@ -89,7 +92,7 @@ class ControllerUI:
 
     def gestionQuetes(self) -> None:
         quetes = Quete.getToutesLesQuetesEnCours()
-        choices = [{"text": f"{quete}", "command": lambda quete=quete: self.accepterQuete(quete)} for quete in quetes]
+        choices = [{"text": f"{quete.getNom()} ({'★' * quete.getDifficulte()}) - Monstre: {quete.getMonstreCible().getNom()} dans le {quete.getDonjonAssocie().getNom()}", "command": lambda quete=quete: self.accepterQuete(quete)} for quete in quetes]
         choices.append({"text": "Retour", "command": self.afficherMenuPrincipal})
         self.view.showChoices(choices)
 
@@ -97,13 +100,23 @@ class ControllerUI:
         try:
             self.joueur.accepterQuete(quete)
             self.view.showMessage(f"Vous avez accepté la quête {quete.getNom()}.")
+            self.view.updateQuestInfo(quete)
         except (QuestAlreadyAcceptedError, IndexError) as e:
             self.view.showMessage(str(e))
         self.gestionQuetes()
 
+    def abandonnerQuete(self) -> None:
+        try:
+            self.joueur.abandonnerQuete()
+            self.view.showMessage("Vous avez abandonné la quête.")
+            self.view.updateQuestInfo(None)
+        except NoActiveQuestError as e:
+            self.view.showMessage(str(e))
+        self.gestionPersonnage()
+        
     def gestionDonjons(self) -> None:
         donjons = Donjon.getTousLesDonjonsActifs()
-        choices = [{"text": f"{donjon}", "command": lambda donjon=donjon: self.explorerDonjon(donjon)} for donjon in donjons]
+        choices = [{"text": f"{donjon.getNom()} ({'★' * donjon.getDifficulte()}) - Monstres: {donjon.getNbMonstres()}", "command": lambda donjon=donjon: self.explorerDonjon(donjon)} for donjon in donjons]
         choices.append({"text": "Retour", "command": self.afficherMenuPrincipal})
         self.view.showChoices(choices)
 
@@ -114,13 +127,14 @@ class ControllerUI:
     def combatDonjon(self, donjon: Donjon) -> None:
         if donjon.estVide():
             donjon.setInactif()
-            self.creerQuete(self.joueur, 1, 2)
+            self.creerQueteArme(self.joueur, 1, 2)
             self.view.showMessage(f"Vous avez vidé le {donjon.getNom()} ! Retour au village.")
             self.afficherMenuPrincipal()
             return
 
         monstre = donjon.getMonstreAleatoire()
         self.view.showMessage(f"Vous rencontrez un {monstre.getNom()} !")
+        self.view.afficherMonstre(monstre.getNom(), monstre.getVie(), monstre.getArmePossedee().getNom())
         self.combatMonstre(monstre, donjon)
 
     def combatMonstre(self, monstre: Monstre, donjon: Donjon) -> None:
@@ -136,7 +150,9 @@ class ControllerUI:
             messages = self.joueur.battreMonstre(monstre, donjon)
             for message in messages:
                 if message.startswith("Félicitations ! Vous avez terminé la") or message.startswith("Félicitations ! Vous avez atteint le niveau"):
-                    self.creerQuete(self.joueur, 1, 2)
+                    self.creerQueteArme(self.joueur, 1, 2)
+                    if message.startswith("Félicitations ! Vous avez terminé la"):
+                        self.view.updateQuestInfo(None)
                 self.view.showMessage(message)
             self.updateStats()
             self.combatDonjon(donjon)
@@ -150,9 +166,9 @@ class ControllerUI:
 
     def attaquerMonstre(self, monstre: Monstre, donjon: Donjon) -> None:
         self.view.showMessage(f"Vous attaquez {monstre.getNom()} !")
-        self.view.showMessage(f"Le {monstre.getNom()} a {monstre.getVie()} points de vie.")
         self.joueur.attaquer(monstre)
-        self.updateStats()
+        self.view.showMessage(f"Le {monstre.getNom()} a {monstre.getVie()} points de vie.")
+        self.view.updateMonstre(monstre.getVie())
         if not monstre.estMort():
             self.view.showMessage(f"{monstre.getNom()} vous attaque !")
             monstre.attaquer(self.joueur)
@@ -186,13 +202,5 @@ class ControllerUI:
             self.joueur.equiperArme(arme)
             self.view.showMessage(f"Vous avez équipé l'arme {arme.getNom()}.")
         except NoSuchItemError as e:
-            self.view.showMessage(str(e))
-        self.gestionPersonnage()
-
-    def abandonnerQuete(self) -> None:
-        try:
-            self.joueur.abandonnerQuete()
-            self.view.showMessage("Vous avez abandonné la quête.")
-        except NoActiveQuestError as e:
             self.view.showMessage(str(e))
         self.gestionPersonnage()

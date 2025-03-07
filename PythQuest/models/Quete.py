@@ -106,7 +106,7 @@ class Quete:
         """
         Marque la quête comme terminée (abandonnée).
         """
-        self.statut = Quete.STATUT_TERMINEE
+        pass
 
     def getNom(self) -> str:
         """
@@ -175,6 +175,20 @@ class Quete:
         quetes = []
         for quete in Quete.toutesLesQuetes:
             if quete.getStatut() == Quete.STATUT_EN_COURS:
+                quetes.append(quete)
+        return quetes
+    
+    @staticmethod
+    def getQuetesEnCoursUsingDifficulte(difficulte: int) -> List["Quete"]:
+        """
+        Retourne la liste des quêtes en cours pour une difficulté donnée.
+
+        :param difficulte: La difficulté des quêtes à rechercher.
+        :return: La liste des quêtes en cours pour la difficulté donnée.
+        """
+        quetes = []
+        for quete in Quete.getToutesLesQuetesEnCours():
+            if quete.getDifficulte() == difficulte:
                 quetes.append(quete)
         return quetes
 

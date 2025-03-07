@@ -230,7 +230,7 @@ class Combattant(Personnage):
             raise NoActiveQuestError("Vous n'avez pas de quête active.")
         self.queteActuelle.queteFinie()
         messages = []
-        messages.append("Félicitations ! Vous avez terminé la ", self.queteActuelle.getNom())
+        messages.append("Félicitations ! Vous avez terminé la " + str(self.queteActuelle.getNom()) + " !")
         messages.append(f"Vous avez gagné {self.queteActuelle.getRecompenseOr()} pièces d'or.")
         self.gagnerOr(self.queteActuelle.getRecompenseOr())
         self.gagnerExperience(int((self.queteActuelle.getDifficulte() / 1.3) * 30 * self.niveau / 1.3))
@@ -253,13 +253,23 @@ class Combattant(Personnage):
         messages.extend(self.gagnerExperience(int(10 * self.niveau * 1.3)))  # Typage explicite pour int
         self.ajouterArmeInventaire(monstre.getArmePossedee())
         messages.append(f"Vous avez obtenu {monstre.getArmePossedee()}.")
-        donjon.supprimerMonstre(monstre)
+
+        # Vérifier si le monstre est dans la liste avant de le supprimer
+        if monstre in donjon.getListeMonstres():
+            donjon.supprimerMonstre(monstre)
         try:
             monstreQuete = self.getMonstreQueteActuelle()
             if monstreQuete == monstre:
-                messages.extend(self.reussiteQuete())
+                messages.extend(self.reussiteQuete()) # réussite de quete : gain d'or, d'expérience, suppression de la quête actuelle (statut devient Terminée)
         except NoActiveQuestError:
             pass
+        finally:
+            print("On entre la")
+            quetesEnCours = Quete.getQuetesEnCoursUsingDifficulte(donjon.getDifficulte())
+            for quete in quetesEnCours:
+                if quete.getMonstreCible() == monstre:
+                    print("LALALALALA")
+                    quete.queteFinie()
         return messages
 
     def attaquer(self, monstre: "Monstre") -> None:

@@ -15,7 +15,7 @@ class Forgeron(Personnage):
         """
         super().__init__(nom, 0, 100)
         self.inventaireArmes = []
-        for _ in range(random.randint(2, 10)):
+        for _ in range(random.randint(2, 5)):
             self.forgerArme()
         
     def ajouterArme(self, arme: Arme) -> None:
