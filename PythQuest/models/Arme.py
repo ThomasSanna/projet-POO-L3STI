@@ -64,8 +64,6 @@ class Arme:
         ("en Jade", 20),  
         ("en Améthyste", 20),  
         ("en Obsidienne", 30),  
-        ("en Verre", 5),  
-        ("en Plastique", 1),  
         ("en Or", 20),  
         ("en Bronze", 10)
     )

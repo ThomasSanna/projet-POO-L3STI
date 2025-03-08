@@ -2,74 +2,6 @@ import random
 from PIL import Image
 import os
 
-# Tuples de préfixes, suffixes et états d'arme
-prefixes = (
-    ("Épée", 40), ("Hache", 50), ("Dague", 30), ("Lance", 45),
-    ("Marteau", 55), ("Bâton", 25), ("Glaive", 60), ("Faux", 65), ("Fleuret", 30),
-    ("Katana", 45), ("Gourdin", 20), ("Fouet", 25), ("Hallebarde", 55),
-    ("Masse", 50), ("Poignard", 35), ("Trident", 50)
-)
-
-suffixes = (
-    ("de Feu", 20),  
-    ("du Dragon", 30),  
-    ("de Glace", 20),  
-    ("des Ombres", 25),  
-    ("de la Nuit", 25),  
-    ("du Chaos", 35),  
-    ("de la Mort", 40),  
-    ("de Lumière", 20),  
-    ("du Soleil", 30),  
-    ("de la Lune", 20),  
-    ("des Étoiles", 25),  
-    ("de la Vie", 20),  
-    ("de la Tempête", 30),  
-    ("du Vent", 20),  
-    ("de la Foudre", 35),  
-    ("de l'Eau", 20),  
-    ("de l'Océan", 20),  
-    ("de l'Esprit", 25),  
-    ("de la Forêt", 20),  
-    ("en Bois", 5),  
-    ("du Guerrier", 25),  
-    ("du Mage", 20),  
-    ("du Voleur", 25),  
-    ("du Paladin", 30),  
-    ("du Barbare", 35),  
-    ("du Ranger", 25),  
-    ("du Sorcier", 20),  
-    ("du Nécromancien", 35),  
-    ("du Druide", 25),  
-    ("de l'Assassin", 30),  
-    ("du Chevalier", 25),  
-    ("en Argent", 15),  
-    ("en Adamantium", 35),  
-    ("en Acier", 15),  
-    ("en Fer", 10),  
-    ("en Cuivre", 5),  
-    ("en Os", 10),  
-    ("en Quartz", 10),  
-    ("en Pierre", 10),  
-    ("en Cristal", 20),  
-    ("en Diamant", 30),  
-    ("en Topaze", 15), 
-    ("en Opale", 15),  
-    ("en Saphir", 25),  
-    ("en Rubis", 25),  
-    ("en Émeraude", 20),  
-    ("en Jade", 20),  
-    ("en Améthyste", 20),  
-    ("en Obsidienne", 30),  
-    ("en Verre", 5),  
-    ("en Plastique", 1),  
-    ("en Or", 20),  
-    ("en Bronze", 10)
-)
-
-etatArme = (
-    ("Cassé", 20), ("Endommagé", 40), ("Usé", 60), ("Solide", 80), ("Neuf", 90)
-)
-
 raretes = {
     (0, 20): "normal",
     (20, 40): "moyenne",
@@ -99,7 +31,6 @@ categoriesSuffixes = {
     "emeraude": ["en Émeraude", "en Jade"],
     "amethyste": ["en Améthyste"],
     "obsidienne": ["en Obsidienne"],
-    "transparent": ["en Verre", "en Plastique"],
     "or": ["en Or"],
 }
 
@@ -138,7 +69,7 @@ def genererArme(typeArme, suffixe, etat, degats, dossier="view"):
         degats (int): Les dégâts de l'arme, utilisés pour déterminer la rareté.
         dossier (str, optional): Le dossier contenant les images des armes, effets, états et raretés. Par défaut "assets".
     Returns:
-        None: La fonction sauvegarde l'image générée dans le dossier "assets/armes_crees" et affiche un message de confirmation.
+        Image: L'image générée de l'arme.
     """
     
     # Déterminer la rareté via le dictionnaire
@@ -179,13 +110,15 @@ def genererArme(typeArme, suffixe, etat, degats, dossier="view"):
 
     # Nom du fichier de sortie
     output = f"{typeArme} {suffixe} {etat} {rarete}.png"
-    outputPath = os.path.join("view/assets/armes_crees", output)
-    arme.save(outputPath)
-    print(f"Arme générée : {output} (Rareté : {rarete})")
-
-# Exemple d'utilisation avec des paramètres aléatoires
-prefixe, degats = random.choice(prefixes)
-suffixe, _ = random.choice(suffixes)
-etat, _ = random.choice(etatArme)
-
-genererArme(prefixe, suffixe, etat, degats)
+    outputPath = os.path.join("models/assets/armes_crees", output)
+    
+    # Créer le dossier s'il n'existe pas
+    os.makedirs(os.path.dirname(outputPath), exist_ok=True)
+    
+    # Vérifier si le fichier existe déjà
+    if not os.path.exists(outputPath):
+        arme.save(outputPath)
+    else:
+        print(f"Le fichier {output} existe déjà.")
+    
+    return arme  # Retourner l'image générée
