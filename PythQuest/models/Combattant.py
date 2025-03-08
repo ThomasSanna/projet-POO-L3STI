@@ -6,7 +6,19 @@ from typing import List, Optional
 from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
 
 class Combattant(Personnage):
-    """Classe représentant un combattant, héritant de Personnage, avec des fonctionnalités de combat et de gestion d'inventaire."""
+    """
+    Classe représentant un combattant, héritant de Personnage, avec des fonctionnalités de combat et de gestion d'inventaire.
+    
+    Attributs:
+        maxVie (int): La vie maximale du combattant.
+        inventairePotions (int): Le nombre de potions dans l'inventaire.
+        armeEquipee (Arme): L'arme actuellement équipée.
+        inventaireArmes (List[Arme]): La liste des armes dans l'inventaire.
+        queteActuelle (Optional[Quete]): La quête actuellement active.
+        donjonsExplores (List[Donjon]): La liste des donjons explorés.
+        niveau (int): Le niveau du combattant. Une augmentation de niveau augmente la vie maximale, mais aussi la force des monstres dans le futur.
+        experience (int): L'expérience du combattant. Un certain nombre d'expérience est nécessaire pour passer au niveau suivant.
+    """
 
     GAIN_POTION: int = 15  # Quantité de vie gagnée par potion
     NB_POTION_MAX: int = 10  # Nombre maximum de potions dans l'inventaire
@@ -21,6 +33,7 @@ class Combattant(Personnage):
         """
         super().__init__(nom, piece, vie)
         self.maxVie: int = vie
+        self.vie: int = vie
         self.inventairePotions: int = 0
         self.armeEquipee: Arme = Arme("Poings", 0, 5)
         self.inventaireArmes: List[Arme] = []

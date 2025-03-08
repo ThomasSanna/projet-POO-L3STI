@@ -4,7 +4,16 @@ import random
 from typing import List, Optional
 
 class Quete:
-    """Classe représentant une quête dans le jeu, avec un monstre cible, un donjon associé et une récompense."""
+    """
+    Classe représentant une quête dans le jeu, avec un monstre cible, un donjon associé et une récompense.
+
+    Attributs:
+        PREFIXES (str): Préfixe utilisé pour générer les noms de quêtes.
+        SUFFIXES (Tuple[str, ...]): Suffixes pour générer les noms de quêtes.
+        STATUT_EN_COURS (str): Statut d'une quête en cours.
+        STATUT_TERMINEE (str): Statut d'une quête terminée.
+        toutesLesQuetes (List["Quete"]): Liste de toutes les quêtes créées.
+    """
 
     PREFIXES: str = "Quête "  # Préfixe utilisé pour générer les noms de quêtes
     SUFFIXES: tuple[str, ...] = (

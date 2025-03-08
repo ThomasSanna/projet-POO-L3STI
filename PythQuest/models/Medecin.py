@@ -3,7 +3,14 @@ import random
 from typing import Optional
 
 class Medecin(Personnage):
-    """Classe représentant un médecin qui vend des potions dans le jeu."""
+    """
+    Classe représentant un médecin qui vend des potions dans le jeu.
+
+    Attributs:
+        nom (str): Nom du médecin
+        prixPotion (int): Prix fixe d'une potion
+        stockPotions (int): Nombre de potions actuellement en stock
+    """
 
     NB_POTION_MAX: int = 10  # Nombre maximum de potions dans le stock du médecin
 

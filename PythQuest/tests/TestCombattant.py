@@ -17,6 +17,26 @@ from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuch
 class TestCombattant(unittest.TestCase):
     """
     Classe de test pour la classe Combattant.
+    
+    Attributes:
+        combattant (Combattant): Un combattant pour les tests.
+        arme (Arme): Une arme pour les tests.
+        quete (Quete): Une quête pour les tests.
+        monstre (Monstre): Un monstre pour les tests.
+        donjon (Donjon): Un donjon pour les tests.
+        
+    Différents cas de tests:
+        - gagnerExperience: Teste la méthode gagnerExperience.
+        - resetApresMort: Teste la méthode resetApresMort.
+        - gagnerPotion: Teste la méthode gagnerPotion.
+        - perdrePotion: Teste la méthode perdrePotion.
+        - boirePotion: Teste la méthode boirePotion.
+        - acheterPotion: Teste la méthode acheterPotion.
+        - acheterArme: Teste la méthode acheterArme.
+        - accepterQuete: Teste la méthode accepterQuete.
+        - abandonnerQuete: Teste la méthode abandonnerQuete.
+        - battreMonstre: Teste la méthode battreMonstre.
+        - attaquer: Teste la méthode attaquer.
     """
 
     def setUp(self):

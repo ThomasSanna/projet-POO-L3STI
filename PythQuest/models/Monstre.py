@@ -3,6 +3,18 @@ from models.Arme import Arme
 import random
 
 class Monstre(Personnage):
+    """
+    Classe représentant un monstre dans le jeu.
+    
+    Attributs:
+        PREFIXES (Tuple[str, ...]): Les préfixes possibles pour les noms des monstres.
+        SUFFIXES (Tuple[str, ...]): Les suffixes possibles pour les noms des monstres.
+        nbMonstres (int): Le nombre total de monstres créés.
+        id (int): L'identifiant unique du monstre.
+        armePossedee (Arme): L'arme possédée par le monstre.
+        niveau (int): Le niveau du monstre.
+    """
+    
     
     PREFIXES = (
         "Zombie", "Goule", "Squelette", "Gobelin", "Orc", "Troll", "Dragon", 

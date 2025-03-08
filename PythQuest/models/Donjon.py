@@ -3,7 +3,17 @@ import random
 from typing import List, Optional
 
 class Donjon:
-    """Classe représentant un donjon avec des monstres, une difficulté et un statut."""
+    """
+    Classe représentant un donjon avec des monstres, une difficulté et un statut.
+    
+    Attributs:
+        id (int): Identifiant unique du donjon
+        nom (str): Nom du donjon
+        difficulte (int): Difficulté du donjon
+        listeMonstres (List[Monstre]): Liste des monstres présents dans le donjon
+        statut (str): Statut du donjon (actif ou inactif)
+        niveau (int): Niveau du joueur pour adapter les monstres
+    """
 
     PREFIXES: str = "Donjon "  # Préfixe utilisé pour générer les noms de donjons
     SUFFIXES: tuple[str, ...] = (

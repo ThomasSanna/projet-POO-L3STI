@@ -2,7 +2,14 @@ from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuch
 from typing import Optional
 
 class Personnage:
-    """Classe de base représentant un personnage dans le jeu avec un nom, de l'or et de la vie."""
+    """
+    Classe de base représentant un personnage dans le jeu avec un nom, de l'or et de la vie.
+    
+    Attributs:
+        nom (str): Le nom du personnage.
+        piece (int): La quantité d'or du personnage.
+        vie (int): La quantité de vie du personnage.
+    """
 
     def __init__(self, nom: str, piece: int, vie: int) -> None:
         """

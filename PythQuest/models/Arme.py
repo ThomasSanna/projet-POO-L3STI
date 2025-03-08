@@ -5,6 +5,15 @@ from .ArmesImages import genererArme
 class Arme:
     """
     Classe représentant une arme avec un nom, une valeur en or, des dégâts et une image.
+    
+    Attributes:
+        PREFIXES (tuple): Les préfixes possibles pour les noms d'armes et leurs dégâts associés.
+        SUFFIXES (tuple): Les suffixes possibles pour les noms d'armes et leurs dégâts associés.
+        ETAT_ARME (tuple): Les états possibles des armes et leurs pourcentages de dégâts associés.
+        __nom (str): Le nom de l'arme.
+        __valeurOr (int): La valeur en or de l'arme.
+        __degat (int): Les dégâts de l'arme.
+        __image (Image.Image): L'image de l'arme.
     """
     
     PREFIXES = (
@@ -85,7 +94,6 @@ class Arme:
         self.__valeurOr = valeurOr
         self.__degat = degat
         self.__image = image
-        print(f"Nouvelle arme créée : {self.__nom} ({self.__image}")
         
     @staticmethod
     def creerArmeAleatoire() -> "Arme":

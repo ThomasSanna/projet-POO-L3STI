@@ -5,6 +5,10 @@ import random
 class Forgeron(Personnage):
     """
     Classe représentant un forgeron, qui peut créer et vendre des armes.
+
+    Attributs:
+        nom (str): Nom du forgeron
+        inventaireArmes (List[Arme]): Liste des armes dans l'inventaire du forgeron
     """
 
     def __init__(self, nom: str):
