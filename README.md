@@ -1,14 +1,24 @@
 # PythQuest
 
-PythQuest est un jeu de rôle textuel développé en Python. Le jeu utilise une architecture MVC (Modèle-Vue-Contrôleur) et inclut des fonctionnalités telles que la gestion de quêtes, de donjons, de monstres, et d'armes. Le projet est conçu pour être extensible et maintenable, avec des tests automatisés et une interface graphique prévue avec Tkinter.
+PythQuest est un jeu de rôle textuel développé en Python. Il inclut des fonctionnalités telles que la gestion de quêtes, de donjons, de monstres, et d'armes. Le projet est conçu pour être extensible et maintenable, avec des tests automatisés et une interface graphique prévue avec Tkinter.
 
 ## Table des matières
 
 - [PythQuest](#pythquest)
   - [Table des matières](#table-des-matières)
   - [Explication du jeu](#explication-du-jeu)
-  - [Installation](#installation)
-  - [Utilisation](#utilisation)
+  - [Bonnes pratiques de codage](#bonnes-pratiques-de-codage)
+    - [Nommage des variables et des fonctions](#nommage-des-variables-et-des-fonctions)
+    - [Structure du code](#structure-du-code)
+    - [Gestion des exceptions](#gestion-des-exceptions)
+    - [Tests automatisés](#tests-automatisés)
+    - [Documentation](#documentation)
+    - [Collaboration](#collaboration)
+  - [Informations supplémentaires](#informations-supplémentaires)
+    - [Architecture du projet](#architecture-du-projet)
+    - [Dépendances](#dépendances)
+    - [Exécution du jeu](#exécution-du-jeu)
+    - [Contribution](#contribution)
 
 ## Explication du jeu
 
@@ -22,31 +32,111 @@ PythQuest est un jeu de rôle qui permet au joueur d'incarner un aventurier qui 
 - **Inventaire** : le joueur peut consulter son inventaire pour voir les armes et les potions qu'il possède. Il peut également équiper une arme. Lorsqu'une arme est équipée, elle remplace l'arme actuelle du joueur.
 - **Statistiques** : le joueur peut consulter ses statistiques pour voir son niveau, son expérience, son or, et ses points de vie.
 
-## Installation
+## Bonnes pratiques de codage
 
-Pour installer et exécuter PythQuest, suivez les étapes ci-dessous :
+Ce projet suit plusieurs bonnes pratiques de codage pour assurer la maintenabilité et la lisibilité du code. Voici quelques-unes des pratiques suivies :
 
-1. Clonez le dépôt :
-    ```sh
-    git clone https://github.com/ThomasSanna/projet-POO-L3STI.git
-    cd PythQuest
-    ```
+### Nommage des variables et des fonctions
 
-2. Créez un environnement virtuel et activez-le :
-    ```sh
-    python -m venv env
-    .\env\Scripts\activate  # Sur Windows
-    source env/bin/activate  # Sur macOS/Linux
-    ```
+- Utilisez des noms de variables et de fonctions explicites et significatifs.
+- Utilisez le style camelCase pour les noms de variables et de fonctions. (ex: `nomDeVariable`, `nomDeFonction`)
+- Utilisez le style PascalCase pour les noms de classes. (ex: `NomDeClasse`)
+- Évitez les noms de variables génériques comme `x`, `y`, `temp`, etc.
 
-3. Installez les dépendances :
-    ```sh
-    pip install -r requirements.txt
-    ```
+### Structure du code
 
-## Utilisation
+- Séparez la logique applicative de l'interface utilisateur en utilisant le modèle MVC (Modèle-Vue-Contrôleur).
+- Organisez le code en modules et fichiers logiques.
+- Utilisez des docstrings pour documenter les classes, les méthodes et les fonctions. (Voir la section Documentation ci-dessous)
 
+### Gestion des exceptions
+
+- Gérez les exceptions de manière appropriée pour éviter les plantages inattendus.
+- Créez des exceptions personnalisées pour les erreurs spécifiques à l'application dans `models/exceptions.py`.
+- Utilisez des blocs try-except pour capturer et gérer les erreurs spécifiques.
+
+### Tests automatisés
+
+- Écrivez des tests unitaires pour vérifier le bon fonctionnement des différentes parties du code.
+- Utilisez des frameworks de test comme `unittest` ou `pytest` pour automatiser les tests.
+
+### Documentation
+
+- Documentez le code avec des commentaires et des docstrings.
+
+```python
+def ajout(a: int, b: int) -> int:
+    """
+    Ajoute deux nombres entiers.
+
+    :param a: Le premier nombre entier.
+    :param b: Le deuxième nombre entier.
+    :return: La somme des deux nombres entiers.
+    """
+    return a + b
+```
+
+- Utilisez des annotations de type pour spécifier les types de paramètres et de retour des fonctions.
+
+```python
+def addition(a: int, b: int) -> int:
+    return a + b
+```
+
+- Maintenez un fichier README à jour avec des instructions claires pour l'installation et l'utilisation du projet.
+
+### Collaboration
+
+- Utilisez Git pour le contrôle de version.
+- Mettez des commentaires significatifs dans les messages de commit.
+- Créez des branches pour chaque nouvelle fonctionnalité ou correction de bug.
+- Nommez les branches de manière significative
+- Fusionnez les branches dans `main` uniquement lorsque le code est stable et testé.
+
+## Informations supplémentaires
+
+### Architecture du projet
+
+Le projet utilise une architecture MVC (Modèle-Vue-Contrôleur) pour séparer la logique métier de l'interface utilisateur. Voici un aperçu des composants principaux :
+
+- **Modèle (Model)** : Contient les classes représentant les données et la logique métier du jeu. Les principales classes incluent :
+  - `Combattant` : Représente le joueur avec ses attributs et méthodes de gestion de combat et d'inventaire.
+  - `Donjon` : Représente les donjons explorables par le joueur, contenant des monstres.
+  - `Quete` : Représente les quêtes que le joueur peut accepter et accomplir.
+  - `Monstre` : Représente les monstres que le joueur peut combattre.
+  - `Arme` : Représente les armes que le joueur peut utiliser.
+  - `Forgeron` et `Medecin` : Représentent les PNJ (personnages non-joueurs) qui vendent des armes et des potions respectivement.
+
+- **Vue (View)** : Gère l'affichage des informations à l'utilisateur et la collecte des entrées utilisateur. Utilise Tkinter pour créer une interface graphique. Les principales responsabilités incluent :
+  - Affichage des statistiques du joueur.
+  - Affichage des quêtes et des donjons disponibles.
+  - Affichage des messages et des choix d'actions pour le joueur.
+
+- **Contrôleur (Controller)** : Coordonne les interactions entre le modèle et la vue, et gère la logique de flux du jeu. Les principales responsabilités incluent :
+  - Initialisation des instances de base (joueur, forgeron, médecin).
+  - Gestion des actions du joueur (achat d'armes, acceptation de quêtes, exploration de donjons).
+  - Mise à jour de l'interface utilisateur en fonction des actions du joueur.
+
+### Dépendances
+
+Le projet utilise les bibliothèques suivantes :
+- `random` : Pour générer des nombres aléatoires.
+- `typing` : Pour les annotations de type.
+- `tkinter` : Pour l'interface graphique.
+- `PIL` (Pillow) : Pour la gestion des images.
+
+### Exécution du jeu
 Pour lancer le jeu, exécutez le fichier principal :
 ```sh
 python main.py
 ```
+
+### Contribution
+Les contributions sont les bienvenues ! Pour contribuer, suivez ces étapes :
+1. Forkez le dépôt.
+2. Créez une branche pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`).
+3. Commitez vos modifications (`git commit -m 'Add some AmazingFeature'`).
+4. Poussez la branche (`git push origin feature/AmazingFeature`).
+5. Ouvrez une Pull Request.
+
+Nous espérons que vous apprécierez jouer à PythQuest et contribuer à son développement !
