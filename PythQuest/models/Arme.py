@@ -1,6 +1,6 @@
 import random
-from PIL import Image  # Ajout de l'importation de PIL
-from .ArmesImages import genererArme  # Importation de la fonction genererArme
+from PIL import Image 
+from .ArmesImages import genererArme 
 
 class Arme:
     """
@@ -84,7 +84,7 @@ class Arme:
         self.__nom = nom
         self.__valeurOr = valeurOr
         self.__degat = degat
-        self.__image = image  # Ajout de l'attribut image
+        self.__image = image
         print(f"Nouvelle arme créée : {self.__nom} ({self.__image}")
         
     @staticmethod
@@ -98,7 +98,7 @@ class Arme:
         suffixe, degatsSuffixe = random.choice(Arme.SUFFIXES)
         etat, pourcentageDegats = random.choice(Arme.ETAT_ARME)
         degats = int((degatsPrefixe + degatsSuffixe) * (pourcentageDegats / 100))
-        plageValeurOr = [degats*5 - 10, degats*5 + 30] # Valeur de l'arme entre degats*2 - 50 et degats*2 + 100
+        plageValeurOr = [degats*5 - 10, degats*5 + 30] # Valeur de l'arme entre degats*3 - 10 et degats*3 + 10
         valeurOr = random.randint(plageValeurOr[0], plageValeurOr[1])
         
         # Générer l'image de l'arme
@@ -116,7 +116,7 @@ class Arme:
         """
         prefixe = random.choice(Arme.PREFIXES)[0]
         suffixe = random.choice(Arme.SUFFIXES)[0]
-        plageValeurOr = [degats*3 - 10, degats*3 + 10] # Valeur de l'arme entre degats*2 - 50 et degats*2 + 100
+        plageValeurOr = [degats*3 - 10, degats*3 + 10] # Valeur de l'arme entre degats*3 - 10 et degats*3 + 10
         valeurOr = random.randint(plageValeurOr[0], plageValeurOr[1])
         
         # Générer l'image de l'arme

@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 import time
+from PIL import Image, ImageTk
 
-class ViewUI:
+class View:
     def __init__(self, root):
         self.root = root
         self.root.title("PythQuest")
@@ -20,6 +21,7 @@ class ViewUI:
         self.vie = tk.IntVar(value=100)
         self.niveau = tk.IntVar(value=1)
         self.experience = tk.IntVar(value=0)
+        self.armeEquipee = tk.StringVar(value="Poings (5 dgts)")
 
         # Frame du haut pour les stats (inchangé)
         self.statsFrame = ttk.Frame(root, relief="raised", borderwidth=2)
@@ -33,6 +35,9 @@ class ViewUI:
         
         self.niveauLabel = ttk.Label(self.statsFrame, text=f"Niveau: {self.niveau.get()} ({self.experience.get()}/{self.niveau.get() * 100})", foreground="#40c4ff")
         self.niveauLabel.grid(row=0, column=2, padx=10, pady=5)
+
+        self.armeLabel = ttk.Label(self.statsFrame, text=f"Arme équipée: {self.armeEquipee.get()}", foreground="#ffffff")
+        self.armeLabel.grid(row=0, column=3, padx=10, pady=5)
 
         # Frame pour la quête associée (inchangé)
         self.questFrame = ttk.Frame(root, relief="raised", borderwidth=2)
@@ -75,7 +80,7 @@ class ViewUI:
         self.choicesScrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         # Configuration du défilement avec la molette
-        self.choicesCanvas.bind_all("<MouseWheel>", self._on_mousewheel)
+        self.choicesCanvas.bind("<MouseWheel>", self._on_mousewheel)
 
         # Configuration des boutons (inchangée)
         style.configure("TButton", background="#424242", foreground="#ffffff")
@@ -114,12 +119,47 @@ class ViewUI:
         self.experience.set(experience)
         self.niveauLabel.config(text=f"Niveau: {self.niveau.get()} ({self.experience.get()}/{self.niveau.get() * 100})")
 
+    def updateArmeEquipee(self, armeNom, armeDgt):
+        self.armeEquipee.set(f"{armeNom} ({armeDgt} dgts)")
+        self.armeLabel.config(text=f"Arme équipée: {self.armeEquipee.get()}")
+
     def showMessage(self, message):
         msgLabel = ttk.Label(self.messageFrame, text=message, foreground="#b0bec5", font=("Arial", 9, "italic"))
         msgLabel.pack(anchor=tk.W, padx=10, pady=2)
         self.activeMessages.append(msgLabel)
         self.root.after(3000, lambda: self.removeMessage(msgLabel))
+    
+    def showChoicesWithImages(self, choicesList):
+        # Supprimer les anciens widgets
+        for widget in self.choicesInnerFrame.winfo_children():
+            widget.destroy()
 
+        # Ajouter les choix avec images et boutons
+        for choice in choicesList:
+            frame = ttk.Frame(self.choicesInnerFrame)
+            frame.pack(pady=3, fill=tk.X)
+
+            try:
+                # Redimensionner l'image et la convertir pour Tkinter
+                resized_image = choice["image"].resize((50, 50), Image.Resampling.LANCZOS)
+                photo_image = ImageTk.PhotoImage(resized_image)
+                
+                # Créer un label pour l'image
+                image_label = ttk.Label(frame, image=photo_image)
+                image_label.image = photo_image  # Garder une référence pour éviter la garbage collection
+                image_label.pack(side=tk.TOP, pady=5)
+            except Exception:
+                pass
+
+            # Créer un bouton avec le texte et la commande
+            btn = ttk.Button(frame, text=choice["text"], command=choice["command"])
+            btn.pack(side=tk.BOTTOM, fill=tk.X)
+
+        # Mettre à jour la région de défilement
+        self.choicesInnerFrame.update_idletasks()
+        self.choicesCanvas.configure(scrollregion=self.choicesCanvas.bbox("all"))
+        self.choicesCanvas.yview_moveto(0)  # Remettre le défilement en haut
+        
     def removeMessage(self, msgLabel):
         if msgLabel in self.activeMessages:
             msgLabel.destroy()

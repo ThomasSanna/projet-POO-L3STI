@@ -107,18 +107,5 @@ def genererArme(typeArme, suffixe, etat, degats, dossier="view"):
     
     # Superposer l'image de rareté
     arme.paste(rareteImg, (0, 0), rareteImg)
-
-    # Nom du fichier de sortie
-    output = f"{typeArme} {suffixe} {etat} {rarete}.png"
-    outputPath = os.path.join("models/assets/armes_crees", output)
-    
-    # Créer le dossier s'il n'existe pas
-    os.makedirs(os.path.dirname(outputPath), exist_ok=True)
-    
-    # Vérifier si le fichier existe déjà
-    if not os.path.exists(outputPath):
-        arme.save(outputPath)
-    else:
-        print(f"Le fichier {output} existe déjà.")
     
     return arme  # Retourner l'image générée

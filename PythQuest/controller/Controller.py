@@ -8,14 +8,14 @@ from models.Monstre import Monstre
 from models.Arme import Arme
 from models.GestionnaireDeQuetes import GestionnaireDeQuetes
 from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
-from view.ViewUI import ViewUI
+from view.View import View
 import random
 import time
 from typing import Tuple
 
-class ControllerUI:
+class Controller:
     def __init__(self, root):
-        self.view = ViewUI(root)
+        self.view = View(root)
         self.joueur = Combattant("Joueur") # a faire : demander le nom du joueur
         self.forgeron, self.medecin = self.initialiserInstances()
         self.creerQueteArme(self.joueur, 4, 6)
@@ -37,6 +37,8 @@ class ControllerUI:
         self.view.updateVie(self.joueur.getVie())
         self.view.updatePiece(self.joueur.getOr())
         self.view.updateNiveau(self.joueur.getNiveau(), self.joueur.getExperience())
+        armeEquippee = self.joueur.getArmeEquipee()
+        self.view.updateArmeEquipee(armeEquippee.getNom(), armeEquippee.getDegats())
 
     def afficherMenuPrincipal(self) -> None:
         self.view.supprimerMonstre()
@@ -61,9 +63,9 @@ class ControllerUI:
 
     def gestionForgeron(self) -> None:
         armes = self.forgeron.getInventaireArmes()
-        choices = [{"text": f"{arme}", "command": lambda arme=arme: self.acheterArme(arme)} for arme in armes]
+        choices = [{"text": f"{arme}", "image": arme.getImage(), "command": lambda arme=arme: self.acheterArme(arme)} for arme in armes]
         choices.append({"text": "Retour", "command": self.gestionAchats})
-        self.view.showChoices(choices)
+        self.view.showChoicesWithImages(choices)
 
     def acheterArme(self, arme: Arme) -> None:
         try:
@@ -193,14 +195,15 @@ class ControllerUI:
 
     def changerArme(self) -> None:
         armes = self.joueur.getInventaireArmes()
-        choices = [{"text": f"{arme}", "command": lambda arme=arme: self.equiperArme(arme)} for arme in armes]
+        choices = [{"text": f"{arme.getNom()} ({arme.getDegats()} dgts)", "image": arme.getImage(), "command": lambda arme=arme: self.equiperArme(arme)} for arme in armes]
         choices.append({"text": "Retour", "command": self.gestionPersonnage})
-        self.view.showChoices(choices)
+        self.view.showChoicesWithImages(choices)
 
     def equiperArme(self, arme: Arme) -> None:
         try:
             self.joueur.equiperArme(arme)
             self.view.showMessage(f"Vous avez équipé l'arme {arme.getNom()}.")
+            self.updateStats()
         except NoSuchItemError as e:
             self.view.showMessage(str(e))
         self.gestionPersonnage()

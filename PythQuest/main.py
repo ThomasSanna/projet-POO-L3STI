@@ -1,9 +1,9 @@
-from controller.ControllerUI import ControllerUI
+from controller.Controller import Controller
 import tkinter as tk
 
 def main():
     root = tk.Tk()
-    gameController = ControllerUI(root)
+    Controller(root)
     root.mainloop()
 
 if __name__ == "__main__":
