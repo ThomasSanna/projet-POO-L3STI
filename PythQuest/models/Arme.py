@@ -1,51 +1,98 @@
 import random
+from PIL import Image  # Ajout de l'importation de PIL
+from .ArmesImages import genererArme  # Importation de la fonction genererArme
 
 class Arme:
     """
-    Classe représentant une arme avec un nom, une valeur en or et des dégâts.
+    Classe représentant une arme avec un nom, une valeur en or, des dégâts et une image.
     """
     
     PREFIXES = (
-        ("Épée", 40), ("Hache", 50), ("Dague", 30), ("Arc", 35), ("Lance", 45),
+        ("Épée", 40), ("Hache", 50), ("Dague", 30), ("Lance", 45),
         ("Marteau", 55), ("Bâton", 25), ("Glaive", 60), ("Faux", 65), ("Fleuret", 30),
-        ("Katana", 45), ("Gourdin", 20), ("Bouclier", 15), ("Fouet", 25), ("Hallebarde", 55),
-        ("Masse", 50), ("Poignard", 35), ("Rapière", 40), ("Sceptre", 30), ("Trident", 50)
+        ("Katana", 45), ("Gourdin", 20), ("Fouet", 25), ("Hallebarde", 55),
+        ("Masse", 50), ("Poignard", 35), ("Trident", 50)
     )
+
     SUFFIXES = (
-        ("de Feu", 20), ("de Glace", 20), ("du Dragon", 30), ("des Ombres", 25), ("de Lumière", 20),
-        ("de la Nuit", 25), ("du Soleil", 30), ("de l'Aube", 20), ("du Crépuscule", 25), ("de la Tempête", 30),
-        ("de la Foudre", 35), ("de la Terre", 20), ("de l'Eau", 20), ("du Vent", 20), ("de l'Esprit", 25),
-        ("de la Forêt", 20), ("de la Montagne", 25), ("de l'Océan", 20), ("de la Lune", 20), ("des Étoiles", 25),
-        ("du Chaos", 35), ("de l'Ordre", 25), ("de la Mort", 40), ("de la Vie", 20), ("de l'Inconnu", 30),
-        ("de l'Ancien Temps", 35), ("du Guerrier", 25), ("du Mage", 20), ("du Voleur", 25), ("du Paladin", 30),
-        ("du Barbare", 35), ("du Ranger", 25), ("du Sorcier", 20), ("du Nécromancien", 35), ("du Druide", 25),
-        ("de l'Assassin", 30), ("du Chevalier", 25), ("en Acier", 15), ("en Fer", 10), ("en Or", 20),
-        ("en Argent", 15), ("en Bronze", 10), ("en Cuivre", 5), ("en Bois", 5), ("en Os", 10),
-        ("en Pierre", 10), ("en Cristal", 20), ("en Diamant", 30), ("en Saphir", 25), ("en Rubis", 25),
-        ("en Émeraude", 20), ("en Topaze", 15), ("en Améthyste", 20), ("en Opale", 15), ("en Quartz", 10),
-        ("en Jade", 20), ("en Mithril", 25), ("en Adamantium", 35), ("en Obsidienne", 30), ("en Verre", 5),
-        ("en Plastique", 1)
+        ("de Feu", 20),  
+        ("du Dragon", 30),  
+        ("de Glace", 20),  
+        ("des Ombres", 25),  
+        ("de la Nuit", 25),  
+        ("du Chaos", 35),  
+        ("de la Mort", 40),  
+        ("de Lumière", 20),  
+        ("du Soleil", 30),  
+        ("de la Lune", 20),  
+        ("des Étoiles", 25),  
+        ("de la Vie", 20),  
+        ("de la Tempête", 30),  
+        ("du Vent", 20),  
+        ("de la Foudre", 35),  
+        ("de l'Eau", 20),  
+        ("de l'Océan", 20),  
+        ("de l'Esprit", 25),  
+        ("de la Forêt", 20),  
+        ("en Bois", 5),  
+        ("du Guerrier", 25),  
+        ("du Mage", 20),  
+        ("du Voleur", 25),  
+        ("du Paladin", 30),  
+        ("du Barbare", 35),  
+        ("du Ranger", 25),  
+        ("du Sorcier", 20),  
+        ("du Nécromancien", 35),  
+        ("du Druide", 25),  
+        ("de l'Assassin", 30),  
+        ("du Chevalier", 25),  
+        ("en Argent", 15),  
+        ("en Adamantium", 35),  
+        ("en Acier", 15),  
+        ("en Fer", 10),  
+        ("en Cuivre", 5),  
+        ("en Os", 10),  
+        ("en Quartz", 10),  
+        ("en Pierre", 10),  
+        ("en Cristal", 20),  
+        ("en Diamant", 30),  
+        ("en Topaze", 15), 
+        ("en Opale", 15),  
+        ("en Saphir", 25),  
+        ("en Rubis", 25),  
+        ("en Émeraude", 20),  
+        ("en Jade", 20),  
+        ("en Améthyste", 20),  
+        ("en Obsidienne", 30),  
+        ("en Verre", 5),  
+        ("en Plastique", 1),  
+        ("en Or", 20),  
+        ("en Bronze", 10)
     )
+    
     ETAT_ARME = (
         ("Cassé", 20), ("Endommagé", 40), ("Usé", 60), ("Solide", 80), ("Neuf", 90)
     )
     
-    def __init__(self, nom: str, valeurOr: int, degat: int):
+    def __init__(self, nom: str, valeurOr: int, degat: int, image: Image.Image=None):
         """
         Initialise une nouvelle arme.
 
         :param nom: Le nom de l'arme.
         :param valeurOr: La valeur en or de l'arme.
         :param degat: Les dégâts de l'arme.
+        :param image: L'image de l'arme.
         """
         self.__nom = nom
         self.__valeurOr = valeurOr
         self.__degat = degat
+        self.__image = image  # Ajout de l'attribut image
+        print(f"Nouvelle arme créée : {self.__nom} ({self.__image}")
         
     @staticmethod
     def creerArmeAleatoire() -> "Arme":
         """
-        Crée une arme aléatoire avec un nom, une valeur en or et des dégâts.
+        Crée une arme aléatoire avec un nom, une valeur en or, des dégâts et une image.
 
         :return: Une instance de la classe Arme.
         """
@@ -56,7 +103,10 @@ class Arme:
         plageValeurOr = [degats*5 - 10, degats*5 + 30] # Valeur de l'arme entre degats*2 - 50 et degats*2 + 100
         valeurOr = random.randint(plageValeurOr[0], plageValeurOr[1])
         
-        return Arme(f"{prefixe} {suffixe} ({etat})", valeurOr, degats)
+        # Générer l'image de l'arme
+        image = genererArme(prefixe, suffixe, etat, degats)
+        
+        return Arme(f"{prefixe} {suffixe} ({etat})", valeurOr, degats, image)
     
     @staticmethod
     def creerArme(degats: int) -> "Arme":
@@ -71,7 +121,10 @@ class Arme:
         plageValeurOr = [degats*3 - 10, degats*3 + 10] # Valeur de l'arme entre degats*2 - 50 et degats*2 + 100
         valeurOr = random.randint(plageValeurOr[0], plageValeurOr[1])
         
-        return Arme(f"{prefixe} {suffixe} (Rouillé)", valeurOr, degats//1.5)
+        # Générer l'image de l'arme
+        image = genererArme(prefixe, suffixe, "Rouillé", degats)
+        
+        return Arme(f"{prefixe} {suffixe} (Rouillé)", valeurOr, degats//1.5, image)
     
     def getNom(self) -> str:
         """
@@ -96,6 +149,14 @@ class Arme:
         :return: Les dégâts de l'arme.
         """
         return self.__degat
+    
+    def getImage(self) -> Image.Image:
+        """
+        Retourne l'image de l'arme.
+
+        :return: L'image de l'arme.
+        """
+        return self.__image
     
     def setDegats(self, degat: int) -> None:
         """
