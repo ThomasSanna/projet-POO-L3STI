@@ -10,35 +10,27 @@ entity Combattant {
     niveau: int
     experience: int
     inventairePotions: int
-    armeEquipee_id: int <<FK>>
-    queteActuelle_id: int <<FK>>
 }
 
 entity Arme {
     id: int <<PK>>
-    combattant_id: int <<PK>> <<FK>>
     nom: str
     valeurOr: int
     degat: int
-    inventaire_combattant_id: int <<FK>>
-    inventaire_forgeron_id: int <<FK>>
+    image: blob
 }
 
 entity Quete {
     id: int <<PK>>
-    combattant_id: int <<PK>> <<FK>>
     nom: str
     recompenseOr: int
     difficulte: int
     statut: str
     niveau: int
-    monstreCible_id: int <<FK>>
-    donjonAssocie_id: int <<FK>>
 }
 
 entity Donjon {
     id: int <<PK>>
-    combattant_id: int <<PK>> <<FK>>
     nom: str
     difficulte: int
     statut: str
@@ -47,24 +39,19 @@ entity Donjon {
 
 entity Monstre {
     id: int <<PK>>
-    combattant_id: int <<PK>> <<FK>>
     nom: str
     piece: int
     vie: int
     niveau: int
-    armePossedee_id: int <<FK>>
-    donjon_id: int <<FK>>
 }
 
 entity Forgeron {
     id: int <<PK>>
-    combattant_id: int <<PK>> <<FK>>
     nom: str
 }
 
 entity Medecin {
     id: int <<PK>>
-    combattant_id: int <<PK>> <<FK>>
     nom: str
     prixPotion: int
     stockPotions: int
@@ -77,4 +64,6 @@ Donjon "1" -- "0..*" Monstre : contient
 Monstre "1" -- "1" Arme : possède
 Combattant "1" -- "1" Forgeron : a
 Combattant "1" -- "1" Medecin : a
+Quete "1" -- "0..*" Monstre : cible
+Quete "1" -- "1" Donjon : associe
 @enduml

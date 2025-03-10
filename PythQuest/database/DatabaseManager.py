@@ -8,10 +8,23 @@ from models.Forgeron import Forgeron
 from models.Medecin import Medecin
 
 class DatabaseManager:
-    @staticmethod
-    def sauvegarder():
-      return
+  
+  def __init__(self):
+    self.conn = getDbConnection()
+    self.cursor = self.conn.cursor() # exécuter des requêtes SQL
+    self.id = None
+  
+  def sEnregistrer(self, username: str, password: str) -> bool:
+    """
+    Enregistre un utilisateur dans la base de données.
     
-    @staticmethod
-    def charger(id: int) :
-      return
+    :param username: Le nom d'utilisateur.
+    :param password: Le mot de passe.
+    :return: True si l'utilisateur a été enregistré, False sinon.
+    """
+    self.cursor.execute("SELECT * FROM Utilisateur WHERE nomUtilisateur = ?", (username,))
+    if self.cursor.fetchone() is not None:
+      return False
+    self.cursor.execute("INSERT INTO Utilisateur (nomUtilisateur, motDePasse) VALUES (?, ?)", (username, password))
+    self.conn.commit()
+    return True  

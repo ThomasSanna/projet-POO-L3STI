@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 04 mars 2025 à 10:59
+-- Généré le : lun. 10 mars 2025 à 10:05
 -- Version du serveur : 10.4.28-MariaDB
 -- Version de PHP : 8.2.4
 
@@ -33,6 +33,7 @@ CREATE TABLE `arme` (
   `nom` varchar(255) DEFAULT NULL,
   `valeurOr` int(11) DEFAULT NULL,
   `degat` int(11) DEFAULT NULL,
+  `image` blob NOT NULL COMMENT 'Image PIL en Binaire',
   `inventaire_combattant_id` int(11) DEFAULT NULL,
   `inventaire_forgeron_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -142,7 +143,7 @@ CREATE TABLE `quete` (
 -- Index pour la table `arme`
 --
 ALTER TABLE `arme`
-  ADD PRIMARY KEY (`id`, `combattant_id`),
+  ADD PRIMARY KEY (`id`,`combattant_id`),
   ADD KEY `combattant_id` (`combattant_id`),
   ADD KEY `inventaire_combattant_id` (`inventaire_combattant_id`),
   ADD KEY `inventaire_forgeron_id` (`inventaire_forgeron_id`);
@@ -151,34 +152,34 @@ ALTER TABLE `arme`
 -- Index pour la table `combattant`
 --
 ALTER TABLE `combattant`
-  ADD PRIMARY KEY (`id`, `email`);
+  ADD PRIMARY KEY (`id`,`email`);
 
 --
 -- Index pour la table `donjon`
 --
 ALTER TABLE `donjon`
-  ADD PRIMARY KEY (`id`, `combattant_id`),
+  ADD PRIMARY KEY (`id`,`combattant_id`),
   ADD KEY `combattant_id` (`combattant_id`);
 
 --
 -- Index pour la table `forgeron`
 --
 ALTER TABLE `forgeron`
-  ADD PRIMARY KEY (`id`, `combattant_id`),
+  ADD PRIMARY KEY (`id`,`combattant_id`),
   ADD KEY `combattant_id` (`combattant_id`);
 
 --
 -- Index pour la table `medecin`
 --
 ALTER TABLE `medecin`
-  ADD PRIMARY KEY (`id`, `combattant_id`),
+  ADD PRIMARY KEY (`id`,`combattant_id`),
   ADD KEY `combattant_id` (`combattant_id`);
 
 --
 -- Index pour la table `monstre`
 --
 ALTER TABLE `monstre`
-  ADD PRIMARY KEY (`id`, `combattant_id`),
+  ADD PRIMARY KEY (`id`,`combattant_id`),
   ADD KEY `combattant_id` (`combattant_id`),
   ADD KEY `armePossedee_id` (`armePossedee_id`),
   ADD KEY `donjon_id` (`donjon_id`);
@@ -187,7 +188,7 @@ ALTER TABLE `monstre`
 -- Index pour la table `quete`
 --
 ALTER TABLE `quete`
-  ADD PRIMARY KEY (`id`, `combattant_id`),
+  ADD PRIMARY KEY (`id`,`combattant_id`),
   ADD KEY `combattant_id` (`combattant_id`),
   ADD KEY `monstreCible_id` (`monstreCible_id`),
   ADD KEY `donjonAssocie_id` (`donjonAssocie_id`);
