@@ -14,17 +14,5 @@ class DatabaseManager:
     self.cursor = self.conn.cursor() # exécuter des requêtes SQL
     self.id = None
   
-  def sEnregistrer(self, username: str, password: str) -> bool:
-    """
-    Enregistre un utilisateur dans la base de données.
-    
-    :param username: Le nom d'utilisateur.
-    :param password: Le mot de passe.
-    :return: True si l'utilisateur a été enregistré, False sinon.
-    """
-    self.cursor.execute("SELECT * FROM Utilisateur WHERE nomUtilisateur = ?", (username,))
-    if self.cursor.fetchone() is not None:
-      return False
-    self.cursor.execute("INSERT INTO Utilisateur (nomUtilisateur, motDePasse) VALUES (?, ?)", (username, password))
-    self.conn.commit()
-    return True  
+  def sEnregistrer(self, nom: str, email: str, password: str) -> bool:
+    return
