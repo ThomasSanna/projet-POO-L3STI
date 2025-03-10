@@ -246,7 +246,8 @@ class Controller:
         if monstre.estMort():
             messages = self.joueur.battreMonstre(monstre, donjon)
             for message in messages:
-                if message.startswith("Félicitations ! Vous avez terminé la") or message.startswith("Félicitations ! Vous avez atteint le niveau"):
+                if message.startswith("Félicitations ! Vous avez terminé la") or message.startswith("Félicitations ! Vous avez atteint le niveau"): # Quête terminée ou niveau monté
+                    self.medecin.restockPotions()
                     self.creerQueteArme(self.joueur, 1, 2)
                     if message.startswith("Félicitations ! Vous avez terminé la"):
                         self.view.updateQuestInfo(None)
