@@ -60,7 +60,9 @@ class Controller:
             GestionnaireDeQuetes.creerQueteDonjonMonstres(joueur.getNiveau())
         for _ in range(random.randint(1, 2)):
             self.forgeron.forgerArme()
+        self.medecin.restockPotions()
 
+        
     def updateStats(self) -> None:
         """
         Met à jour les statistiques du joueur dans l'interface graphique (vie, pièces, niveau, arme équipée).
@@ -247,7 +249,6 @@ class Controller:
             messages = self.joueur.battreMonstre(monstre, donjon)
             for message in messages:
                 if message.startswith("Félicitations ! Vous avez terminé la") or message.startswith("Félicitations ! Vous avez atteint le niveau"): # Quête terminée ou niveau monté
-                    self.medecin.restockPotions()
                     self.creerQueteArme(self.joueur, 1, 2)
                     if message.startswith("Félicitations ! Vous avez terminé la"):
                         self.view.updateQuestInfo(None)

@@ -41,6 +41,7 @@ Ce projet suit plusieurs bonnes pratiques de codage pour assurer la maintenabili
 - Utilisez des noms de variables et de fonctions explicites et significatifs.
 - Utilisez le style camelCase pour les noms de variables et de fonctions. (ex: `nomDeVariable`, `nomDeFonction`)
 - Utilisez le style PascalCase pour les noms de classes. (ex: `NomDeClasse`)
+- Utilisez le style snake_case pour les noms de constantes. (ex: `NOM_DE_CONSTANTE`).
 - Évitez les noms de variables génériques comme `x`, `y`, `temp`, etc.
 
 ### Structure du code
@@ -48,6 +49,7 @@ Ce projet suit plusieurs bonnes pratiques de codage pour assurer la maintenabili
 - Séparez la logique applicative de l'interface utilisateur en utilisant le modèle MVC (Modèle-Vue-Contrôleur).
 - Organisez le code en modules et fichiers logiques.
 - Utilisez des docstrings pour documenter les classes, les méthodes et les fonctions. (Voir la section Documentation ci-dessous)
+- Utilisez des constantes pour éviter les valeurs en dur dans le code.
 
 ### Gestion des exceptions
 
