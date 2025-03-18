@@ -7,31 +7,6 @@ class View:
     """
     Classe représentant la vue du jeu
     Cette classe ne doit pas utiliser de méthodes de contrôleur
-    
-    Attributs:
-        root (tk.Tk): Fenêtre principale de l'application
-        piece (tk.IntVar): Pièces du joueur
-        vie (tk.IntVar): Vie du joueur
-        niveau (tk.IntVar): Niveau du joueur
-        experience (tk.IntVar): Expérience du joueur
-        armeEquipee (tk.StringVar): Arme équipée par le joueur
-        statsFrame (ttk.Frame): Frame pour les statistiques
-        pieceLabel (ttk.Label): Label pour les pièces
-        vieLabel (ttk.Label): Label pour la vie
-        niveauLabel (ttk.Label): Label pour le niveau
-        armeLabel (ttk.Label): Label pour l'arme équipée
-        questFrame (ttk.Frame): Frame pour la quête
-        questLabel (ttk.Label): Label pour le nom de la quête
-        monsterLabel (ttk.Label): Label pour le monstre de la quête
-        dungeonLabel (ttk.Label): Label pour le donjon de la quête
-        imageFrame (ttk.Frame): Frame pour les images
-        messageFrame (ttk.Frame): Frame pour les messages
-        activeMessages (list): Liste des messages actifs
-        choicesFrame (ttk.Frame): Frame pour les choix
-        choicesCanvas (tk.Canvas): Canvas pour les choix
-        choicesScrollbar (ttk.Scrollbar): Scrollbar pour les choix
-        choicesInnerFrame (ttk.Frame): Frame interne pour les boutons
-        monsterImage (tk.PhotoImage): Image du monstre
     """
     
     def __init__(self, root):
@@ -61,7 +36,7 @@ class View:
         self.experience = tk.IntVar(value=0)
         self.armeEquipee = tk.StringVar(value="Poings (5 dgts)")
 
-        # Frame du haut pour les stats (inchangé)
+        # Frame du haut pour les stats 
         self.statsFrame = ttk.Frame(root, relief="raised", borderwidth=2)
         self.statsFrame.pack(side=tk.TOP, anchor=tk.NW, padx=10, pady=10, fill=tk.X)
 
@@ -77,24 +52,24 @@ class View:
         self.armeLabel = ttk.Label(self.statsFrame, text=f"Arme équipée: {self.armeEquipee.get()}", foreground="#ffffff")
         self.armeLabel.grid(row=0, column=3, padx=10, pady=5)
 
-        # Frame pour la quête associée (inchangé)
+        # Frame pour la quête associée 
         self.questFrame = ttk.Frame(root, relief="raised", borderwidth=2)
         self.questFrame.pack(side=tk.TOP, anchor=tk.NE, padx=10, pady=10)
 
         self.questLabel = ttk.Label(self.questFrame, text="Quête: Aucune", foreground="#ffffff", font=("Arial", 11, "bold"))
         self.questLabel.grid(row=0, column=0, padx=10, pady=5)
         
-        self.monsterLabel = ttk.Label(self.questFrame, text="", foreground="#ff7043")
-        self.monsterLabel.grid(row=1, column=0, padx=10, pady=2)
+        self.monstreLabel = ttk.Label(self.questFrame, text="", foreground="#ff7043")
+        self.monstreLabel.grid(row=1, column=0, padx=10, pady=2)
         
         self.dungeonLabel = ttk.Label(self.questFrame, text="", foreground="#66bb6a")
         self.dungeonLabel.grid(row=2, column=0, padx=10, pady=2)
 
-        # Frame central pour les images (inchangé)
+        # Frame central pour les images 
         self.imageFrame = ttk.Frame(root, relief="sunken", borderwidth=2)
         self.imageFrame.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
 
-        # Frame pour les messages (inchangé)
+        # Frame pour les messages 
         self.messageFrame = ttk.Frame(root, height=100, relief="groove", borderwidth=2)
         self.messageFrame.pack_propagate(False)
         self.messageFrame.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=(0, 10))
@@ -120,13 +95,14 @@ class View:
         # Configuration du défilement avec la molette
         self.choicesCanvas.bind("<MouseWheel>", self._on_mousewheel)
 
-        # Configuration des boutons (inchangée)
+        # Configuration des boutons 
         style.configure("TButton", background="#424242", foreground="#ffffff")
         style.map("TButton", background=[("active", "#616161")])
 
     def _on_mousewheel(self, event):
         """
         Gère le défilement du Canvas avec la molette de la souris
+        Utilise : choicesCanvas pour le défilement
         
         :param event: Événement de la molette de la souris
         """
@@ -135,6 +111,8 @@ class View:
     def showChoices(self, choicesList):
         """
         Affiche une liste de choix sous forme de boutons
+        Utilise : choicesInnerFrame pour ajouter les boutons
+        Utilise : choicesCanvas pour gérer le défilement
         
         :param choicesList: Liste de dictionnaires contenant le texte et la commande de chaque choix
         """
@@ -154,6 +132,7 @@ class View:
     def updatePiece(self, amount):
         """
         Met à jour le nombre de pièces du joueur
+        Utilise : pieceLabel dans statsFrame pour afficher le montant de pièces
         
         :param amount: Nouveau montant de pièces
         """
@@ -163,6 +142,7 @@ class View:
     def updateVie(self, amount):
         """
         Met à jour la vie du joueur
+        Utilise : vieLabel dans statsFrame pour afficher le montant de vie
         
         :param amount: Nouveau montant de vie
         """
@@ -172,6 +152,7 @@ class View:
     def updateNiveau(self, niveau, experience):
         """
         Met à jour le niveau et l'expérience du joueur
+        Utilise : niveauLabel dans statsFrame pour afficher le niveau et l'expérience
         
         :param niveau: Nouveau niveau du joueur
         :param experience: Nouvelle expérience du joueur
@@ -183,6 +164,7 @@ class View:
     def updateArmeEquipee(self, armeNom, armeDgt):
         """
         Met à jour l'arme équipée par le joueur
+        Utilise : armeLabel dans statsFrame pour afficher le nom et les dégâts de l'arme
         
         :param armeNom: Nom de la nouvelle arme équipée
         :param armeDgt: Dégâts de la nouvelle arme équipée
@@ -193,6 +175,8 @@ class View:
     def showMessage(self, message):
         """
         Affiche un message dans la frame dédiée
+        Utilise : messageFrame pour afficher le message
+        Utilise : activeMessages pour garder une trace des messages actifs
         
         :param message: Message à afficher
         """
@@ -204,6 +188,8 @@ class View:
     def showChoicesWithImages(self, choicesList):
         """
         Affiche une liste de choix avec des images au dessus des boutons
+        Utilise : choicesInnerFrame pour ajouter les boutons et les images
+        Utilise : choicesCanvas pour gérer le défilement
         
         :param choicesList: Liste de dictionnaires contenant le texte, l'image et la commande de chaque choix
         """
@@ -240,6 +226,8 @@ class View:
     def removeMessage(self, msgLabel):
         """
         Supprime un message de la frame dédiée
+        Utilise : messageFrame pour supprimer le message
+        Utilise : activeMessages pour garder une trace des messages actifs
         
         :param msgLabel: Label du message à supprimer
         """
@@ -250,6 +238,12 @@ class View:
     def afficherMonstre(self, nom, vie, arme):
         """
         Affiche les informations d'un monstre
+        Utilise : imageFrame pour afficher les informations du monstre
+        imageFrame contient :
+        - nomLabel : Label pour le nom du monstre
+        - vieLabel : Label pour la vie du monstre
+        - armeLabel : Label pour l'arme du monstre
+        - imageLabel : Label pour l'image du monstre
         
         :param nom: Nom du monstre
         :param vie: Vie du monstre
@@ -268,8 +262,8 @@ class View:
         armeLabel.pack(pady=5)
 
         try:
-            self.monsterImage = tk.PhotoImage(file="view/assets/monstre/zombie.png").subsample(3, 3)
-            imageLabel = ttk.Label(self.imageFrame, image=self.monsterImage)
+            self.monstreImage = tk.PhotoImage(file="view/assets/monstre/zombie.png").subsample(3, 3)
+            imageLabel = ttk.Label(self.imageFrame, image=self.monstreImage)
             imageLabel.pack(pady=2)
         except tk.TclError:
             ttk.Label(self.imageFrame, text="[Image indisponible]", foreground="#757575").pack(pady=10)
@@ -277,6 +271,7 @@ class View:
     def supprimerMonstre(self):
         """
         Supprime les informations du monstre affiché pour y laisser un espace vide
+        Utilise : imageFrame pour supprimer les informations du monstre
         """
         for widget in self.imageFrame.winfo_children():
             widget.destroy()
@@ -284,6 +279,7 @@ class View:
     def updateMonstre(self, vie):
         """
         Met à jour la vie du monstre à afficher
+        Utilise : imageFrame pour mettre à jour les informations du monstre
         
         :param vie: Nouvelle vie du monstre
         """
@@ -295,14 +291,15 @@ class View:
     def updateQuestInfo(self, quete=None):
         """
         Met à jour les informations de la quête en cours du combattant
+        Utilise : questFrame pour mettre à jour les informations de la quête
         
         :param quete: Quête à afficher
         """
         if quete:
             self.questLabel.config(text=f"Quête: {quete.getNom()}")
-            self.monsterLabel.config(text=f"Monstre: {quete.getMonstreCible().getNom()}")
+            self.monstreLabel.config(text=f"Monstre: {quete.getMonstreCible().getNom()}")
             self.dungeonLabel.config(text=f"Donjon: {quete.getDonjonAssocie().getNom()}")
         else:
             self.questLabel.config(text="Quête: Aucune")
-            self.monsterLabel.config(text="")
+            self.monstreLabel.config(text="")
             self.dungeonLabel.config(text="")

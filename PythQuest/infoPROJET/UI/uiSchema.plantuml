@@ -1,0 +1,44 @@
+@startuml uiSchema
+
+package "Fenêtre principale (root)" {
+    frame "View" {
+        ' Frame du haut pour les stats
+        frame "statsFrame" {
+            label "pieceLabel: Pièces"
+            label "vieLabel: Vie"
+            label "niveauLabel: Niveau"
+            label "armeLabel: Arme équipée"
+        }
+
+        ' Frame pour la quête associée
+        frame "questFrame" {
+            label "questLabel: Quête"
+            label "monsterLabel: Monstre"
+            label "dungeonLabel: Donjon"
+        }
+
+        ' Frame central pour les images
+        frame "imageFrame" {
+            label "nomLabel: Nom du monstre"
+            label "vieLabel: Vie du monstre"
+            label "armeLabel: Arme du monstre"
+            label "monsterImage: Image du monstre"
+        }
+
+        ' Frame pour les messages
+        frame "messageFrame" {
+            label "msgLabel: Message"
+        }
+
+        ' Frame pour les choix avec scrollbar
+        frame "choicesFrame" {
+            frame "choicesCanvas" {
+                frame "choicesInnerFrame" {
+                    label "btn: Bouton de choix"
+                }
+            }
+            label "choicesScrollbar: Scrollbar"
+        }
+    }
+}
+@enduml
