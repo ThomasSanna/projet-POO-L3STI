@@ -7,3 +7,7 @@ Connaître tout ce qu'on a fait avec l'IA
 Des "logs" à dire de ce qu'on a changé sur les anciennes versions (autocritiques) (ex: print dans combattant qu'on a ensuite mis dans la view, changement or_ en piece)
 $$ faire des diapos/illustrations avec les points compliqués à comprendre (comment marche une quete)
 $$ faire des schema pour savoir à quoi ressemblera l'interface graphique Tkinter
+
+prochaines features :
+- sauvegarde de la partie
+- mettre des musiques ?
