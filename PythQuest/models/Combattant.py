@@ -391,6 +391,13 @@ class Combattant(Personnage):
             result += f"{i + 1}. {arme}\n"
         result += f"{self.getNbArmesInventaire() + 1}. Retour\n"
         return result
+    
+    def getMaxVie(self) -> int:
+        """
+        Retourne la vie maximale du combatt
+        :return: La vie maximale.
+        """
+        return self.maxVie
 
     def __repr__(self) -> str:
         """

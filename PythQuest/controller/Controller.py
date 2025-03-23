@@ -67,7 +67,7 @@ class Controller:
         """
         Met à jour les statistiques du joueur dans l'interface graphique (vie, pièces, niveau, arme équipée).
         """
-        self.view.updateVie(self.joueur.getVie())
+        self.view.updateVie(self.joueur.getVie(), self.joueur.getMaxVie())
         self.view.updatePiece(self.joueur.getOr())
         self.view.updateNiveau(self.joueur.getNiveau(), self.joueur.getExperience())
         armeEquippee = self.joueur.getArmeEquipee()

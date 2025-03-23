@@ -32,6 +32,7 @@ class View:
         # Variables du jeu (inchangées)
         self.piece = tk.IntVar(value=0)
         self.vie = tk.IntVar(value=100)
+        self.maxVie = tk.IntVar(value=100)
         self.niveau = tk.IntVar(value=1)
         self.experience = tk.IntVar(value=0)
         self.armeEquipee = tk.StringVar(value="Poings (5 dgts)")
@@ -43,7 +44,7 @@ class View:
         self.pieceLabel = ttk.Label(self.statsFrame, text=f"Pièces: {self.piece.get()}", foreground="#ffd700")
         self.pieceLabel.grid(row=0, column=0, padx=10, pady=5)
         
-        self.vieLabel = ttk.Label(self.statsFrame, text=f"Vie: {self.vie.get()}", foreground="#ff4040")
+        self.vieLabel = ttk.Label(self.statsFrame, text=f"Vie: {self.vie.get()}/{self.maxVie.get()}", foreground="#ff4040")
         self.vieLabel.grid(row=0, column=1, padx=10, pady=5)
         
         self.niveauLabel = ttk.Label(self.statsFrame, text=f"Niveau: {self.niveau.get()} ({self.experience.get()}/{self.niveau.get() * 100})", foreground="#40c4ff")
@@ -139,7 +140,7 @@ class View:
         self.piece.set(amount)
         self.pieceLabel.config(text=f"Pièces: {self.piece.get()}")
 
-    def updateVie(self, amount):
+    def updateVie(self, amount, maxAmount):
         """
         Met à jour la vie du joueur
         Utilise : vieLabel dans statsFrame pour afficher le montant de vie
@@ -147,7 +148,8 @@ class View:
         :param amount: Nouveau montant de vie
         """
         self.vie.set(amount)
-        self.vieLabel.config(text=f"Vie: {self.vie.get()}")
+        self.maxVie.set(maxAmount)
+        self.vieLabel.config(text=f"Vie: {self.vie.get()}/{self.maxVie.get()}")
 
     def updateNiveau(self, niveau, experience):
         """
