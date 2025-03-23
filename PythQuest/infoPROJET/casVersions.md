@@ -26,7 +26,6 @@ V1 :
     - Réussite de la quête
       - Gain d'expérience
       - Gain d'or de la quête
-- Création de Quête, Donjon, Monstres automatisés au début du jeu et à la fin d'une quête, difficulté selon le niveau du joueur
 
 V2 :
 
@@ -41,6 +40,7 @@ V2 :
 - Ajout d'une interface graphique avec Tkinter
 - Equilibrage du jeu
   - Ajustement des récompenses et de la difficulté
+- Création de Quête, Donjon, Monstres automatisés au début du jeu et à la fin d'une quête, difficulté selon le niveau du joueur
 
 V3 :
 

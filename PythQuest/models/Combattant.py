@@ -6,21 +6,34 @@ from typing import List, Optional
 from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
 
 class Combattant(Personnage):
-    """Classe représentant un combattant, héritant de Personnage, avec des fonctionnalités de combat et de gestion d'inventaire."""
+    """
+    Classe représentant un combattant, héritant de Personnage, avec des fonctionnalités de combat et de gestion d'inventaire.
+    
+    Attributs:
+        maxVie (int): La vie maximale du combattant.
+        inventairePotions (int): Le nombre de potions dans l'inventaire.
+        armeEquipee (Arme): L'arme actuellement équipée.
+        inventaireArmes (List[Arme]): La liste des armes dans l'inventaire.
+        queteActuelle (Optional[Quete]): La quête actuellement active.
+        donjonsExplores (List[Donjon]): La liste des donjons explorés.
+        niveau (int): Le niveau du combattant. Une augmentation de niveau augmente la vie maximale, mais aussi la force des monstres dans le futur.
+        experience (int): L'expérience du combattant. Un certain nombre d'expérience est nécessaire pour passer au niveau suivant.
+    """
 
     GAIN_POTION: int = 15  # Quantité de vie gagnée par potion
     NB_POTION_MAX: int = 10  # Nombre maximum de potions dans l'inventaire
 
-    def __init__(self, nom: str, or_: int = 0, vie: int = 100) -> None:
+    def __init__(self, nom: str, piece: int = 0, vie: int = 100) -> None:
         """
         Initialise un nouveau Combattant avec le nom, l'or et la vie spécifiés.
 
         :param nom: Le nom du combattant.
-        :param or_: La quantité d'or initiale du combattant. Par défaut 0.
+        :param piece: La quantité d'or initiale du combattant. Par défaut 0.
         :param vie: La vie initiale du combattant. Par défaut 100.
         """
-        super().__init__(nom, or_, vie)
+        super().__init__(nom, piece, vie)
         self.maxVie: int = vie
+        self.vie: int = vie
         self.inventairePotions: int = 0
         self.armeEquipee: Arme = Arme("Poings", 0, 5)
         self.inventaireArmes: List[Arme] = []
@@ -29,24 +42,27 @@ class Combattant(Personnage):
         self.niveau: int = 1
         self.experience: int = 0
 
-    def gagnerExperience(self, exp: int) -> None:
+    def gagnerExperience(self, exp: int) -> List[str]:
         """
         Permet au combattant de gagner de l'expérience.
 
         :param exp: La quantité d'expérience à gagner. Doit être positive.
         :raises ValueError: Si exp est négatif ou nul.
+        :return: Liste des messages à afficher.
         """
+        messages = []
         if exp <= 0:
             raise ValueError("L'expérience gagnée doit être positive.")
         self.experience += exp
         expNiveauSuivant = self.niveau * 100
-        print(f"Vous avez gagné {exp} points d'expérience.")
-        print(f"Vous avez maintenant {self.experience}/{expNiveauSuivant} points d'expérience.")
+        messages.append(f"Vous avez gagné {exp} points d'expérience.")
+        messages.append(f"Vous avez maintenant {self.experience}/{expNiveauSuivant} points d'expérience.")
         while self.experience >= self.niveau * 100:
+            self.experience -= self.niveau * 100
             self.niveau += 1
-            self.experience = self.experience - self.niveau * 100
-            self.maxVie = int(self.maxVie * 1.5)
-            print(f"Félicitations ! Vous avez atteint le niveau {self.niveau}. Votre vie maximale est maintenant de {self.maxVie}.")
+            self.maxVie = int(self.maxVie + 100)
+            messages.append(f"Félicitations ! Vous avez atteint le niveau {self.niveau}. Votre vie maximale est maintenant de {self.maxVie}.")
+        return messages
 
     def estMort(self) -> bool:
         """
@@ -56,16 +72,19 @@ class Combattant(Personnage):
         """
         return self.vie <= 0
 
-    def resetApresMort(self) -> None:
+    def resetApresMort(self) -> List[str]:
         """
         Réinitialise le combattant après sa mort.
 
         Le combattant perd la moitié de son or et sa vie est réinitialisée à la moitié de sa vie maximale.
+        :return: Liste des messages à afficher.
         """
-        print("Vous êtes mort.")
-        print(f"Vous perdez {self.or_//1.5} pièces d'or.")
+        messages = []
+        messages.append("Vous êtes mort.")
+        messages.append(f"Vous perdez {self.piece // 1.5} pièces d'or.")
         self.vie = self.maxVie // 1.5
-        self.perdreOr(self.or_ // 1.5)
+        self.perdreOr(self.piece // 1.5)
+        return messages
 
     def gagnerPotion(self) -> None:
         """
@@ -193,7 +212,7 @@ class Combattant(Personnage):
         :raises InventoryFullError: Si l'inventaire de potions du combattant est plein.
         """
         prixPotion = medecin.getPrixPotion()
-        if self.or_ < prixPotion:
+        if self.piece < prixPotion:
             raise InsufficientFundsError("Vous n'avez pas assez d'or pour acheter une potion.")
         if medecin.getStockPotions() <= 0:
             raise NoSuchItemError("Le médecin n'a plus de potions en stock.")
@@ -223,30 +242,46 @@ class Combattant(Personnage):
         if self.queteActuelle is None:
             raise NoActiveQuestError("Vous n'avez pas de quête active.")
         self.queteActuelle.queteFinie()
+        messages = []
+        messages.append("Félicitations ! Vous avez terminé la " + str(self.queteActuelle.getNom()) + " !")
+        messages.append(f"Vous avez gagné {self.queteActuelle.getRecompenseOr()} pièces d'or.")
         self.gagnerOr(self.queteActuelle.getRecompenseOr())
         self.gagnerExperience(int((self.queteActuelle.getDifficulte() / 1.3) * 30 * self.niveau / 1.3))
         self.queteActuelle = None
+        return messages
 
-    def battreMonstre(self, monstre: "Monstre", donjon: "Donjon") -> None:
+    def battreMonstre(self, monstre: "Monstre", donjon: "Donjon") -> List[str]:
         """
         Gère les actions après avoir battu un monstre.
 
         :param monstre: Le monstre vaincu.
         :param donjon: Le donjon dans lequel le monstre a été vaincu.
         :raises NoActiveQuestError: Si aucune quête n'est active et que le monstre est lié à une quête.
+        :return: Liste des messages à afficher.
         """
-        print(f"Vous avez vaincu {monstre.getNom()} !")
+        messages = []
+        messages.append(f"Vous avez vaincu {monstre.getNom()} !")
+        messages.append(f"Vous avez gagné {monstre.getOr()} pièces d'or.")
         self.gagnerOr(monstre.getOr())
-        self.gagnerExperience(int(10 * self.niveau * 1.3))  # Typage explicite pour int
+        messages.extend(self.gagnerExperience(int(10 * self.niveau * 1.3)))  # Typage explicite pour int
         self.ajouterArmeInventaire(monstre.getArmePossedee())
-        donjon.supprimerMonstre(monstre)
+        messages.append(f"Vous avez obtenu {monstre.getArmePossedee()}.")
+
+        # Vérifier si le monstre est dans la liste avant de le supprimer
+        if monstre in donjon.getListeMonstres():
+            donjon.supprimerMonstre(monstre)
         try:
             monstreQuete = self.getMonstreQueteActuelle()
             if monstreQuete == monstre:
-                self.reussiteQuete()
-                print("Vous avez réussi la quête !")
+                messages.extend(self.reussiteQuete()) # réussite de quete : gain d'or, d'expérience, suppression de la quête actuelle (statut devient Terminée)
         except NoActiveQuestError:
-            raise NoActiveQuestError("Vous n'avez pas de quête active.")
+            pass
+        finally:
+            quetesEnCours = Quete.getQuetesEnCoursUsingDifficulte(donjon.getDifficulte())
+            for quete in quetesEnCours:
+                if quete.getMonstreCible() == monstre:
+                    quete.queteFinie()
+        return messages
 
     def attaquer(self, monstre: "Monstre") -> None:
         """
@@ -371,7 +406,7 @@ class Combattant(Personnage):
 
         :return: Une chaîne de caractères représentant le combattant.
         """
-        return (f"Combattant(nom={self.nom}, or_={self.or_}, vie={self.vie}/{self.maxVie}, "
+        return (f"Combattant(nom={self.nom}, piece={self.piece}, vie={self.vie}/{self.maxVie}, "
                 f"niveau={self.niveau}, experience={self.experience}, "
                 f"inventairePotions={self.inventairePotions}, armeEquipee={self.armeEquipee}, "
                 f"inventaireArmes={self.inventaireArmes}, queteActuelle={self.queteActuelle}, "

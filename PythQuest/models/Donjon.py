@@ -3,7 +3,17 @@ import random
 from typing import List, Optional
 
 class Donjon:
-    """Classe représentant un donjon avec des monstres, une difficulté et un statut."""
+    """
+    Classe représentant un donjon avec des monstres, une difficulté et un statut.
+    
+    Attributs:
+        id (int): Identifiant unique du donjon
+        nom (str): Nom du donjon
+        difficulte (int): Difficulté du donjon
+        listeMonstres (List[Monstre]): Liste des monstres présents dans le donjon
+        statut (str): Statut du donjon (actif ou inactif)
+        niveau (int): Niveau du joueur pour adapter les monstres
+    """
 
     PREFIXES: str = "Donjon "  # Préfixe utilisé pour générer les noms de donjons
     SUFFIXES: tuple[str, ...] = (
@@ -55,16 +65,25 @@ class Donjon:
     @staticmethod
     def creerDonjonAleatoire(difficulte: int, monstre: Monstre, niveauJoueur: int) -> "Donjon":
         """
-        Crée un donjon avec un nom aléatoire.
-
+        Crée un donjon avec un nom aléatoire ou retourne un donjon existant avec la même difficulté et le même niveau de joueur.
+    
         :param difficulte: La difficulté du donjon.
         :param monstre: Le monstre initial à inclure.
         :param niveauJoueur: Le niveau du joueur pour adapter les monstres.
-        :return: Le donjon créé.
+        :return: Le donjon créé ou un donjon existant.
         """
+        # Vérifier si un donjon existant correspond aux critères, pour éviter de créer un nouveau donjon avec les mêmes caractéristiques
+        donjonsExistants = Donjon.getDonjonsActifsParNiveauEtDifficulte(niveauJoueur, difficulte)
+        if donjonsExistants:
+            donjonChoisi = random.choice(donjonsExistants)
+            donjonChoisi.ajouterMonstre(monstre)
+            return donjonChoisi
+    
+        # Créer un nouveau donjon si aucun donjon existant ne correspond
         prefixe = Donjon.PREFIXES
-        suffixe = Donjon.SUFFIXES[random.randint(0, len(Donjon.SUFFIXES) - 1)]
+        suffixe = random.choice(Donjon.SUFFIXES)
         nom = prefixe + suffixe
+        
         donjon = Donjon(nom, difficulte, niveauJoueur, monstre)
         return donjon
 
@@ -92,6 +111,14 @@ class Donjon:
         for _ in range(nb):
             monstre = Monstre.creerMonstreAleatoire(self.difficulte, niveauJoueur)
             self.listeMonstres.append(monstre)
+            
+    def ajouterMonstre(self, monstre: Monstre) -> None:
+        """
+        Ajoute un monstre au donjon.
+
+        :param monstre: Le monstre à ajouter.
+        """
+        self.listeMonstres.append(monstre)
 
     def supprimerMonstre(self, monstre: Monstre) -> None:
         """
@@ -202,6 +229,20 @@ class Donjon:
         if index < 0 or index >= len(donjonsActifs):
             raise IndexError("Donjon index out of range.")
         return donjonsActifs[index]
+    
+    @staticmethod
+    def getDonjonsActifsParNiveauEtDifficulte(niveau: int, difficulte: int) -> List["Donjon"]:
+        """
+        Retourne la liste des donjons actifs correspondant à un niveau et une difficulté donnés.
+
+        :param niveau: Le niveau du donjon.
+        :param difficulte: La difficulté du donjon.
+        :return: La liste des donjons actifs correspondant aux critères.
+        """
+        return [
+            donjon for donjon in Donjon.getTousLesDonjonsActifs()
+            if donjon.niveau == niveau and donjon.difficulte == difficulte
+        ]
 
     @staticmethod
     def getNbDonjonsActifs() -> int:

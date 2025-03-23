@@ -4,7 +4,16 @@ import random
 from typing import List, Optional
 
 class Quete:
-    """Classe représentant une quête dans le jeu, avec un monstre cible, un donjon associé et une récompense."""
+    """
+    Classe représentant une quête dans le jeu, avec un monstre cible, un donjon associé et une récompense.
+
+    Attributs:
+        PREFIXES (str): Préfixe utilisé pour générer les noms de quêtes.
+        SUFFIXES (Tuple[str, ...]): Suffixes pour générer les noms de quêtes.
+        STATUT_EN_COURS (str): Statut d'une quête en cours.
+        STATUT_TERMINEE (str): Statut d'une quête terminée.
+        toutesLesQuetes (List["Quete"]): Liste de toutes les quêtes créées.
+    """
 
     PREFIXES: str = "Quête "  # Préfixe utilisé pour générer les noms de quêtes
     SUFFIXES: tuple[str, ...] = (
@@ -13,7 +22,16 @@ class Quete:
         "de l'ombre", "de la lumière", "du guerrier",
         "de la sorcière", "du magicien", "du voleur",
         "du roi", "de la reine", "du prince",
-        "de la princesse",
+        "de la princesse", "du chevalier", "de la fée",
+        "du nain", "de l'elfe", "du géant",
+        "du loup", "du serpent", "de l'araignée",
+        "du scorpion", "du zombie", "du squelette",
+        "du fantôme", "du vampire", "du loup-garou",
+        "du démon", "de l'ange", "du dieu",
+        "de la déesse", "du titan", "de la chimère",
+        "du sphinx", "du minotaure", "du cyclope",
+        "du centaure", "du dragonnier", "du chasseur",
+        "du pêcheur", "du bûcheron", "du mineur"
     )  # Suffixes pour générer les noms de quêtes
 
     STATUT_EN_COURS: str = "En cours"  # Statut d'une quête en cours
@@ -30,6 +48,7 @@ class Quete:
         :param difficulte: La difficulté de la quête.
         :param niveauJoueur: Le niveau du joueur pour adapter la quête.
         """
+        self.id = len(Quete.toutesLesQuetes) + 1
         self.nom: str = nom
         self.recompenseOr: int = recompenseOr
         self.difficulte: int = difficulte
@@ -96,7 +115,7 @@ class Quete:
         """
         Marque la quête comme terminée (abandonnée).
         """
-        self.statut = Quete.STATUT_TERMINEE
+        pass
 
     def getNom(self) -> str:
         """
@@ -165,6 +184,20 @@ class Quete:
         quetes = []
         for quete in Quete.toutesLesQuetes:
             if quete.getStatut() == Quete.STATUT_EN_COURS:
+                quetes.append(quete)
+        return quetes
+    
+    @staticmethod
+    def getQuetesEnCoursUsingDifficulte(difficulte: int) -> List["Quete"]:
+        """
+        Retourne la liste des quêtes en cours pour une difficulté donnée.
+
+        :param difficulte: La difficulté des quêtes à rechercher.
+        :return: La liste des quêtes en cours pour la difficulté donnée.
+        """
+        quetes = []
+        for quete in Quete.getToutesLesQuetesEnCours():
+            if quete.getDifficulte() == difficulte:
                 quetes.append(quete)
         return quetes
 

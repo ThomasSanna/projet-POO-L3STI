@@ -1,8 +1,11 @@
+import tkinter as tk
 from models.Combattant import Combattant
 from models.Forgeron import Forgeron
 from models.Medecin import Medecin
 from models.Quete import Quete
 from models.Donjon import Donjon
+from models.Monstre import Monstre
+from models.Arme import Arme
 from models.GestionnaireDeQuetes import GestionnaireDeQuetes
 from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
 from view.View import View
@@ -11,275 +14,318 @@ import time
 from typing import Tuple
 
 class Controller:
-    """Classe principale contrôlant la logique du jeu et les interactions entre le modèle et la vue."""
+    """
+    Classe représentant le contrôleur principal du jeu
+    Cette classe gère la logique du jeu et les interactions entre la vue (View) et les modèles.
 
-    def __init__(self) -> None:
-        """
-        Initialise le contrôleur avec une vue, un joueur et des instances de forgeron et médecin.
+    Attributs:
+        view (View): Interface graphique du jeu
+        joueur (Combattant): Instance du joueur principal
+        forgeron (Forgeron): Instance du forgeron pour acheter des armes
+        medecin (Medecin): Instance du médecin pour acheter des potions
+    """
 
-        Crée également des quêtes initiales pour le joueur.
+    def __init__(self, root):
         """
-        self.view: View = View()
-        self.joueur: Combattant = self.creerPersonnage()
-        self.forgeron: Forgeron
-        self.medecin: Medecin
+        Initialise le contrôleur avec la fenêtre principale et configure les instances de base.
+
+        :param root: Fenêtre principale de l'application Tkinter
+        """
+        self.view = View(root)
+        self.joueur = Combattant("Joueur")  # TODO: Demander le nom du joueur
         self.forgeron, self.medecin = self.initialiserInstances()
-        self.creerQuete(self.joueur, 2, 4)
+        self.creerQueteArme(self.joueur, 4, 6)
+        self.updateStats()
+        self.afficherMenuPrincipal()
 
     def initialiserInstances(self) -> Tuple[Forgeron, Medecin]:
         """
-        Initialise les instances de forgeron et médecin.
+        Crée et initialise les instances du forgeron et du médecin.
 
-        :return: Un tuple contenant le forgeron et le médecin créés.
+        :return: Tuple contenant l'instance du forgeron et du médecin
         """
         forgeron = Forgeron("Robert")
         medecin = Medecin("Jean")
         return forgeron, medecin
 
-    def creerQuete(self, joueur: Combattant, minQuete: int, maxQuete: int) -> None:
+    def creerQueteArme(self, joueur: Combattant, minQuete: int, maxQuete: int) -> None:
         """
-        Crée un nombre aléatoire de quêtes pour le joueur.
+        Crée un nombre aléatoire de quêtes et d'armes pour le joueur.
 
-        :param joueur: Le combattant pour lequel créer les quêtes.
-        :param minQuete: Le nombre minimum de quêtes à créer.
-        :param maxQuete: Le nombre maximum de quêtes à créer.
+        :param joueur: Instance du joueur (Combattant)
+        :param minQuete: Nombre minimum de quêtes à créer
+        :param maxQuete: Nombre maximum de quêtes à créer
         """
         for _ in range(random.randint(minQuete, maxQuete)):
             GestionnaireDeQuetes.creerQueteDonjonMonstres(joueur.getNiveau())
+        for _ in range(random.randint(1, 2)):
+            self.forgeron.forgerArme()
+        self.medecin.restockPotions()
 
-    def creerPersonnage(self) -> Combattant:
+        
+    def updateStats(self) -> None:
         """
-        Crée un personnage en demandant son nom via la vue.
-
-        :return: Le combattant créé avec 100 pièces d'or initiales.
+        Met à jour les statistiques du joueur dans l'interface graphique (vie, pièces, niveau, arme équipée).
         """
-        nomPersonnage = self.view.choixConsole("Entrez le nom de votre personnage : ")
-        return Combattant(nomPersonnage, 100)
+        self.view.updateVie(self.joueur.getVie())
+        self.view.updatePiece(self.joueur.getOr())
+        self.view.updateNiveau(self.joueur.getNiveau(), self.joueur.getExperience())
+        armeEquippee = self.joueur.getArmeEquipee()
+        self.view.updateArmeEquipee(armeEquippee.getNom(), armeEquippee.getDegats())
 
     def afficherMenuPrincipal(self) -> None:
         """
-        Affiche le menu principal et gère les choix de l'utilisateur.
+        Affiche le menu principal du jeu avec les options disponibles.
         """
-        while True:
-            self.view.afficherMenuPrincipal()
-            choix = self.view.choixConsole("Choix : ") # 1. Achats, 2. Quêtes, 3. Donjons, 4. Personnage, 5. Quitter
+        self.view.supprimerMonstre()
+        self.view.showChoices([
+            {"text": "Faire des achats", "command": self.gestionAchats},
+            {"text": "Voir les quêtes", "command": self.gestionQuetes},
+            {"text": "Voir les donjons", "command": self.gestionDonjons},
+            {"text": "Informations sur le personnage", "command": self.gestionPersonnage},
+            {"text": "Quitter le jeu", "command": self.quitterJeu}
+        ])
 
-            if choix == "1":
-                self.gestionAchats()
-            elif choix == "2":
-                self.gestionQuetes()
-            elif choix == "3":
-                self.gestionDonjons()
-            elif choix == "4":
-                self.gestionPersonnage()
-            elif choix == "5":
-                self.view.afficherMessage("Merci d'avoir joué !")
-                time.sleep(2)
-                break
-            else:
-                self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
-                time.sleep(1)
-                
+    def quitterJeu(self) -> None:
+        """
+        Ferme le jeu et affiche un message de fin.
+        """
+        self.view.showMessage("Merci d'avoir joué !")
+        self.view.root.quit()
+
     def gestionAchats(self):
         """
-        Gère l'interaction avec la boutique et les achats d'armes et potions.
+        Affiche les options d'achat (forgeron, médecin, retour au menu principal).
         """
-        self.view.afficherMessage("Vous arrivez dans la boutique.")
-        while True:
-            self.view.afficherMenuAchats()
-            choixAchats = self.view.choixConsole("Choix : ") # 1. Forgeron, 2. Medecin, 3. Quitter
-
-            if choixAchats == "1":
-                self.gestionForgeron()
-            elif choixAchats == "2":
-                self.gestionMedecin()
-            elif choixAchats == "3":
-                self.view.afficherMessage("Vous quittez la boutique.")
-                break
-            else:
-                self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
+        self.view.showChoices([
+            {"text": "Visiter le Forgeron", "command": self.gestionForgeron},
+            {"text": "Visiter le Médecin", "command": self.gestionMedecin},
+            {"text": "Retour", "command": self.afficherMenuPrincipal}
+        ])
 
     def gestionForgeron(self) -> None:
         """
-        Gère l'interaction avec le forgeron et l'achat d'armes.
+        Affiche les armes disponibles chez le forgeron pour achat.
         """
-        self.view.afficherMessage("Vous arrivez chez le forgeron.")
-        time.sleep(1)
-        self.forgeron.afficherInventaire()
-        choix = self.view.choixConsole("Choix : ")
-        if choix.isdigit() and int(choix) == self.forgeron.getNbArmes() + 1:
-            return
-        elif choix.isdigit() and (int(choix) > 0 and int(choix) <= self.forgeron.getNbArmes()):
-            try:
-                arme = self.forgeron.getArmeIndex(int(choix) - 1)
-                self.joueur.acheterArme(self.forgeron, arme)
-                self.view.afficherMessage(f"Vous avez acheté l'arme {arme.getNom()} pour {arme.getValeurOr()} or.")
-                time.sleep(1)
-            except (InsufficientFundsError, NoSuchItemError) as e:
-                self.view.afficherMessage(str(e))
-                time.sleep(1)
-            except ValueError:
-                self.view.afficherMessage("Choix invalide. Veuillez entrer un nombre.")
-                time.sleep(1)
-        else:
-            self.view.afficherMessage("Choix invalide.")
-            time.sleep(1)
+        armes = self.forgeron.getInventaireArmes()
+        choices = [{"text": f"{arme}", "image": arme.getImage(), "command": lambda arme=arme: self.acheterArme(arme)} for arme in armes]
+        choices.append({"text": "Retour", "command": self.gestionAchats})
+        self.view.showChoicesWithImages(choices)
+
+    def acheterArme(self, arme: Arme) -> None:
+        """
+        Gère l'achat d'une arme par le joueur auprès du forgeron.
+
+        :param arme: Arme à acheter
+        :raises InsufficientFundsError: Si le joueur n'a pas assez d'or
+        :raises NoSuchItemError: Si l'arme n'est pas disponible
+        """
+        try:
+            self.joueur.acheterArme(self.forgeron, arme)
+            self.view.showMessage(f"Vous avez acheté l'arme {arme.getNom()} pour {arme.getValeurOr()} or.")
+            self.updateStats()
+        except (InsufficientFundsError, NoSuchItemError) as e:
+            self.view.showMessage(str(e))
+        self.gestionForgeron()
 
     def gestionMedecin(self) -> None:
         """
-        Gère l'interaction avec le médecin et l'achat de potions.
+        Affiche les options pour acheter des potions chez le médecin.
         """
-        self.view.afficherMessage("Vous arrivez chez le médecin.")
-        time.sleep(1)
-        self.view.afficherMessage(self.medecin.afficherStockPotions())
-        choix = self.view.choixConsole("Choix : ")
-        if choix.isdigit() and int(choix) == 0:
-            return
-        elif choix.isdigit() and (int(choix) > 0 and int(choix) <= self.medecin.getStockPotions()):
-            nbAchetes = 0
-            for _ in range(int(choix)):
-                try:
-                    self.joueur.acheterPotion(self.medecin)
-                    nbAchetes += 1
-                except (InsufficientFundsError, NoSuchItemError, InventoryFullError) as e:
-                    self.view.afficherMessage(str(e))
-                    time.sleep(1)
-                    break
-            self.view.afficherMessage(f"Vous avez acheté {nbAchetes} potions.")
-            time.sleep(1)
-        else:
-            self.view.afficherMessage("Choix invalide.")
-            time.sleep(1)
+        stock = self.medecin.getStockPotions()
+        choices = [{"text": f"Acheter {i} potion(s)", "command": lambda i=i: self.acheterPotion(i)} for i in range(1, stock + 1)]
+        choices.append({"text": "Retour", "command": self.gestionAchats})
+        self.view.showChoices(choices)
+
+    def acheterPotion(self, quantite: int) -> None:
+        """
+        Gère l'achat de potions par le joueur auprès du médecin.
+
+        :param quantite: Nombre de potions à acheter
+        :raises InsufficientFundsError: Si le joueur n'a pas assez d'or
+        :raises NoSuchItemError: Si les potions ne sont pas disponibles
+        :raises InventoryFullError: Si l'inventaire du joueur est plein
+        """
+        try:
+            for _ in range(quantite):
+                self.joueur.acheterPotion(self.medecin)
+            self.view.showMessage(f"Vous avez acheté {quantite} potion(s).")
+            self.updateStats()
+        except (InsufficientFundsError, NoSuchItemError, InventoryFullError) as e:
+            self.view.showMessage(str(e))
+        self.gestionMedecin()
 
     def gestionQuetes(self) -> None:
         """
-        Gère l'affichage et l'acceptation des quêtes par le joueur.
+        Affiche la liste des quêtes disponibles pour acceptation.
         """
-        self.view.afficherMessage(Quete.afficherToutesLesQuetesEnCours())
-        choix = self.view.choixConsole("Choix d'une quête à accepter : ")
-        if choix.isdigit() and int(choix) == Quete.getNbQuetesEnCours() + 1:
-            return
-        elif choix.isdigit() and (int(choix) > 0 and int(choix) <= Quete.getNbQuetesEnCours()):
-            try:
-                quete = Quete.getQueteIndexEnCours(int(choix) - 1)
-                self.joueur.accepterQuete(quete)
-                self.view.afficherMessage(f"Vous avez accepté la quête {quete.getNom()}.")
-                time.sleep(1)
-            except (QuestAlreadyAcceptedError, IndexError) as e:
-                self.view.afficherMessage(str(e))
-                time.sleep(1)
-            except ValueError:
-                self.view.afficherMessage("Choix invalide. Veuillez entrer un nombre.")
-                time.sleep(1)
-        else:
-            self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
-            time.sleep(1)
+        quetes = Quete.getToutesLesQuetesEnCours()
+        choices = [{"text": f"{quete.getNom()} ({'★' * quete.getDifficulte()}) - Monstre: {quete.getMonstreCible().getNom()} dans le {quete.getDonjonAssocie().getNom()}", "command": lambda quete=quete: self.accepterQuete(quete)} for quete in quetes]
+        choices.append({"text": "Retour", "command": self.afficherMenuPrincipal})
+        self.view.showChoices(choices)
+
+    def accepterQuete(self, quete: Quete) -> None:
+        """
+        Permet au joueur d'accepter une quête.
+
+        :param quete: Quête à accepter
+        :raises QuestAlreadyAcceptedError: Si une quête est déjà en cours
+        :raises IndexError: Si la quête n'est pas valide
+        """
+        try:
+            self.joueur.accepterQuete(quete)
+            self.view.showMessage(f"Vous avez accepté la quête {quete.getNom()}.")
+            self.view.updateQuestInfo(quete)
+        except (QuestAlreadyAcceptedError, IndexError) as e:
+            self.view.showMessage(str(e))
+        self.gestionQuetes()
+
+    def abandonnerQuete(self) -> None:
+        """
+        Permet au joueur d'abandonner la quête en cours.
+
+        :raises NoActiveQuestError: Si aucune quête n'est en cours
+        """
+        try:
+            self.joueur.abandonnerQuete()
+            self.view.showMessage("Vous avez abandonné la quête.")
+            self.view.updateQuestInfo(None)
+        except NoActiveQuestError as e:
+            self.view.showMessage(str(e))
+        self.gestionPersonnage()
 
     def gestionDonjons(self) -> None:
         """
-        Gère l'exploration des donjons et les combats avec les monstres.
-
-        Sort du donjon immédiatement si le joueur choisit de fuir un combat.
+        Affiche la liste des donjons disponibles pour exploration.
         """
-        self.view.afficherMessage(Donjon.afficherTousLesDonjonsActifs())
-        choix = self.view.choixConsole("Choix d'un donjon à explorer : ")
-        if choix.isdigit() and int(choix) == Donjon.nbDonjons + 1:
+        donjons = Donjon.getTousLesDonjonsActifs()
+        choices = [{"text": f"{donjon.getNom()} ({'★' * donjon.getDifficulte()}) - Monstres: {donjon.getNbMonstres()}", "command": lambda donjon=donjon: self.explorerDonjon(donjon)} for donjon in donjons]
+        choices.append({"text": "Retour", "command": self.afficherMenuPrincipal})
+        self.view.showChoices(choices)
+
+    def explorerDonjon(self, donjon: Donjon) -> None:
+        """
+        Lance l'exploration d'un donjon par le joueur.
+
+        :param donjon: Donjon à explorer
+        """
+        self.view.showMessage(f"Vous entrez dans le {donjon.getNom()}.")
+        self.combatDonjon(donjon)
+
+    def combatDonjon(self, donjon: Donjon) -> None:
+        """
+        Gère le combat dans un donjon, en affrontant les monstres un par un.
+
+        :param donjon: Donjon en cours d'exploration
+        """
+        if donjon.estVide():
+            donjon.setInactif()
+            self.creerQueteArme(self.joueur, 1, 2)
+            self.view.showMessage(f"Vous avez vidé le {donjon.getNom()} ! Retour au village.")
+            self.afficherMenuPrincipal()
             return
-        elif choix.isdigit() and (int(choix) > 0 and int(choix) <= Donjon.nbDonjons):
-            donjon = Donjon.getDonjonIndexActif(int(choix) - 1)
-            self.view.afficherMessage(f"Vous entrez dans le {donjon.getNom()}.")
-            time.sleep(1)
-            while not donjon.estVide():
-                monstre = donjon.getMonstreAleatoire()
-                self.view.afficherMessage(f"Vous rencontrez un {monstre.getNom()} !")
-                time.sleep(1)
-                self.view.afficherMessage(f"Vous avez {self.joueur.getVie()} points de vie.")
-                time.sleep(0.5)
-                self.view.afficherMessage(f"Le {monstre.getNom()} a {monstre.getVie()} points de vie.")
-                time.sleep(1)
-                fuite = False  # Indicateur pour savoir si le joueur a fui
-                while not self.joueur.estMort() and not monstre.estMort() and not fuite:
-                    choix = self.view.choixConsole("1. Attaquer\n2. Boire une potion\n3. Fuir\nChoix : ")
-                    if choix == "1":
-                        self.view.afficherMessage(f"Vous attaquez {monstre.getNom()} !")
-                        self.joueur.attaquer(monstre)
-                        time.sleep(1)
-                        self.view.afficherMessage(f"Le {monstre.getNom()} a {monstre.getVie()} points de vie.")
-                        time.sleep(1)
-                        if not monstre.estMort():
-                            self.view.afficherMessage(f"{monstre.getNom()} vous attaque !")
-                            monstre.attaquer(self.joueur)
-                            time.sleep(1)
-                            self.view.afficherMessage(f"Vous avez {self.joueur.getVie()} points de vie.")
-                            time.sleep(1)
-                    elif choix == "2":
-                        try:
-                            self.joueur.boirePotion()
-                            self.view.afficherMessage("Vous avez bu une potion.")
-                            time.sleep(1)
-                        except NoSuchItemError as e:
-                            self.view.afficherMessage(str(e))
-                            time.sleep(1)
-                    elif choix == "3":
-                        self.view.afficherMessage("Vous avez fui.")
-                        time.sleep(1)
-                        fuite = True  # Marque que le joueur a fui
-                        break
-                    else:
-                        self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
-                        time.sleep(1)
-                        continue
-                if fuite:  # Si le joueur a fui, on sort complètement du donjon
-                    break
-                if self.joueur.estMort():
-                    self.joueur.resetApresMort()
-                    break
-                elif monstre.estMort():
-                    try:
-                        self.joueur.battreMonstre(monstre, donjon)
-                    except NoActiveQuestError:
-                        pass
-            if donjon.estVide():
-                donjon.setInactif()
-        else:
-            self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
-            time.sleep(1)
+
+        monstre = donjon.getMonstreAleatoire()
+        self.view.showMessage(f"Vous rencontrez un {monstre.getNom()} !")
+        self.view.afficherMonstre(monstre.getNom(), monstre.getVie(), monstre.getArmePossedee().getNom())
+        self.combatMonstre(monstre, donjon)
+
+    def combatMonstre(self, monstre: Monstre, donjon: Donjon) -> None:
+        """
+        Gère le combat entre le joueur et un monstre dans un donjon.
+
+        :param monstre: Monstre à combattre
+        :param donjon: Donjon où se déroule le combat
+        """
+        if self.joueur.estMort():
+            messages = self.joueur.resetApresMort()
+            for message in messages:
+                self.view.showMessage(message)
+            self.updateStats()
+            self.afficherMenuPrincipal()
+            return
+
+        if monstre.estMort():
+            messages = self.joueur.battreMonstre(monstre, donjon)
+            for message in messages:
+                if message.startswith("Félicitations ! Vous avez terminé la") or message.startswith("Félicitations ! Vous avez atteint le niveau"): # Quête terminée ou niveau monté
+                    self.creerQueteArme(self.joueur, 1, 2)
+                    if message.startswith("Félicitations ! Vous avez terminé la"):
+                        self.view.updateQuestInfo(None)
+                self.view.showMessage(message)
+            self.updateStats()
+            self.combatDonjon(donjon)
+            return
+
+        self.view.showChoices([
+            {"text": "Attaquer", "command": lambda: self.attaquerMonstre(monstre, donjon)},
+            {"text": "Boire une potion", "command": lambda: self.boirePotion(monstre, donjon)},
+            {"text": "Fuir", "command": self.afficherMenuPrincipal}
+        ])
+
+    def attaquerMonstre(self, monstre: Monstre, donjon: Donjon) -> None:
+        """
+        Permet au joueur d'attaquer un monstre et gère la riposte du monstre.
+
+        :param monstre: Monstre à attaquer
+        :param donjon: Donjon où se déroule le combat
+        """
+        self.view.showMessage(f"Vous attaquez {monstre.getNom()} !")
+        self.joueur.attaquer(monstre)
+        self.view.showMessage(f"Le {monstre.getNom()} a {monstre.getVie()} points de vie.")
+        self.view.updateMonstre(monstre.getVie())
+        if not monstre.estMort():
+            self.view.showMessage(f"{monstre.getNom()} vous attaque !")
+            monstre.attaquer(self.joueur)
+            self.updateStats()
+        self.combatMonstre(monstre, donjon)
+
+    def boirePotion(self, monstre: Monstre, donjon: Donjon) -> None:
+        """
+        Permet au joueur de boire une potion pour récupérer des points de vie.
+
+        :param monstre: Monstre en cours de combat
+        :param donjon: Donjon où se déroule le combat
+        :raises NoSuchItemError: Si aucune potion n'est disponible
+        """
+        try:
+            self.joueur.boirePotion()
+            self.view.showMessage("Vous avez bu une potion.")
+            self.updateStats()
+        except NoSuchItemError as e:
+            self.view.showMessage(str(e))
+        self.combatMonstre(monstre, donjon)
 
     def gestionPersonnage(self) -> None:
         """
-        Gère les actions liées au personnage, comme équiper une arme ou abandonner une quête.
+        Affiche les options de gestion du personnage (changer d'arme, abandonner une quête, retour).
         """
-        while True:
-            self.view.afficherMessage(str(self.joueur))
-            self.view.afficherMenuPersonnage()
-            choix = self.view.choixConsole("Choix : ")
-            if choix == "1":
-                self.view.afficherMessage(self.joueur.afficherArmes())
-                choix = self.view.choixConsole("Choix d'arme à porter : ")
-                if choix.isdigit() and int(choix) == self.joueur.getNbArmesInventaire() + 1:
-                    break
-                elif choix.isdigit():
-                    try:
-                        arme = self.joueur.getArmeIndexInventaire(int(choix) - 1)
-                        self.joueur.equiperArme(arme)
-                        self.view.afficherMessage(f"Vous avez équipé l'arme {arme.getNom()}.")
-                        time.sleep(1)
-                    except (NoSuchItemError, IndexError) as e:
-                        self.view.afficherMessage(str(e))
-                        time.sleep(1)
-                    except ValueError:
-                        self.view.afficherMessage("Choix invalide. Veuillez entrer un nombre.")
-                        time.sleep(1)
-            elif choix == "2":
-                try:
-                    self.joueur.abandonnerQuete()
-                    self.view.afficherMessage("Vous avez abandonné la quête.")
-                    time.sleep(1)
-                except NoActiveQuestError as e:
-                    self.view.afficherMessage(str(e))
-                    time.sleep(1)
-            elif choix == "3":
-                break
-            else:
-                self.view.afficherMessage("Choix invalide. Veuillez réessayer.")
-                time.sleep(1)
+        self.view.showChoices([
+            {"text": "Changer d'arme", "command": self.changerArme},
+            {"text": "Abandonner la quête", "command": self.abandonnerQuete},
+            {"text": "Retour", "command": self.afficherMenuPrincipal}
+        ])
+
+    def changerArme(self) -> None:
+        """
+        Affiche les armes disponibles dans l'inventaire du joueur pour les équiper.
+        """
+        armes = self.joueur.getInventaireArmes()
+        choices = [{"text": f"{arme.getNom()} ({arme.getDegats()} dgts)", "image": arme.getImage(), "command": lambda arme=arme: self.equiperArme(arme)} for arme in armes]
+        choices.append({"text": "Retour", "command": self.gestionPersonnage})
+        self.view.showChoicesWithImages(choices)
+
+    def equiperArme(self, arme: Arme) -> None:
+        """
+        Permet au joueur d'équiper une arme de son inventaire.
+
+        :param arme: Arme à équiper
+        :raises NoSuchItemError: Si l'arme n'est pas dans l'inventaire
+        """
+        try:
+            self.joueur.equiperArme(arme)
+            self.view.showMessage(f"Vous avez équipé l'arme {arme.getNom()}.")
+            self.updateStats()
+        except NoSuchItemError as e:
+            self.view.showMessage(str(e))
+        self.gestionPersonnage()

@@ -10,6 +10,7 @@ PythQuest est un jeu de rôle textuel développé en Python. Il inclut des fonct
   - [Bonnes pratiques de codage](#bonnes-pratiques-de-codage)
     - [Nommage des variables et des fonctions](#nommage-des-variables-et-des-fonctions)
     - [Structure du code](#structure-du-code)
+    - [Structure MVC](#structure-mvc)
     - [Gestion des exceptions](#gestion-des-exceptions)
     - [Tests automatisés](#tests-automatisés)
     - [Documentation](#documentation)
@@ -18,7 +19,6 @@ PythQuest est un jeu de rôle textuel développé en Python. Il inclut des fonct
     - [Architecture du projet](#architecture-du-projet)
     - [Dépendances](#dépendances)
     - [Exécution du jeu](#exécution-du-jeu)
-    - [Contribution](#contribution)
 
 ## Explication du jeu
 
@@ -39,18 +39,31 @@ Ce projet suit plusieurs bonnes pratiques de codage pour assurer la maintenabili
 ### Nommage des variables et des fonctions
 
 - Utilisez des noms de variables et de fonctions explicites et significatifs.
-- Utilisez le style camelCase pour les noms de variables et de fonctions.
-- Utilisez le style PascalCase pour les noms de classes.
+- Utilisez le style camelCase pour les noms de variables et de fonctions. (ex: `nomDeVariable`, `nomDeFonction`)
+- Utilisez le style PascalCase pour les noms de classes. (ex: `NomDeClasse`)
+- Utilisez le style snake_case pour les noms de constantes. (ex: `NOM_DE_CONSTANTE`).
+- Évitez les noms de variables génériques comme `x`, `y`, `temp`, etc.
 
 ### Structure du code
 
 - Séparez la logique applicative de l'interface utilisateur en utilisant le modèle MVC (Modèle-Vue-Contrôleur).
 - Organisez le code en modules et fichiers logiques.
-- Utilisez des docstrings pour documenter les classes, les méthodes et les fonctions.
+- Utilisez des docstrings pour documenter les classes, les méthodes et les fonctions. (Voir la section Documentation ci-dessous)
+- Utilisez des constantes pour éviter les valeurs en dur dans le code.
+
+### Structure MVC
+
+- Le modèle (Model) contient la logique métier et les données.
+- La vue (View) gère l'affichage et l'interface utilisateur.
+- Le contrôleur (Controller) gère les interactions entre le modèle et la vue.
+- Évitez de mélanger la logique métier avec l'interface utilisateur.
+- Tout ce qui concerne une classe doit être regroupé dans le même fichier. Par exemple, la classe `Combattant` doit être dans `models/combattant.py`, et la classe `Donjon` doit être dans `models/donjon.py`.
+- Les classes de modèles doivent être placées dans le dossier `models/`, les classes de vues dans `view/`, et les classes de contrôleurs dans `controller/`.
 
 ### Gestion des exceptions
 
 - Gérez les exceptions de manière appropriée pour éviter les plantages inattendus.
+- Créez des exceptions personnalisées pour les erreurs spécifiques à l'application dans `models/exceptions.py`.
 - Utilisez des blocs try-except pour capturer et gérer les erreurs spécifiques.
 
 ### Tests automatisés
@@ -61,12 +74,34 @@ Ce projet suit plusieurs bonnes pratiques de codage pour assurer la maintenabili
 ### Documentation
 
 - Documentez le code avec des commentaires et des docstrings.
+
+```python
+def ajout(a: int, b: int) -> int:
+    """
+    Ajoute deux nombres entiers.
+
+    :param a: Le premier nombre entier.
+    :param b: Le deuxième nombre entier.
+    :return: La somme des deux nombres entiers.
+    """
+    return a + b
+```
+
+- Utilisez des annotations de type pour spécifier les types de paramètres et de retour des fonctions.
+
+```python
+def addition(a: int, b: int) -> int:
+    return a + b
+```
+
 - Maintenez un fichier README à jour avec des instructions claires pour l'installation et l'utilisation du projet.
 
 ### Collaboration
 
 - Utilisez Git pour le contrôle de version.
+- Mettez des commentaires significatifs dans les messages de commit.
 - Créez des branches pour chaque nouvelle fonctionnalité ou correction de bug.
+- Nommez les branches de manière significative
 - Fusionnez les branches dans `main` uniquement lorsque le code est stable et testé.
 
 ## Informations supplémentaires
@@ -75,27 +110,36 @@ Ce projet suit plusieurs bonnes pratiques de codage pour assurer la maintenabili
 
 Le projet utilise une architecture MVC (Modèle-Vue-Contrôleur) pour séparer la logique métier de l'interface utilisateur. Voici un aperçu des composants principaux :
 
-- **Modèle (Model)** : Contient les classes représentant les données et la logique métier du jeu (par exemple, `Combattant`, `Donjon`, `Quete`).
-- **Vue (View)** : Gère l'affichage des informations à l'utilisateur et la collecte des entrées utilisateur.
-- **Contrôleur (Controller)** : Coordonne les interactions entre le modèle et la vue, et gère la logique de flux du jeu.
+- **Modèle (Model)** : Contient les classes représentant les données et la logique métier du jeu. Les principales classes incluent :
+  - `Combattant` : Représente le joueur avec ses attributs et méthodes de gestion de combat et d'inventaire.
+  - `Donjon` : Représente les donjons explorables par le joueur, contenant des monstres.
+  - `Quete` : Représente les quêtes que le joueur peut accepter et accomplir.
+  - `Monstre` : Représente les monstres que le joueur peut combattre.
+  - `Arme` : Représente les armes que le joueur peut utiliser.
+  - `Forgeron` et `Medecin` : Représentent les PNJ (personnages non-joueurs) qui vendent des armes et des potions respectivement.
+
+- **Vue (View)** : Gère l'affichage des informations à l'utilisateur et la collecte des entrées utilisateur. Utilise Tkinter pour créer une interface graphique. Les principales responsabilités incluent :
+  - Affichage des statistiques du joueur.
+  - Affichage des quêtes et des donjons disponibles.
+  - Affichage des messages et des choix d'actions pour le joueur.
+
+- **Contrôleur (Controller)** : Coordonne les interactions entre le modèle et la vue, et gère la logique de flux du jeu. Les principales responsabilités incluent :
+  - Initialisation des instances de base (joueur, forgeron, médecin).
+  - Gestion des actions du joueur (achat d'armes, acceptation de quêtes, exploration de donjons).
+  - Mise à jour de l'interface utilisateur en fonction des actions du joueur.
 
 ### Dépendances
+
 Le projet utilise les bibliothèques suivantes :
 - `random` : Pour générer des nombres aléatoires.
 - `typing` : Pour les annotations de type.
+- `tkinter` : Pour l'interface graphique.
+- `PIL` (Pillow) : Pour la gestion des images.
 
 ### Exécution du jeu
 Pour lancer le jeu, exécutez le fichier principal :
 ```sh
 python main.py
 ```
-
-### Contribution
-Les contributions sont les bienvenues ! Pour contribuer, suivez ces étapes :
-1. Forkez le dépôt.
-2. Créez une branche pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`).
-3. Commitez vos modifications (`git commit -m 'Add some AmazingFeature'`).
-4. Poussez la branche (`git push origin feature/AmazingFeature`).
-5. Ouvrez une Pull Request.
 
 Nous espérons que vous apprécierez jouer à PythQuest et contribuer à son développement !

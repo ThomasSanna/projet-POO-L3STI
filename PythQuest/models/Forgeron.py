@@ -5,6 +5,10 @@ import random
 class Forgeron(Personnage):
     """
     Classe représentant un forgeron, qui peut créer et vendre des armes.
+
+    Attributs:
+        nom (str): Nom du forgeron
+        inventaireArmes (List[Arme]): Liste des armes dans l'inventaire du forgeron
     """
 
     def __init__(self, nom: str):
@@ -15,7 +19,7 @@ class Forgeron(Personnage):
         """
         super().__init__(nom, 0, 100)
         self.inventaireArmes = []
-        for _ in range(random.randint(2, 10)):
+        for _ in range(random.randint(2, 5)):
             self.forgerArme()
         
     def ajouterArme(self, arme: Arme) -> None:
@@ -60,13 +64,15 @@ class Forgeron(Personnage):
         """
         return len(self.inventaireArmes)
     
-    def afficherInventaire(self) -> None:
+    def afficherInventaire(self) -> str:
         """
-        Affiche l'inventaire des armes du forgeron.
+        Renvoie une chaîne de caractères représentant l'inventaire des armes du forgeron.
         """
+        inventaireStr = ""
         for i, arme in enumerate(self.inventaireArmes):
-            print(f"{i + 1}. {arme}")
-        print(f"{self.getNbArmes() + 1}. Retour")
+            inventaireStr += f"{i + 1}. {arme}\n"
+        inventaireStr += f"{self.getNbArmes() + 1}. Retour"
+        return inventaireStr
         
     def getArmeIndex(self, index: int) -> Arme:
         """
@@ -76,6 +82,14 @@ class Forgeron(Personnage):
         :return: L'arme à l'index spécifié.
         """
         return self.inventaireArmes[index]
+    
+    def getInventaireArmes(self) -> list[Arme]:
+        """
+        Retourne l'inventaire des armes du forgeron.
+
+        :return: Une liste d'armes.
+        """
+        return self.inventaireArmes
         
     def __str__(self) -> str:
         """
