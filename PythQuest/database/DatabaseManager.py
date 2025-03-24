@@ -14,5 +14,3 @@ class DatabaseManager:
     self.cursor = self.conn.cursor() # exécuter des requêtes SQL
     self.id = None
   
-  def sEnregistrer(self, nom: str, email: str, password: str) -> bool:
-    return
