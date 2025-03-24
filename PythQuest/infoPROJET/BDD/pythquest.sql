@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 10 mars 2025 à 10:05
+-- Généré le : lun. 24 mars 2025 à 09:35
 -- Version du serveur : 10.4.28-MariaDB
 -- Version de PHP : 8.2.4
 
@@ -152,7 +152,8 @@ ALTER TABLE `arme`
 -- Index pour la table `combattant`
 --
 ALTER TABLE `combattant`
-  ADD PRIMARY KEY (`id`,`email`);
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- Index pour la table `donjon`
