@@ -38,7 +38,7 @@ class View:
         self.armeEquipee = tk.StringVar(value="Poings (5 dgts)")
 
         # Frame du haut pour les stats 
-        self.statsFrame = ttk.Frame(root, relief="raised", borderwidth=2)
+        self.statsFrame = ttk.Frame(root, relief="raised", borderwidth=2) # relief="raised" pour un effet de profondeur
         self.statsFrame.pack(side=tk.TOP, anchor=tk.NW, padx=10, pady=10, fill=tk.X)
 
         self.pieceLabel = ttk.Label(self.statsFrame, text=f"Pièces: {self.piece.get()}", foreground="#ffd700")
