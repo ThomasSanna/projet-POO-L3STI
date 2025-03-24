@@ -11,7 +11,7 @@
 - Correction du fait que le joueur pouvat avoir une valeure négative d'experiences lors d'un passage de niveau.
 - Correction de certaines méthodes dans Forgeron et Combattant qui utilisaient encore des print() pour afficher des informations.
 
-## Ajustements
+## Ajustements/Rééquilibrage
 
 - Baisse de la récompense d'or des monstres de ~20%.
 - Baisse des dégats des monstres (3 à 10 -> 2 à 5 (évoluant avec la difficulté et le niveau du joueur)).
