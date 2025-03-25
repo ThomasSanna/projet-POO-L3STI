@@ -9,13 +9,15 @@ def getDbConnection():
         database="pythquest",
     )
 
-"""
+
 def testDbConnection():
     try:
-        print("j'essaie")
         conn = getDbConnection()
         if conn.is_connected():
             print("Connexion réussie à la base de données.")
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO combattant (email, motDePasse, nom) VALUES ('aaa@gmail.com', 'cqfd', 'pablo')")
+            conn.commit()
         else:
             print("Échec de la connexion à la base de données.")
         conn.close()
@@ -25,4 +27,3 @@ def testDbConnection():
 # Test de la connexion
 if __name__ == "__main__":
     testDbConnection()
-"""
