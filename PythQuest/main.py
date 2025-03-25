@@ -1,13 +1,16 @@
-from controller.Controller import Controller
 import tkinter as tk
+from controller.ControllerAuth import ControllerAuth
+from controller.Controller import Controller
 
-def main():
-    """
-    Fonction principale à lancer pour démarrer le jeu
-    """
-    root = tk.Tk()
-    Controller(root)
-    root.mainloop()
+def startGame():
+    root.destroy()  # Ferme la fenêtre d'authentification
+    gameRoot = tk.Tk()
+    gameRoot.title("PythQuest")
+    Controller(gameRoot)  # Lance le jeu
+    gameRoot.mainloop()
 
 if __name__ == "__main__":
-    main()
+    root = tk.Tk()
+    root.title("Authentification - PythQuest")
+    ControllerAuth(root, startGame)
+    root.mainloop()

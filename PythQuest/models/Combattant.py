@@ -1,3 +1,4 @@
+from dao.CombattantDAO import CombattantDAO
 from models.Personnage import Personnage
 from models.Quete import Quete
 from models.Arme import Arme
@@ -23,24 +24,77 @@ class Combattant(Personnage):
     GAIN_POTION: int = 15  # Quantité de vie gagnée par potion
     NB_POTION_MAX: int = 10  # Nombre maximum de potions dans l'inventaire
 
-    def __init__(self, nom: str, piece: int = 0, vie: int = 100) -> None:
+    def __init__(self, id: int, nom: str, piece: int = 0, vie: int = 100, maxVie: int = 100, 
+                 inventairePotions: int = 0, niveau: int = 1, experience: int = 0, armeEquipee: Arme = Arme("Poings", 0, 5), 
+                 queteActuelle: Optional[Quete] = None) -> None:
         """
-        Initialise un nouveau Combattant avec le nom, l'or et la vie spécifiés.
+        Initialise un nouveau Combattant avec les attributs spécifiés.
 
         :param nom: Le nom du combattant.
         :param piece: La quantité d'or initiale du combattant. Par défaut 0.
         :param vie: La vie initiale du combattant. Par défaut 100.
+        :param maxVie: La vie maximale du combattant. Par défaut 100.
+        :param inventairePotions: Le nombre de potions dans l'inventaire. Par défaut 0.
+        :param armeEquipee: L'arme actuellement équipée. Par défaut "Poings".
+        :param inventaireArmes: La liste des armes dans l'inventaire. Par défaut vide.
+        :param queteActuelle: La quête actuellement active. Par défaut None.
+        :param niveau: Le niveau du combattant. Par défaut 1.
+        :param experience: L'expérience du combattant. Par défaut 0.
         """
         super().__init__(nom, piece, vie)
-        self.maxVie: int = vie
+        self.id: int = id
+        self.maxVie: int = maxVie
         self.vie: int = vie
-        self.inventairePotions: int = 0
-        self.armeEquipee: Arme = Arme("Poings", 0, 5)
+        self.inventairePotions: int = inventairePotions
+        self.armeEquipee: Arme = armeEquipee
         self.inventaireArmes: List[Arme] = []
-        self.queteActuelle: Optional[Quete] = None
-        self.donjonsExplores: List[Donjon] = []
-        self.niveau: int = 1
-        self.experience: int = 0
+        self.queteActuelle: Optional[Quete] = queteActuelle
+        self.niveau: int = niveau
+        self.experience: int = experience
+        
+    @staticmethod
+    def authentifier(email: str, password: str) -> Optional["Combattant"]:
+        """
+        Authentifie un utilisateur en utilisant CombattantDAO.
+
+        :param email: Email de l'utilisateur
+        :param password: Mot de passe de l'utilisateur
+        :return: Instance de Combattant si l'authentification réussie, sinon None
+        """
+        combattantInfo = CombattantDAO.authenticate(email, password)
+        if combattantInfo:
+            if combattantInfo["piece"] == None:
+                print('là')
+                return Combattant(
+                    combattantInfo["id"],
+                    combattantInfo["nom"]
+                )
+            return Combattant(
+                combattantInfo["id"],
+                combattantInfo["nom"],
+                combattantInfo["piece"],
+                combattantInfo["vie"],
+                combattantInfo["maxVie"],
+                combattantInfo["inventairePotions"],
+                combattantInfo["niveau"],
+                combattantInfo["experience"],
+            )
+        return None
+        
+    @staticmethod
+    def inscrire(name: str, email: str, password: str) -> bool:
+        """
+        Enregistre un nouvel utilisateur en utilisant CombattantDAO.
+
+        :param name: Nom de l'utilisateur
+        :param email: Email de l'utilisateur
+        :param password: Mot de passe de l'utilisateur
+        :return: Instance de Combattant si l'inscription est réussie, sinon None
+        """
+        combattantInfo = CombattantDAO.register(name, email, password)
+        return Combattant(
+            combattantInfo["id"], 
+            combattantInfo["nom"]) if combattantInfo else None
 
     def gagnerExperience(self, exp: int) -> List[str]:
         """
@@ -184,15 +238,6 @@ class Combattant(Personnage):
             raise QuestAlreadyAcceptedError("Une quête est déjà en cours.")
         self.queteActuelle = quete
         self.queteActuelle.queteEnCours()
-
-    def explorerDonjon(self, donjon: Donjon) -> None:
-        """
-        Ajoute un donjon à la liste des donjons explorés.
-
-        :param donjon: Le donjon à ajouter.
-        """
-        if donjon not in self.donjonsExplores:
-            self.donjonsExplores.append(donjon)
 
     def entrerBoutique(self) -> None:
         """
@@ -351,14 +396,6 @@ class Combattant(Personnage):
             raise NoActiveQuestError("Vous n'avez pas de quête active.")
         return self.queteActuelle.getMonstreCible()
 
-    def getDonjonsExplores(self) -> List[Donjon]:
-        """
-        Retourne la liste des donjons explorés.
-
-        :return: La liste des donjons explorés.
-        """
-        return self.donjonsExplores
-
     def getNbArmesInventaire(self) -> int:
         """
         Retourne le nombre d'armes dans l'inventaire.
@@ -398,23 +435,6 @@ class Combattant(Personnage):
         :return: La vie maximale.
         """
         return self.maxVie
-
-    def __repr__(self) -> str:
-        """
-        Retourne une représentation formelle du combattant.
-
-        :return: Une chaîne de caractères représentant le combattant.
-        """
-        return self.nom
-
-    def __str__(self) -> str:
-        """
-        Retourne une représentation détaillée du combattant.
-
-        :return: Une chaîne de caractères représentant le combattant.
-        """
-        return (f"Combattant(nom={self.nom}, piece={self.piece}, vie={self.vie}/{self.maxVie}, "
-                f"niveau={self.niveau}, experience={self.experience}, "
-                f"inventairePotions={self.inventairePotions}, armeEquipee={self.armeEquipee}, "
-                f"inventaireArmes={self.inventaireArmes}, queteActuelle={self.queteActuelle}, "
-                f"donjonExplore={self.donjonsExplores})")
+    
+    def __str__(self):
+        return f"Combattant(nom={self.nom}, piece={self.piece}, vie={self.vie}, maxVie={self.maxVie}, inventairePotions={self.inventairePotions}, armeEquipee={self.armeEquipee}, inventaireArmes={self.inventaireArmes}, queteActuelle={self.queteActuelle}, niveau={self.niveau}, experience={self.experience})"

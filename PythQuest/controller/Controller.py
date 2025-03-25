@@ -8,6 +8,7 @@ from models.Monstre import Monstre
 from models.Arme import Arme
 from models.GestionnaireDeQuetes import GestionnaireDeQuetes
 from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
+from controller.ControllerAuth import ControllerAuth
 from view.View import View
 import random
 import time
@@ -32,7 +33,7 @@ class Controller:
         :param root: Fenêtre principale de l'application Tkinter
         """
         self.view = View(root)
-        self.joueur = Combattant("Joueur")  # TODO: Demander le nom du joueur
+        self.joueur = ControllerAuth.combattant 
         self.forgeron, self.medecin = self.initialiserInstances()
         self.creerQueteArme(self.joueur, 4, 6)
         self.updateStats()
@@ -83,12 +84,12 @@ class Controller:
             {"text": "Voir les quêtes", "command": self.gestionQuetes},
             {"text": "Voir les donjons", "command": self.gestionDonjons},
             {"text": "Informations sur le personnage", "command": self.gestionPersonnage},
-            {"text": "Quitter le jeu", "command": self.quitterJeu}
+            {"text": "Sauvegarder et quitter", "command": self.quitterJeu}
         ])
 
     def quitterJeu(self) -> None:
         """
-        Ferme le jeu et affiche un message de fin.
+        Sauvegarde l'état du jeu et quitte l'application.
         """
         self.view.showMessage("Merci d'avoir joué !")
         self.view.root.quit()

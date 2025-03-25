@@ -1,7 +1,17 @@
+from models.Combattant import Combattant
+from models.Forgeron import Forgeron
+from models.Medecin import Medecin
+from models.Quete import Quete
+from models.Donjon import Donjon
+from models.Monstre import Monstre
+from models.Arme import Arme
 from configdb.database import getDbConnection
 from tkinter import messagebox
 
 class ControllerAuth:
+  
+    combattant = None
+  
     def __init__(self, root, onLoginSuccess):
         """
         :param root: Fenêtre principale Tkinter
@@ -10,34 +20,41 @@ class ControllerAuth:
         from view.ViewAuth import ViewAuth
         self.view = ViewAuth(root, self)
         self.onLoginSuccess = onLoginSuccess
+        
 
     def login(self, email, password):
-        conn = getDbConnection()
-        cursor = conn.cursor()
+        """
+        Authentifie un utilisateur en passant par le modèle Combattant.
+    
+        :param email: Email de l'utilisateur
+        :param password: Mot de passe de l'utilisateur
+        """
         try:
-            cursor.execute("SELECT id, nom FROM combattant WHERE email = %s AND motDePasse = %s", (email, password))
-            user = cursor.fetchone()
-            if user:
-                messagebox.showinfo("Connexion réussie", f"Bienvenue, {user[1]}!")
-                self.onLoginSuccess(user[0], user[1])  # Passe l'ID et le nom de l'utilisateur
+            combattant = Combattant.authentifier(email, password)
+            if combattant:
+                self.view.putMessageBox("Connexion réussie", "Vous êtes connecté avec succès.")
+                ControllerAuth.combattant = combattant
+                self.onLoginSuccess()
             else:
-                messagebox.showerror("Erreur", "Email ou mot de passe incorrect.")
+                self.view.putErrorBox("Erreur de connexion", "Email ou mot de passe incorrect.")
         except Exception as e:
-            messagebox.showerror("Erreur", f"Une erreur est survenue: {e}")
-        finally:
-            cursor.close()
-            conn.close()
-
+            self.view.putErrorBox("Erreur", f"Une erreur est survenue : {str(e)}")
+    
     def register(self, name, email, password):
-        conn = getDbConnection()
-        cursor = conn.cursor()
+        """
+        Enregistre un nouvel utilisateur en passant par le modèle Combattant.
+    
+        :param name: Nom de l'utilisateur
+        :param email: Email de l'utilisateur
+        :param password: Mot de passe de l'utilisateur
+        """
         try:
-            cursor.execute("INSERT INTO combattant (nom, email, motDePasse) VALUES (%s, %s, %s)", (name, email, password))
-            conn.commit()
-            messagebox.showinfo("Inscription réussie", "Votre compte a été créé avec succès.")
-            self.login(email, password)  # Connecte automatiquement après l'inscription
+            combattant = Combattant.inscrire(name, email, password)
+            if combattant:
+              self.view.putMessageBox("Inscription réussie", "Votre compte a été créé avec succès.")
+              ControllerAuth.combattant = combattant
+              self.onLoginSuccess()
+            else:
+                self.view.putErrorBox("Erreur", "Impossible de créer le compte. L'email est peut-être déjà utilisé.")
         except Exception as e:
-            messagebox.showerror("Erreur", f"Une erreur est survenue: {e}")
-        finally:
-            cursor.close()
-            conn.close()
+            self.view.putErrorBox("Erreur", f"Une erreur est survenue : {str(e)}")

@@ -1,6 +1,4 @@
-import random
 from PIL import Image
-import os
 
 raretes = {
     (0, 20): "normal",
@@ -47,7 +45,7 @@ def getRarete(degats):
     for (minDegats, maxDegats), rarete in raretes.items():
         if minDegats <= degats < maxDegats:
             return rarete
-    return "inconnu"  
+    return "normal"  
 
 def ajusterOpacite(image, alpha):
     """Ajuste l'opacité d'une image en modifiant son canal alpha."""

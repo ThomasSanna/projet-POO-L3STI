@@ -45,7 +45,7 @@ CREATE TABLE `arme` (
 --
 
 CREATE TABLE `combattant` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
   `motDePasse` varchar(255) NOT NULL,
   `nom` varchar(255) DEFAULT NULL,
@@ -56,7 +56,8 @@ CREATE TABLE `combattant` (
   `experience` int(11) DEFAULT NULL,
   `inventairePotions` int(11) DEFAULT NULL,
   `armeEquipee_id` int(11) DEFAULT NULL,
-  `queteActuelle_id` int(11) DEFAULT NULL
+  `queteActuelle_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`) -- Ajout de la clé primaire
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -152,7 +153,6 @@ ALTER TABLE `arme`
 -- Index pour la table `combattant`
 --
 ALTER TABLE `combattant`
-  ADD PRIMARY KEY (`id`) USING BTREE,
   ADD UNIQUE KEY `email` (`email`);
 
 --

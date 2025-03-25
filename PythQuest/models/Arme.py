@@ -81,7 +81,7 @@ class Arme:
         ("Cassé", 20), ("Endommagé", 40), ("Usé", 60), ("Solide", 80), ("Neuf", 90)
     )
     
-    def __init__(self, nom: str, valeurOr: int, degat: int, image: Image.Image=None):
+    def __init__(self, nom: str, valeurOr: int, degat: int, image: Image.Image=None, id: int=None) -> None:
         """
         Initialise une nouvelle arme.
 
@@ -94,6 +94,7 @@ class Arme:
         self.__valeurOr = valeurOr
         self.__degat = degat
         self.__image = image
+        self.__id = id
         
     @staticmethod
     def creerArmeAleatoire() -> "Arme":
@@ -171,6 +172,14 @@ class Arme:
         :param degat: Les nouveaux dégâts de l'arme.
         """
         self.__degat = degat
+        
+    def getId(self) -> int:
+        """
+        Retourne l'identifiant de l'arme.
+
+        :return: L'identifiant de l'arme.
+        """
+        return self.__id
         
     def __repr__(self) -> str:
         """

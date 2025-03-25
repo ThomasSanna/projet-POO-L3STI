@@ -49,3 +49,15 @@ class ViewAuth:
         email = self.emailEntry.get()
         password = self.passwordEntry.get()
         self.controller.register(name, email, password)
+        
+    def putMessageBox(self, title, message):
+        """
+        Affiche une boîte de message avec le titre et le message spécifiés.
+        """
+        tk.messagebox.showinfo(title, message)
+    
+    def putErrorBox(self, title, message):
+        """
+        Affiche une boîte de message d'erreur avec le titre et le message spécifiés.
+        """
+        tk.messagebox.showerror(title, message)
