@@ -9,6 +9,7 @@ from models.Arme import Arme
 from models.GestionnaireDeQuetes import GestionnaireDeQuetes
 from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
 from controller.ControllerAuth import ControllerAuth
+from controller.ControllerSave import ControllerSave
 from view.View import View
 import random
 import time
@@ -38,6 +39,8 @@ class Controller:
         self.creerQueteArme(self.joueur, 4, 6)
         self.updateStats()
         self.afficherMenuPrincipal()
+        self.controllerSave = ControllerSave(self.joueur)
+        self.jeuQuitte = False
 
     def initialiserInstances(self) -> Tuple[Forgeron, Medecin]:
         """
@@ -91,7 +94,12 @@ class Controller:
         """
         Sauvegarde l'état du jeu et quitte l'application.
         """
-        self.view.showMessage("Merci d'avoir joué !")
+        if not self.jeuQuitte:
+            self.jeuQuitte = True
+            self.view.showMessage("Sauvegarde en cours...")
+            self.controllerSave.saveAll()
+            self.view.showMessage("Sauvegarde réussie !")
+            self.view.showMessage("Merci d'avoir joué !")
         self.view.root.quit()
 
     def gestionAchats(self):
@@ -154,6 +162,7 @@ class Controller:
             self.updateStats()
         except (InsufficientFundsError, NoSuchItemError, InventoryFullError) as e:
             self.view.showMessage(str(e))
+            self.updateStats() # Correction erreur : Mise à jour des stats après l'erreur
         self.gestionMedecin()
 
     def gestionQuetes(self) -> None:

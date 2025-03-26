@@ -20,6 +20,7 @@ class Combattant(Personnage):
         niveau (int): Le niveau du combattant. Une augmentation de niveau augmente la vie maximale, mais aussi la force des monstres dans le futur.
         experience (int): L'expérience du combattant. Un certain nombre d'expérience est nécessaire pour passer au niveau suivant.
     """
+    
 
     GAIN_POTION: int = 15  # Quantité de vie gagnée par potion
     NB_POTION_MAX: int = 10  # Nombre maximum de potions dans l'inventaire
@@ -51,6 +52,7 @@ class Combattant(Personnage):
         self.queteActuelle: Optional[Quete] = queteActuelle
         self.niveau: int = niveau
         self.experience: int = experience
+        self.dao = CombattantDAO()
         
     @staticmethod
     def authentifier(email: str, password: str) -> Optional["Combattant"]:
@@ -64,7 +66,6 @@ class Combattant(Personnage):
         combattantInfo = CombattantDAO.authenticate(email, password)
         if combattantInfo:
             if combattantInfo["piece"] == None:
-                print('là')
                 return Combattant(
                     combattantInfo["id"],
                     combattantInfo["nom"]
@@ -95,6 +96,33 @@ class Combattant(Personnage):
         return Combattant(
             combattantInfo["id"], 
             combattantInfo["nom"]) if combattantInfo else None
+        
+    def save(self) -> None:
+        """
+        Enregistre les informations du combattant dans la base de données.
+
+        :raises Exception: Si l'enregistrement échoue.
+        """
+        try:
+            self.dao.saveCombattant(self)
+        except Exception as e:
+            raise e
+        
+    def recupererArmeEquipee(self) -> None:
+        """
+        Récupère l'arme équipée du combattant depuis la base de données.
+
+        :raises Exception: Si la récupération échoue.
+        """
+        try:
+            armeEquipeeId = self.dao.getArmeEquipeeId(self.id)
+            arme = Arme.getArmeById(armeEquipeeId)
+            if arme:
+                self.armeEquipee = arme
+            else:
+                raise NoSuchItemError("Aucune arme équipée.")
+        except Exception as e:
+            raise e
 
     def gagnerExperience(self, exp: int) -> List[str]:
         """
@@ -416,18 +444,14 @@ class Combattant(Personnage):
             raise IndexError("Weapon index out of range.")
         return self.inventaireArmes[index]
 
-    def afficherArmes(self) -> str:
+    def armeDansInventaire(self, arme: Arme) -> bool:
         """
-        Retourne une représentation textuelle des armes du combattant.
+        Vérifie si une arme est dans l'inventaire.
 
-        :return: Une chaîne de caractères représentant les armes.
+        :param arme: L'arme à vérifier.
+        :return: True si l'arme est dans l'inventaire, False sinon.
         """
-        result = f"Arme portée : {self.armeEquipee}\n"
-        result += "Armes dans l'inventaire :\n"
-        for i, arme in enumerate(self.inventaireArmes):
-            result += f"{i + 1}. {arme}\n"
-        result += f"{self.getNbArmesInventaire() + 1}. Retour\n"
-        return result
+        return arme in self.inventaireArmes
     
     def getMaxVie(self) -> int:
         """
@@ -435,6 +459,14 @@ class Combattant(Personnage):
         :return: La vie maximale.
         """
         return self.maxVie
+    
+    def getId(self) -> int:
+        """
+        Retourne l'identifiant du combattant.
+
+        :return: L'identifiant.
+        """
+        return self.id
     
     def __str__(self):
         return f"Combattant(nom={self.nom}, piece={self.piece}, vie={self.vie}, maxVie={self.maxVie}, inventairePotions={self.inventairePotions}, armeEquipee={self.armeEquipee}, inventaireArmes={self.inventaireArmes}, queteActuelle={self.queteActuelle}, niveau={self.niveau}, experience={self.experience})"

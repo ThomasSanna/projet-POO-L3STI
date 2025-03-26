@@ -1,6 +1,7 @@
 import random
 from PIL import Image 
 from .ArmesImages import genererArme 
+from dao.ArmeDAO import ArmeDAO
 
 class Arme:
     """
@@ -81,6 +82,10 @@ class Arme:
         ("Cassé", 20), ("Endommagé", 40), ("Usé", 60), ("Solide", 80), ("Neuf", 90)
     )
     
+    # Attributs de classe
+    lstArmes = []
+    nbArmes = 0
+    
     def __init__(self, nom: str, valeurOr: int, degat: int, image: Image.Image=None, id: int=None) -> None:
         """
         Initialise une nouvelle arme.
@@ -89,12 +94,17 @@ class Arme:
         :param valeurOr: La valeur en or de l'arme.
         :param degat: Les dégâts de l'arme.
         :param image: L'image de l'arme.
+        :param id: L'identifiant de l'arme. Si None, un nouvel identifiant sera généré.
         """
         self.__nom = nom
         self.__valeurOr = valeurOr
         self.__degat = degat
         self.__image = image
-        self.__id = id
+        self.__id = id if id is not None else Arme.nbArmes
+        # Le nombre d'arme est égal à l'id le plus grand parmi les armes créées + 1
+        Arme.nbArmes = id + 1 if id is not None and (id+1)>=Arme.nbArmes else Arme.nbArmes + 1
+        self.dao = ArmeDAO()
+        Arme.lstArmes.append(self)
         
     @staticmethod
     def creerArmeAleatoire() -> "Arme":
@@ -132,6 +142,67 @@ class Arme:
         image = genererArme(prefixe, suffixe, "Rouillé", degats)
         
         return Arme(f"{prefixe} {suffixe} (Rouillé)", valeurOr, degats//1.5, image)
+    
+    @staticmethod
+    def recupererArmes(combattant: 'Combattant') -> list:
+        """
+        Récupère toutes les armes d'un combattant à partir de la base de données.
+
+        :param idCombattant: ID du combattant dont on veut récupérer les armes.
+        :return: Liste des armes du combattant.
+        """
+        armes = ArmeDAO.recupAllArmes(combattant.getId())
+        for arme in armes:
+            image = Arme.getImageFromBin(arme["image"])
+            armeObj = Arme(arme["nom"], arme["valeurOr"], arme["degat"], image, arme["id"])
+            if(arme["inventaire_combattant_id"]):
+                combattant.ajouterArmeInventaire(armeObj)
+        return
+    
+    def save(self, combattant: 'Combattant') -> None:
+        """
+        Enregistre l'arme dans la base de données.
+        """
+        self.dao.saveArme(self.toDict(combattant))
+        
+    def toDict(self, combattant: 'Combattant') -> dict:
+        """
+        Retourne un dictionnaire représentant l'objet.
+
+        :return: Un dictionnaire représentant l'objet.
+        """
+        return {
+            "id": self.__id,
+            "nom": self.__nom,
+            "valeurOr": self.__valeurOr,
+            "degat": self.__degat,
+            "image": self.__image.tobytes() if self.__image else None,
+            "imageBin": self.getImageBin(),
+            "inventaire_combattant_id": combattant.getId() if combattant.armeDansInventaire(self) else None,
+            "combattant_id": combattant.getId()
+            }
+        
+    @staticmethod
+    def getAllArmes() -> list:
+        """
+        Retourne la liste de toutes les armes créées.
+
+        :return: La liste des armes.
+        """
+        return Arme.lstArmes
+    
+    @staticmethod
+    def getArmeById(id: int) -> "Arme":
+        """
+        Retourne l'arme correspondant à l'identifiant spécifié.
+
+        :param id: L'identifiant de l'arme.
+        :return: L'arme correspondante.
+        """
+        for arme in Arme.lstArmes:
+            if arme.getId() == id:
+                return arme
+        return None
     
     def getNom(self) -> str:
         """
@@ -180,6 +251,24 @@ class Arme:
         :return: L'identifiant de l'arme.
         """
         return self.__id
+    
+    def getImageBin(self) -> Image.Image:
+        """
+        Retourne l'image de l'arme sous forme binaire.
+
+        :return: L'image de l'arme sous forme binaire.
+        """
+        return self.__image.tobytes() if self.__image else None
+    
+    @staticmethod
+    def getImageFromBin(imageBin: bytes) -> Image.Image:
+        """
+        Retourne l'image de l'arme à partir de sa représentation binaire.
+
+        :param imageBin: L'image binaire.
+        :return: L'image de l'arme.
+        """
+        return Image.frombytes("RGBA", (16, 16), imageBin) if imageBin else None
         
     def __repr__(self) -> str:
         """

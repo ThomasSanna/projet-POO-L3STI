@@ -1,12 +1,5 @@
 from models.Combattant import Combattant
-from models.Forgeron import Forgeron
-from models.Medecin import Medecin
-from models.Quete import Quete
-from models.Donjon import Donjon
-from models.Monstre import Monstre
 from models.Arme import Arme
-from configdb.database import getDbConnection
-from tkinter import messagebox
 
 class ControllerAuth:
   
@@ -32,8 +25,8 @@ class ControllerAuth:
         try:
             combattant = Combattant.authentifier(email, password)
             if combattant:
-                self.view.putMessageBox("Connexion réussie", "Vous êtes connecté avec succès.")
                 ControllerAuth.combattant = combattant
+                self.recupDonnees()  
                 self.onLoginSuccess()
             else:
                 self.view.putErrorBox("Erreur de connexion", "Email ou mot de passe incorrect.")
@@ -51,10 +44,19 @@ class ControllerAuth:
         try:
             combattant = Combattant.inscrire(name, email, password)
             if combattant:
-              self.view.putMessageBox("Inscription réussie", "Votre compte a été créé avec succès.")
-              ControllerAuth.combattant = combattant
-              self.onLoginSuccess()
+                self.view.putMessageBox("Inscription réussie", "Votre compte a été créé avec succès.")
+                ControllerAuth.combattant = combattant
+                self.onLoginSuccess()
             else:
                 self.view.putErrorBox("Erreur", "Impossible de créer le compte. L'email est peut-être déjà utilisé.")
         except Exception as e:
             self.view.putErrorBox("Erreur", f"Une erreur est survenue : {str(e)}")
+            
+    def recupDonnees(self):
+        try:
+            Arme.recupererArmes(ControllerAuth.combattant)
+            ControllerAuth.combattant.recupererArmeEquipee()
+        except Exception as e:
+            self.view.putErrorBox("Erreur", f"Une erreur est survenue lors de la récupération des données : {str(e)}")
+        return
+        
