@@ -63,7 +63,7 @@ class Combattant(Personnage):
         :param password: Mot de passe de l'utilisateur
         :return: Instance de Combattant si l'authentification réussie, sinon None
         """
-        combattantInfo = CombattantDAO.authenticate(email, password)
+        combattantInfo = CombattantDAO.authentifier(email, password)
         if combattantInfo:
             if combattantInfo["piece"] == None:
                 return Combattant(
@@ -83,7 +83,7 @@ class Combattant(Personnage):
         return None
         
     @staticmethod
-    def inscrire(name: str, email: str, password: str) -> bool:
+    def inscrire(name: str, email: str, password: str) -> Optional["Combattant"]:
         """
         Enregistre un nouvel utilisateur en utilisant CombattantDAO.
 
@@ -92,7 +92,7 @@ class Combattant(Personnage):
         :param password: Mot de passe de l'utilisateur
         :return: Instance de Combattant si l'inscription est réussie, sinon None
         """
-        combattantInfo = CombattantDAO.register(name, email, password)
+        combattantInfo = CombattantDAO.inscrire(name, email, password)
         return Combattant(
             combattantInfo["id"], 
             combattantInfo["nom"]) if combattantInfo else None

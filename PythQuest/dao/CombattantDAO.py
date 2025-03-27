@@ -11,7 +11,7 @@ class CombattantDAO:
         self.cursor = self.conn.cursor(dictionary=True)
     
     @staticmethod
-    def authenticate(email: str, password: str) -> dict:
+    def authentifier(email: str, password: str) -> dict:
         """
         Authentifie un utilisateur en vérifiant ses identifiants.
 
@@ -38,7 +38,7 @@ class CombattantDAO:
         return None  
 
     @staticmethod
-    def register(name: str, email: str, password: str) -> dict:
+    def inscrire(name: str, email: str, password: str) -> dict:
         """
         Enregistre un nouvel utilisateur.
 
@@ -62,6 +62,8 @@ class CombattantDAO:
             query = "INSERT INTO Combattant (nom, email, motDePasse) VALUES (%s, %s, %s)"
             cursor.execute(query, (name, email, hashed_password))
             conn.commit()
+            
+            # Ces deux attributs nous permettrons d'initialiser le combattant
             query = "SELECT id, nom FROM Combattant WHERE email = %s"
             cursor.execute(query, (email,))
             result = cursor.fetchone()
