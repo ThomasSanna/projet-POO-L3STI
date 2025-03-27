@@ -4,6 +4,7 @@ from models.Quete import Quete
 from models.Arme import Arme
 from models.Donjon import Donjon
 from typing import List, Optional
+import math
 from models.exceptions import InsufficientFundsError, InventoryFullError, NoSuchItemError, QuestAlreadyAcceptedError, NoActiveQuestError
 
 class Combattant(Personnage):
@@ -196,7 +197,7 @@ class Combattant(Personnage):
         :raises NoSuchItemError: Si l'inventaire de potions est vide.
         """
         if self.inventairePotions > 0:
-            self.gagnerVie(Combattant.GAIN_POTION)
+            self.gagnerVie(Combattant.GAIN_POTION * math.sqrt(self.niveau))
             self.perdrePotion()
         else:
             raise NoSuchItemError("Vous n'avez plus de potion.")

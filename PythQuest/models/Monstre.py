@@ -1,6 +1,7 @@
 from models.Personnage import Personnage
 from models.Arme import Arme
 import random
+import math
 
 class Monstre(Personnage):
     """
@@ -65,9 +66,9 @@ class Monstre(Personnage):
         :return: Un monstre généré aléatoirement.
         """
         nom = random.choice(Monstre.PREFIXES) + " " + random.choice(Monstre.SUFFIXES)
-        piece = random.randint(10, 20) * difficulte * niveauJoueur # Calcule une quantité d'or aléatoire basée sur la difficulté et le niveau du joueur
+        piece = random.randint(10, 20) * difficulte * math.sqrt(niveauJoueur) # Calcule une quantité d'or aléatoire basée sur la difficulté et le niveau du joueur
         vie = random.randint(8, 18) * difficulte // 2 * niveauJoueur # Calcule des points de vie aléatoires basés sur la difficulté et le niveau du joueur
-        armeMonstre = Arme.creerArme(int(random.randint(2, 5) * difficulte * niveauJoueur))
+        armeMonstre = Arme.creerArme(int(random.randint(2, 5) * math.sqrt(difficulte) * math.sqrt(niveauJoueur)))
         monstre = Monstre(nom, piece, vie, armeMonstre, niveauJoueur)
         return monstre
     

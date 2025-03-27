@@ -1,8 +1,11 @@
 from models.Combattant import Combattant
 from models.Arme import Arme
+from view.ViewAuth import ViewAuth
 
 class ControllerAuth:
-  
+    
+    # Attributs de classe
+    # Utilisé pour stocker le combattant connecté
     combattant = None
   
     def __init__(self, root, onLoginSuccess):
@@ -10,7 +13,6 @@ class ControllerAuth:
         :param root: Fenêtre principale Tkinter
         :param onLoginSuccess: Callback à appeler après une connexion réussie
         """
-        from view.ViewAuth import ViewAuth
         self.view = ViewAuth(root, self)
         self.onLoginSuccess = onLoginSuccess
         

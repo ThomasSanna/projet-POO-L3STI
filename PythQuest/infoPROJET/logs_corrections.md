@@ -17,3 +17,15 @@
 - Baisse des dégats des monstres (3 à 10 -> 2 à 5 (évoluant avec la difficulté et le niveau du joueur)).
 - Baisse de la vie maximale obtenue lors d'un passage de niveau, qui était beaucoup trop élevée au fil du temps (VieMax * 1.5 -> VieMax + 100).
 - Augmentation du prix des armes chez le forgeron de ~50%.
+
+# Logs de Corrections de bug / Ajustements dans le jeu de la V2 à la V3
+
+## Corrections de bugs
+
+- Correction du fait que les données sur l'écran ne se mettaient pas à jour lors d'un certain cas à l'achat de potion et de vie.
+
+## Ajustements/Rééquilibrage
+
+- Baisse de la scalabilité des dégats des montres selon le niveau du joueur (Dégats * niveau -> Dégats * sqrt(niveau)).
+- Baisse de la scalabilité des dégats des montres selon la difficulé du donjon (Dégats * difficulte -> Dégats * sqrt(difficulte)).
+- Baisse de la scalabilité de l'or des monstres selon le niveau du joueur (Or * niveau -> Or * sqrt(niveau)).

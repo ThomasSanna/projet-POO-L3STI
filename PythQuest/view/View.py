@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import time
+import random
 from PIL import Image, ImageTk
 
 class View:
@@ -264,7 +265,12 @@ class View:
         armeLabel.pack(pady=5)
 
         try:
-            self.monstreImage = tk.PhotoImage(file="view/assets/monstre/zombie.png").subsample(3, 3)
+            files = ["view/assets/monstre/zombie.png", "view/assets/monstre/arraignee.png", "view/assets/monstre/goblin.png"]
+            # Choisir une image aléatoire parmi celles disponibles
+            imageFile = random.choice(files)
+            # Redimensionner l'image et la convertir pour Tkinter
+            resizedImage = Image.open(imageFile).resize((100, 100), Image.Resampling.LANCZOS)
+            self.monstreImage = ImageTk.PhotoImage(resizedImage)
             imageLabel = ttk.Label(self.imageFrame, image=self.monstreImage)
             imageLabel.pack(pady=2)
         except tk.TclError:
