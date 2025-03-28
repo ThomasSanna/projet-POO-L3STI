@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.9.12)  28 MAR 2025 17:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.9.12)  28 MAR 2025 17:15
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -644,7 +644,7 @@ Package biblatex Info: ... file 'rapport_SANNA_RAETH_Pythquest.bbl' not found.
 No file rapport_SANNA_RAETH_Pythquest.bbl.
 Package biblatex Info: Reference section=0 on input line 55.
 Package biblatex Info: Reference segment=0 on input line 55.
-<img/univCorse.png, id=71, 487.3407pt x 154.8987pt>
+<img/univCorse.png, id=87, 487.3407pt x 154.8987pt>
 File: img/univCorse.png Graphic file (type png)
 <use img/univCorse.png>
 Package pdftex.def Info: img/univCorse.png  used on input line 59.
@@ -699,7 +699,7 @@ Package fancyhdr Warning: \footskip is too small (30.0pt):
 (fancyhdr)                \setlength{\footskip}{32.05278pt}.
 
 [3]
-<img/UML.png, id=114, 1380.15625pt x 1501.61pt>
+<img/UML.png, id=134, 1380.15625pt x 1501.61pt>
 File: img/UML.png Graphic file (type png)
 <use img/UML.png>
 Package pdftex.def Info: img/UML.png  used on input line 157.
@@ -743,7 +743,7 @@ Overfull \hbox (2.66724pt too wide) in paragraph at lines 243--244
 []\OT1/cmr/m/n/10 Utilisation d'an-no-ta-tions de type pour sp^^Secifier les types de pa-ram^^Retres
  []
 
-<img/MVC.png, id=125, 656.4525pt x 547.04375pt>
+<img/MVC.png, id=145, 656.4525pt x 547.04375pt>
 File: img/MVC.png Graphic file (type png)
 <use img/MVC.png>
 Package pdftex.def Info: img/MVC.png  used on input line 255.
@@ -758,7 +758,7 @@ Package fancyhdr Warning: \footskip is too small (30.0pt):
 (fancyhdr)                \setlength{\footskip}{32.05278pt}.
 
 [6]
-<img/BDD.png, id=131, 881.54344pt x 648.17157pt>
+<img/BDD.png, id=151, 881.54344pt x 648.17157pt>
 File: img/BDD.png Graphic file (type png)
 <use img/BDD.png>
 Package pdftex.def Info: img/BDD.png  used on input line 270.
@@ -779,7 +779,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has
                                                   \__shipout_drop_firstpage_...
 l.274 
        <./img/MVC.png>]
-<img/fenetre.png, id=137, 1444.64719pt x 812.28468pt>
+<img/fenetre.png, id=157, 1444.64719pt x 812.28468pt>
 File: img/fenetre.png Graphic file (type png)
 <use img/fenetre.png>
 Package pdftex.def Info: img/fenetre.png  used on input line 286.
@@ -800,7 +800,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has
                                                   \__shipout_drop_firstpage_...
 l.290 
        <./img/BDD.png>]
-<img/uiSchem.png, id=144, 953.5625pt x 632.3625pt>
+<img/uiSchem.png, id=164, 953.5625pt x 632.3625pt>
 File: img/uiSchem.png Graphic file (type png)
 <use img/uiSchem.png>
 Package pdftex.def Info: img/uiSchem.png  used on input line 293.
@@ -877,7 +877,7 @@ Package fancyhdr Warning: \footskip is too small (30.0pt):
 [12]
 File: img/univCorse.png Graphic file (type png)
 <use img/univCorse.png>
-Package pdftex.def Info: img/univCorse.png  used on input line 444.
+Package pdftex.def Info: img/univCorse.png  used on input line 458.
 (pdftex.def)             Requested size: 89.51709pt x 28.45274pt.
 
 
@@ -895,23 +895,23 @@ L3 programming layer <2024-01-04>
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `rapport_SANNA_RAETH_Pythquest.out' has not changed.
-(rerunfilecheck)             Checksum: 10B9182F7D7FA031FAE6A7D496111AE9;2783.
+(rerunfilecheck)             Checksum: 97A7BBDA6C229100ED63042CA0E7FA26;3429.
 Package logreq Info: Writing requests to 'rapport_SANNA_RAETH_Pythquest.run.xml'.
 \openout1 = `rapport_SANNA_RAETH_Pythquest.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 20372 strings out of 474486
- 356793 string characters out of 5743755
- 1939542 words of memory out of 5000000
- 42417 multiletter control sequences out of 15000+600000
+ 20380 strings out of 474486
+ 356903 string characters out of 5743755
+ 1940542 words of memory out of 5000000
+ 42421 multiletter control sequences out of 15000+600000
  562399 words of font info for 51 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,14n,81p,1262b,1823s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\thoma\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/thoma/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on "c:\Users\thoma\Desktop\programmes\L3STI\Semestre 2\projetPOO-Cours-Projet\projet-POO-L3STI\rapport_Projet\aux_files\rapport_SANNA_RAETH_Pythquest.pdf" (14 pages, 733676 bytes).
+Output written on "c:\Users\thoma\Desktop\programmes\L3STI\Semestre 2\projetPOO-Cours-Projet\projet-POO-L3STI\rapport_Projet\aux_files\rapport_SANNA_RAETH_Pythquest.pdf" (14 pages, 737834 bytes).
 PDF statistics:
- 223 PDF objects out of 1000 (max. 8388607)
- 37 named destinations out of 1000 (max. 500000)
- 167 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 243 PDF objects out of 1000 (max. 8388607)
+ 41 named destinations out of 1000 (max. 500000)
+ 199 words of extra memory for PDF output out of 10000 (max. 10000000)
 
