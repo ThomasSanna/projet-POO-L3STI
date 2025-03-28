@@ -5,10 +5,8 @@ class CombattantDAO:
     
     def __init__(self):
         """
-        Initialise la connexion à la base de données et le curseur.
         """
-        self.conn = getDbConnection()
-        self.cursor = self.conn.cursor(dictionary=True)
+        pass
     
     @staticmethod
     def authentifier(email: str, password: str) -> dict:
@@ -29,9 +27,8 @@ class CombattantDAO:
         conn.close()
 
         """
-        Pourquoi utf-8 ? Il y aura un problème si on n'utilise pas un caractere utf-8 dans le mdp ?
-        On utilise utf-8 pour s'assurer que les chaînes de caractères sont correctement encodées et décodées.
-        Si notre mdp contient des caractères hors UTF-8 comme "é" ou "ç", on aura un problème.
+        Vérification du mot de passe avec bcrypt.
+        On encode en utf-8 le mot de passe et le mot de passe haché pour la comparaison.
         """
         if result and bcrypt.checkpw(password.encode('utf-8'), result['motDePasse'].encode('utf-8')):
             return result
@@ -81,11 +78,11 @@ class CombattantDAO:
 
         :param combattant: Dictionnaire contenant les informations du combattant
         """
-        self.conn = getDbConnection()
-        self.cursor = self.conn.cursor(dictionary=True)
+        conn = getDbConnection()
+        cursor = conn.cursor(dictionary=True)
         try:
             query = "UPDATE Combattant SET piece = %s, vie = %s, maxVie = %s, niveau = %s, experience = %s, inventairePotions = %s, armeEquipee_id = %s WHERE id = %s"
-            self.cursor.execute(query, (combattant.getOr(), 
+            cursor.execute(query, (combattant.getOr(), 
                                         combattant.getVie(), 
                                         combattant.getMaxVie(), 
                                         combattant.getNiveau(), 
@@ -93,13 +90,13 @@ class CombattantDAO:
                                         combattant.getInventairePotions(), 
                                         combattant.getArmeEquipee().getId(),
                                         combattant.getId()))
-            self.conn.commit()
+            conn.commit()
         except Exception as e:
-            self.conn.rollback()
+            conn.rollback()
             raise e
         finally:
-            self.cursor.close()
-            self.conn.close()
+            cursor.close()
+            conn.close()
             
     def getArmeEquipeeId(self, idCombattant: int) -> int:
         """
@@ -108,16 +105,16 @@ class CombattantDAO:
         :param idCombattant: ID du combattant
         :return: ID de l'arme équipée
         """
-        self.conn = getDbConnection()
-        self.cursor = self.conn.cursor(dictionary=True)
+        conn = getDbConnection()
+        cursor = conn.cursor(dictionary=True)
         
         try:
             query = "SELECT armeEquipee_id FROM Combattant WHERE id = %s"
-            self.cursor.execute(query, (idCombattant,))
-            result = self.cursor.fetchone()
+            cursor.execute(query, (idCombattant,))
+            result = cursor.fetchone()
             return result['armeEquipee_id'] if result else None
         except Exception as e:
             raise e
         finally:
-            self.cursor.close()
-            self.conn.close()
+            cursor.close()
+            conn.close()
