@@ -1,0 +1,37 @@
+@startuml
+skinparam style strictuml
+
+package "MVC Architecture" {
+    class Controller {
+        +gestionQuetes()
+        +gestionDonjons()
+        +gestionPersonnage()
+    }
+
+    class View {
+        +showChoices()
+        +updateStats()
+        +showMessage()
+    }
+
+    class Models {
+        +Combattant
+        +Quete
+        +Donjon
+        +Monstre
+        +Arme
+    }
+
+    class DAO {
+        +saveCombattant()
+        +loadCombattant()
+        +recupAllArmes()
+    }
+}
+
+Controller --> View : "Met à jour l'interface utilisateur"
+Controller --> Models : "Gère la logique métier"
+Models --> DAO : "accède et envoie des données persistantes"
+View --> Controller : "Envoie les actions utilisateur"
+
+@enduml

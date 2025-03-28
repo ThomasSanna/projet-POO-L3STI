@@ -128,6 +128,9 @@ Le projet utilise une architecture MVC (Modèle-Vue-Contrôleur) pour séparer l
   - Gestion des actions du joueur (achat d'armes, acceptation de quêtes, exploration de donjons).
   - Mise à jour de l'interface utilisateur en fonction des actions du joueur.
 
+- **DAO (Data Access Object)** : Gère l'accès aux données persistantes, comme les fichiers de sauvegarde. Permet de charger et de sauvegarder l'état du jeu.
+  - Le DAO n'est appelé que par le modele, et il n'y a pas de DAO pour la vue ou le contrôleur.
+
 ### Dépendances
 
 Le projet utilise les bibliothèques suivantes :
