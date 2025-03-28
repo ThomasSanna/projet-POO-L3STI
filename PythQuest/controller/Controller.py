@@ -38,6 +38,7 @@ class Controller:
         self.forgeron, self.medecin = self.initialiserInstances()
         self.creerQueteArme(self.joueur, 4, 6)
         self.updateStats()
+        self.view.updateNom(self.joueur.getNom())
         self.afficherMenuPrincipal()
         self.controllerSave = ControllerSave(self.joueur)
         self.jeuQuitte = False

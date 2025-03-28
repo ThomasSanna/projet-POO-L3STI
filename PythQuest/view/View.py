@@ -31,6 +31,7 @@ class View:
         style.configure("TButton", font=("Arial", 10), padding=5)
 
         # Variables du jeu (inchangées)
+        self.nom = tk.StringVar(value="Joueur")
         self.piece = tk.IntVar(value=0)
         self.vie = tk.IntVar(value=100)
         self.maxVie = tk.IntVar(value=100)
@@ -41,18 +42,21 @@ class View:
         # Frame du haut pour les stats 
         self.statsFrame = ttk.Frame(root, relief="raised", borderwidth=2) # relief="raised" pour un effet de profondeur
         self.statsFrame.pack(side=tk.TOP, anchor=tk.NW, padx=10, pady=10, fill=tk.X)
+        
+        self.nomLabel = ttk.Label(self.statsFrame, text=f"{self.nom.get()}", foreground="#ffffff")
+        self.nomLabel.grid(row=0, column=0, padx=10, pady=5)
 
         self.pieceLabel = ttk.Label(self.statsFrame, text=f"Pièces: {self.piece.get()}", foreground="#ffd700")
-        self.pieceLabel.grid(row=0, column=0, padx=10, pady=5)
+        self.pieceLabel.grid(row=0, column=1, padx=10, pady=5)
         
         self.vieLabel = ttk.Label(self.statsFrame, text=f"Vie: {self.vie.get()}/{self.maxVie.get()}", foreground="#ff4040")
-        self.vieLabel.grid(row=0, column=1, padx=10, pady=5)
+        self.vieLabel.grid(row=0, column=2, padx=10, pady=5)
         
         self.niveauLabel = ttk.Label(self.statsFrame, text=f"Niveau: {self.niveau.get()} ({self.experience.get()}/{self.niveau.get() * 100})", foreground="#40c4ff")
-        self.niveauLabel.grid(row=0, column=2, padx=10, pady=5)
+        self.niveauLabel.grid(row=0, column=3, padx=10, pady=5)
 
         self.armeLabel = ttk.Label(self.statsFrame, text=f"Arme équipée: {self.armeEquipee.get()}", foreground="#ffffff")
-        self.armeLabel.grid(row=0, column=3, padx=10, pady=5)
+        self.armeLabel.grid(row=0, column=4, padx=10, pady=5)
 
         # Frame pour la quête associée 
         self.questFrame = ttk.Frame(root, relief="raised", borderwidth=2)
@@ -130,6 +134,17 @@ class View:
         # Mettre à jour la région défilable
         self.choicesInnerFrame.update_idletasks()
         self.choicesCanvas.configure(scrollregion=self.choicesCanvas.bbox("all"))
+        
+    def updateNom(self, nom):
+        """
+        Met à jour le nom du joueur
+        Utilise : nomLabel dans statsFrame pour afficher le nom
+        
+        :param nom: Nouveau nom du joueur
+        """
+        self.nom.set(nom)
+        self.nomLabel.config(text=f"{self.nom.get()}")
+        # self.nomLabel.update_idletasks()  # Met à jour l'affichage du label
 
     def updatePiece(self, amount):
         """
