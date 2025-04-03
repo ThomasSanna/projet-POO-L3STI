@@ -88,10 +88,10 @@ class Controller:
             {"text": "Voir les quêtes", "command": self.gestionQuetes},
             {"text": "Voir les donjons", "command": self.gestionDonjons},
             {"text": "Informations sur le personnage", "command": self.gestionPersonnage},
-            {"text": "Sauvegarder et quitter", "command": self.quitterJeu}
+            {"text": "Sauvegarder et quitter", "command": self.quitterSauvegarderJeu}
         ])
 
-    def quitterJeu(self) -> None:
+    def quitterSauvegarderJeu(self) -> None:
         """
         Sauvegarde l'état du jeu et quitte l'application.
         """

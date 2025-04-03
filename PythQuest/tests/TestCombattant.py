@@ -3,6 +3,7 @@ import sys
 import os
 
 # Ajouter le chemin du répertoire parent au sys.path
+# Permet d'importer les classes de models
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from models.Combattant import Combattant
