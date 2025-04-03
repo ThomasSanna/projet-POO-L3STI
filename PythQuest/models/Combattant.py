@@ -64,7 +64,7 @@ class Combattant(Personnage):
         :param password: Mot de passe de l'utilisateur
         :return: Instance de Combattant si l'authentification réussie, sinon None
         """
-        combattantInfo = CombattantDAO.authentifier(email, password)
+        combattantInfo = CombattantDAO.authentifier(email, password) # dictionnaire
         if combattantInfo:
             if combattantInfo["piece"] == None:
                 return Combattant(

@@ -20,6 +20,7 @@ class CombattantDAO:
         conn = getDbConnection()
         cursor = conn.cursor(dictionary=True)
         
+        # Récuperer les données selon l'email
         query = "SELECT * FROM Combattant WHERE email = %s"
         cursor.execute(query, (email,))
         result = cursor.fetchone()

@@ -3,7 +3,12 @@ from tkinter import ttk
 import tkinter.messagebox
 
 class ViewAuth:
-    def __init__(self, root, controller):
+    def __init__(self, root: tk.Tk, controller: "ControllerAuth") -> None:
+        """
+        Initialise la vue d'authentification.
+        :param root: Fenêtre principale Tkinter
+        :param controller: Instance du contrôleur d'authentification
+        """
         self.root = root
         self.controller = controller
         self.is_register_mode = False
@@ -75,6 +80,11 @@ class ViewAuth:
                  foreground=[('active', '#000')])
 
     def toggle_register(self):
+        """
+        Bascule entre le mode inscription et le mode connexion.
+        Affiche ou cache le champ de saisie du nom selon le mode actif.
+        """
+        # Vérifie si le mode inscription est actif
         if not self.is_register_mode:
             # Passage en mode inscription
             self.nameLabel.grid(row=3, column=0, sticky=tk.W, pady=10) # On rend visible le label et l'entry du nom
@@ -93,21 +103,27 @@ class ViewAuth:
             self.is_register_mode = False
 
     def login(self):
+        """
+        Authentifie l'utilisateur en récupérant les informations du formulaire de connexion.
+        """
         email = self.emailEntry.get()
         password = self.passwordEntry.get()
         self.controller.login(email, password)
 
     def register(self):
+        """
+        Inscrit l'utilisateur en récupérant les informations du formulaire d'inscription.
+        """
         name = self.nameEntry.get()
         email = self.emailEntry.get()
         password = self.passwordEntry.get()
         self.controller.register(name, email, password)
         
-    def putMessageBox(self, title, message):
+    def putMessageBox(self, title: str, message: str):
         """Affiche une boîte de message"""
         tkinter.messagebox.showinfo(title, message)
     
-    def putErrorBox(self, title, message):
+    def putErrorBox(self, title: str, message: str):
         """Affiche une boîte d'erreur"""
         tkinter.messagebox.showerror(title, message)
 

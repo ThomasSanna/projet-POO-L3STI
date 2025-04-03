@@ -8,7 +8,7 @@ class ControllerAuth:
     # Utilisé pour stocker le combattant connecté
     combattant = None
   
-    def __init__(self, root, onLoginSuccess):
+    def __init__(self, root: "tk.Tk", onLoginSuccess: callable) -> None:
         """
         :param root: Fenêtre principale Tkinter
         :param onLoginSuccess: Callback à appeler après une connexion réussie
@@ -17,7 +17,7 @@ class ControllerAuth:
         self.onLoginSuccess = onLoginSuccess
         
 
-    def login(self, email, password):
+    def login(self, email: str, password: str) -> None:
         """
         Authentifie un utilisateur en passant par le modèle Combattant.
     
@@ -35,7 +35,7 @@ class ControllerAuth:
         except Exception as e:
             self.view.putErrorBox("Erreur", f"Une erreur est survenue : {str(e)}")
     
-    def register(self, name, email, password):
+    def register(self, name: str, email: str, password: str) -> None:
         """
         Enregistre un nouvel utilisateur en passant par le modèle Combattant.
     
